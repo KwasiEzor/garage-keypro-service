@@ -5,9 +5,11 @@ import { ServiceCard } from '@/components/brand/service-card';
 import { LeadForm } from '@/components/brand/lead-form';
 import { Icon } from '@/components/ui/icon';
 
+import { Service } from '@/types';
+
 interface ServiceShowProps {
-  service: any;
-  relatedServices: any[];
+  service: Service;
+  relatedServices: Service[];
 }
 
 export default function ServiceShow({ service, relatedServices }: ServiceShowProps) {

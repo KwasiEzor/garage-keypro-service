@@ -4,7 +4,6 @@ namespace App\Filament\Resources\GalleryItems;
 
 use App\Filament\Resources\GalleryItems\Pages\ManageGalleryItems;
 use App\Models\GalleryItem;
-use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -28,7 +27,7 @@ class GalleryItemResource extends Resource
 {
     protected static ?string $model = GalleryItem::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-photo';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-photo';
 
     public static function form(Schema $schema): Schema
     {

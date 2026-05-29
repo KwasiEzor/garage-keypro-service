@@ -28,7 +28,8 @@
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
+        <env name="APP_KEY" value="base64:uP7v7S7zX6vG5M7zX6vG5M7zX6vG5M7zX6vG5M7zX6v="/>
+        <env name="SESSION_DRIVER" value="file"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>

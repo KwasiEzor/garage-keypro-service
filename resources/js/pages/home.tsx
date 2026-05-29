@@ -5,11 +5,12 @@ import { BrandGrid } from '@/components/brand/brand-grid';
 import { TestimonialCard } from '@/components/brand/testimonial-card';
 import { LeadForm } from '@/components/brand/lead-form';
 import { Icon } from '@/components/ui/icon';
+import { Service, Brand, Testimonial } from '@/types';
 
 interface HomeProps {
-  featuredServices: any[];
-  featuredBrands: any[];
-  testimonials: any[];
+  featuredServices: Service[];
+  featuredBrands: Brand[];
+  testimonials: Testimonial[];
 }
 
 export default function Home({ featuredServices, featuredBrands, testimonials }: HomeProps) {

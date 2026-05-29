@@ -1,11 +1,12 @@
 import PublicLayout from '@/layouts/public-layout';
 import { ServiceCard } from '@/components/brand/service-card';
+import { Service } from '@/types';
 
-interface ServicesIndexProps {
-  services: any[];
+interface ServicesProps {
+  services: Service[];
 }
 
-export default function ServicesIndex({ services }: ServicesIndexProps) {
+export default function ServicesIndex({ services }: ServicesProps) {
   return (
     <PublicLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">

@@ -4,6 +4,7 @@ import { InfiniteScroll, router } from '@inertiajs/react';
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Icon } from '@/components/ui/icon';
+import { index as galleryIndex } from '@/routes/gallery';
 import {
   Dialog,
   DialogContent,
@@ -37,11 +38,10 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
   }, []);
 
   const handleFilter = (category: string) => {
-    router.visit(route('gallery.index'), {
+    router.visit(galleryIndex().url(), {
       data: { category },
       only: ['items', 'currentCategory'],
       reset: ['items'],
-      preserveScroll: true,
     });
   };
 

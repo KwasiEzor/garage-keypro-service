@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Icon } from '@/components/ui/icon';
 import { BrandGrid } from '@/components/brand/brand-grid';
 
+import { Brand } from '@/types';
+
 interface BrandsIndexProps {
-  brands: any[];
+  brands: Brand[];
 }
 
 export default function BrandsIndex({ brands }: BrandsIndexProps) {
