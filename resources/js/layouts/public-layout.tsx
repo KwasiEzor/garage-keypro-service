@@ -1,46 +1,143 @@
 import { Link } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { useState } from 'react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
 }
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const navigation = [
     { name: 'Services', href: '/services' },
     { name: 'Marques', href: '/brands' },
+    { name: 'Galerie', href: '/gallery' },
     { name: 'FAQ', href: '/faq' },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 bg-background border-b">
+    <div className="min-h-screen flex flex-col bg-background text-foreground bg-grid-pattern">
+      {/* Top Info Bar */}
+      <div className="hidden lg:block w-full bg-luxury-black border-b border-white/5 py-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <div className="flex gap-8">
+            <div className="flex items-center gap-2 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <Icon name="Phone" className="h-3 w-3 text-racing-red" />
+              <span>+33 1 23 45 67 89</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              <Icon name="Clock" className="h-3 w-3 text-racing-red" />
+              <span>Lun - Sam : 09:00 - 19:00</span>
+            </div>
+          </div>
+          <div className="flex gap-6">
+            {['Instagram', 'Facebook', 'Twitter'].map(social => (
+              <a key={social} href="#" className="text-muted-foreground hover:text-racing-red transition-colors">
+                <Icon name={social as any} className="h-3.5 w-3.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Navigation */}
+      <header className="sticky top-0 z-50 w-full bg-luxury-black/95 backdrop-blur-md border-b border-white/5">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center gap-2">
-              <Icon name="KeyRound" className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold">GarageKeyPro</span>
+          <div className="flex justify-between items-center h-24">
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="relative">
+                <Icon name="KeyRound" className="h-9 w-9 text-racing-red transition-transform duration-500 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-racing-red/20 blur-xl rounded-none opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+              <span className="text-2xl font-heading font-bold tracking-[0.3em] uppercase text-chrome">
+                Key<span className="text-racing-red">Pro</span>
+              </span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-12">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-sm font-medium hover:text-primary transition-colors"
+                  className="text-[11px] font-heading font-bold uppercase tracking-[0.25em] text-muted-foreground hover:text-white transition-all duration-300 relative group"
                 >
                   {item.name}
+                  <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-racing-red transition-all duration-500 group-hover:w-full" />
                 </Link>
               ))}
-              <Button asChild>
-                <Link href="#contact">Demander un devis</Link>
-              </Button>
+              
+              <Link 
+                href="#contact"
+                className="skewed-btn bg-racing-red text-white hover:bg-white hover:text-luxury-black transition-colors"
+              >
+                <span>Réserver</span>
+              </Link>
             </div>
 
-            <button className="md:hidden">
-              <Icon name="Menu" className="h-6 w-6" />
-            </button>
+            <div className="md:hidden">
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <button 
+                    className="text-racing-red p-2"
+                    aria-label="Ouvrir le menu"
+                  >
+                    <Icon name="Menu" className="h-6 w-6" />
+                  </button>
+                </SheetTrigger>
+                <SheetContent side="right" className="bg-luxury-black border-white/10 p-0 overflow-hidden">
+                  <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
+                  
+                  <SheetHeader className="p-8 border-b border-white/5">
+                    <SheetTitle>
+                      <Link href="/" className="flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
+                        <Icon name="KeyRound" className="h-7 w-7 text-racing-red" />
+                        <span className="text-xl font-heading font-bold tracking-[0.2em] uppercase text-chrome">
+                          Key<span className="text-racing-red">Pro</span>
+                        </span>
+                      </Link>
+                    </SheetTitle>
+                  </SheetHeader>
+
+                  <div className="flex flex-col p-8 gap-8">
+                    {navigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-xl font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+
+                    <Link 
+                      href="#contact"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="mt-4 skewed-btn bg-racing-red text-white py-4 text-center font-bold uppercase tracking-[0.2em]"
+                    >
+                      <span>Réserver</span>
+                    </Link>
+
+                    <div className="mt-12 pt-12 border-t border-white/5 flex gap-6">
+                      {['Instagram', 'Facebook', 'Twitter'].map(social => (
+                        <a key={social} href="#" className="w-10 h-10 border border-white/10 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12">
+                          <Icon name={social as any} className="w-4 h-4 skew-x-12" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
         </nav>
       </header>
@@ -49,53 +146,78 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
         {children}
       </main>
 
-      <footer className="bg-muted border-t mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <Icon name="KeyRound" className="h-6 w-6 text-primary" />
-                <span className="text-lg font-bold">GarageKeyPro</span>
+      {/* Footer */}
+      <footer className="bg-luxury-black border-t-4 border-racing-red pt-24 pb-12 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] bg-grid-pattern pointer-events-none" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-16 mb-24">
+            <div className="md:col-span-5">
+              <div className="flex items-center gap-3 mb-8">
+                <Icon name="KeyRound" className="h-7 w-7 text-racing-red" />
+                <span className="text-xl font-heading font-bold tracking-[0.2em] uppercase text-chrome">
+                  Key<span className="text-racing-red">Pro</span>
+                </span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Service professionnel de programmation de clés, duplication et assistance routière.
-                Intervention rapide 24/7.
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+                Serrurerie automobile d'élite et diagnostics techniques de pointe. 
+                Ingénierie de précision pour marques de prestige et protocoles de sécurité avancés.
               </p>
+              
+              <div className="mt-10 flex gap-4">
+                {['Instagram', 'Twitter', 'Facebook'].map(social => (
+                  <a key={social} href="#" className="w-12 h-12 border border-white/5 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12">
+                    <Icon name={social as any} className="w-4 h-4 skew-x-12" />
+                  </a>
+                ))}
+              </div>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-4">Liens rapides</h3>
-              <ul className="space-y-2 text-sm">
+            <div className="md:col-span-3">
+              <h3 className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-white mb-8 border-l-2 border-racing-red pl-4">Entreprise</h3>
+              <ul className="space-y-4">
                 {navigation.map((item) => (
                   <li key={item.name}>
-                    <Link href={item.href} className="text-muted-foreground hover:text-primary">
+                    <Link href={item.href} className="text-sm text-muted-foreground hover:text-racing-red transition-all inline-block uppercase tracking-wider">
                       {item.name}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link href="#contact" className="text-sm text-muted-foreground hover:text-racing-red transition-all inline-block uppercase tracking-wider">
+                    Protocoles
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            <div>
-              <h3 className="font-semibold mb-4">Contact</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Icon name="Phone" className="h-4 w-4" />
-                  <span>+33 1 23 45 67 89</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Icon name="Mail" className="h-4 w-4" />
-                  <span>contact@garagekeypro.com</span>
-                </li>
-              </ul>
+            <div className="md:col-span-4">
+              <h3 className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-white mb-8 border-l-2 border-racing-red pl-4">Intervention 24/7</h3>
+              <div className="bg-luxury-charcoal p-8 border border-white/5 relative group">
+                <div className="absolute top-0 left-0 w-1 h-0 bg-racing-red transition-all duration-500 group-hover:h-full" />
+                <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-3">Ligne Technique Prioritaire</p>
+                <a href="tel:+33123456789" className="text-2xl font-heading font-bold text-chrome hover:text-racing-red transition-all">
+                  +33 1 23 45 67 89
+                </a>
+                <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="w-2.5 h-2.5 bg-racing-red animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                  Unités d'intervention actives
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} GarageKeyPro. Tous droits réservés.</p>
+          <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground">
+              &copy; {new Date().getFullYear()} GarageKeyPro. Ingénierie de Performance.
+            </p>
+            <div className="flex gap-8">
+              <a href="#" className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all">Confidentialité</a>
+              <a href="#" className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all">Conditions</a>
+            </div>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+

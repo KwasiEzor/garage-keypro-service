@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\Teams\TeamInvitationController;
@@ -10,6 +11,7 @@ Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/services', [PublicController::class, 'services'])->name('services.index');
 Route::get('/services/{service:slug}', [PublicController::class, 'serviceShow'])->name('services.show');
 Route::get('/brands', [PublicController::class, 'brands'])->name('brands.index');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 Route::get('/faq', [PublicController::class, 'faq'])->name('faq');
 Route::post('/leads', [LeadController::class, 'store'])->name('leads.store');
 

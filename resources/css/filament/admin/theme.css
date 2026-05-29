@@ -1,0 +1,65 @@
+@import "../../../../vendor/filament/filament/resources/css/theme.css";
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/filament/filament/resources/views/**/*.blade.php';
+
+/* Custom UI Tweaks */
+@layer base {
+    :root {
+        --filament-widgets-container-gap: 2rem;
+    }
+
+    /* Use Filament's dynamic color variables if possible, or stick to standard Tailwind shades */
+    .fi-sidebar {
+        @apply border-r border-gray-200/50 bg-gray-50/50 backdrop-blur-xl dark:border-white/5 dark:bg-gray-900/50;
+    }
+
+    .fi-topbar {
+        @apply border-b border-gray-200/50 bg-white/50 backdrop-blur-xl dark:border-white/5 dark:bg-gray-900/50;
+    }
+
+    .fi-main-ctn {
+        @apply bg-gray-50/30 dark:bg-black/20;
+    }
+
+    .fi-section {
+        @apply rounded-2xl border-none shadow-sm ring-1 ring-gray-200/50 dark:ring-white/5;
+    }
+
+    .fi-ta-ctn {
+        @apply rounded-2xl border-none shadow-sm ring-1 ring-gray-200/50 dark:ring-white/5;
+    }
+
+    .fi-wi-stats-overview-stat {
+        @apply rounded-2xl border-none shadow-sm ring-1 ring-gray-200/50 transition-all duration-300 hover:scale-[1.02] hover:shadow-md dark:ring-white/5;
+    }
+
+    /* Pulse animation for new leads (warning badge) */
+    .fi-badge-color-warning {
+        animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse-subtle {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.85;
+        }
+    }
+
+    /* Modern Scrollbars */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/20;
+    }
+}

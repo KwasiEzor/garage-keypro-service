@@ -9,11 +9,14 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx'],
+            input: ['resources/css/app.css', 'resources/js/app.tsx', 'resources/css/filament/admin/theme.css'],
             refresh: true,
             fonts: [
-                bunny('Instrument Sans', {
-                    weights: [400, 500, 600],
+                bunny('Outfit', {
+                    weights: [300, 400, 500, 600, 700],
+                }),
+                bunny('Syncopate', {
+                    weights: [400, 700],
                 }),
             ],
         }),

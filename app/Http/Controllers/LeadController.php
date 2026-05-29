@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lead;
+use App\Models\User;
+use App\Notifications\NewLeadNotification;
 use Illuminate\Http\Request;
 
 class LeadController extends Controller
@@ -23,11 +25,13 @@ class LeadController extends Controller
             'utm_campaign' => 'nullable|string|max:100',
         ]);
 
-        Lead::create([
+        $lead = Lead::create([
             ...$validated,
             'status' => 'new',
             'source' => 'website',
         ]);
+
+        User::first()?->notify(new NewLeadNotification($lead));
 
         return back()->with('success', 'Merci! Nous vous contacterons sous peu.');
     }
