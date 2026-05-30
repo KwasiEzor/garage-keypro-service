@@ -1,8 +1,8 @@
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Icon } from '@/components/ui/icon';
-import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useEffect, useRef, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { Icon } from '@/components/ui/icon';
 
 interface GalleryCardProps {
   item: {

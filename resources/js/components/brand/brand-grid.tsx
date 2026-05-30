@@ -1,5 +1,5 @@
-import { BrandBadge } from './brand-badge';
 import { Icon } from '@/components/ui/icon';
+import { BrandBadge } from './brand-badge';
 
 interface Brand {
   id: number;

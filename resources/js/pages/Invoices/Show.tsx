@@ -1,8 +1,8 @@
-import AppLayout from '@/layouts/app-layout';
-import PublicLayout from '@/layouts/public-layout';
 import { Head, usePage } from '@inertiajs/react';
 import InvoiceView from '@/components/invoice-view';
-import { BreadcrumbItem } from '@/types';
+import AppLayout from '@/layouts/app-layout';
+import PublicLayout from '@/layouts/public-layout';
+import type { BreadcrumbItem } from '@/types';
 
 interface Props {
     invoice: any;

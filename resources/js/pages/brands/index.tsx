@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import PublicLayout from '@/layouts/public-layout';
-import { Input } from '@/components/ui/input';
-import { Icon } from '@/components/ui/icon';
 import { BrandGrid } from '@/components/brand/brand-grid';
+import { Icon } from '@/components/ui/icon';
+import { Input } from '@/components/ui/input';
+import PublicLayout from '@/layouts/public-layout';
 
-import { Brand } from '@/types';
+import type { Brand } from '@/types';
 
 interface BrandsIndexProps {
   brands: Brand[];

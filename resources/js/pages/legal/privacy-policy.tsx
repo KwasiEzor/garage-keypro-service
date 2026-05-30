@@ -1,5 +1,5 @@
-import PublicLayout from '@/layouts/public-layout';
 import { Head } from '@inertiajs/react';
+import PublicLayout from '@/layouts/public-layout';
 
 interface PrivacyPolicyProps {
   content: string;

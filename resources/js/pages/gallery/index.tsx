@@ -1,10 +1,7 @@
-import PublicLayout from '@/layouts/public-layout';
-import { GalleryCard } from '@/components/gallery/gallery-card';
 import { InfiniteScroll, router } from '@inertiajs/react';
-import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Icon } from '@/components/ui/icon';
-import { index as galleryIndex } from '@/routes/gallery';
+import { useEffect, useRef, useState } from 'react';
+import { GalleryCard } from '@/components/gallery/gallery-card';
 import {
   Dialog,
   DialogContent,
@@ -12,6 +9,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Icon } from '@/components/ui/icon';
+import PublicLayout from '@/layouts/public-layout';
+import { index as galleryIndex } from '@/routes/gallery';
 
 interface GalleryIndexProps {
   items: {

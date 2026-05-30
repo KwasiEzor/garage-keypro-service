@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Card, CardContent } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 
 interface TestimonialCardProps {

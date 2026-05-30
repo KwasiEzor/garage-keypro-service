@@ -1,6 +1,6 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
-import { Badge } from '@/components/ui/badge';
 
 interface HeroSectionProps {
   title: string;

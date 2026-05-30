@@ -1,7 +1,7 @@
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface CookieConsentProps {
   enabled: boolean;
@@ -13,11 +13,15 @@ export function CookieConsent({ enabled, message, privacyPolicyUrl }: CookieCons
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+return;
+}
     
     const consent = localStorage.getItem('cookie-consent');
+
     if (!consent) {
       const timer = setTimeout(() => setIsVisible(true), 2000);
+
       return () => clearTimeout(timer);
     }
   }, [enabled]);
@@ -32,7 +36,9 @@ export function CookieConsent({ enabled, message, privacyPolicyUrl }: CookieCons
     setIsVisible(false);
   };
 
-  if (!enabled) return null;
+  if (!enabled) {
+return null;
+}
 
   return (
     <AnimatePresence>

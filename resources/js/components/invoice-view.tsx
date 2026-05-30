@@ -1,7 +1,7 @@
+import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { format } from 'date-fns';
 
 interface InvoiceItem {
     id: number;

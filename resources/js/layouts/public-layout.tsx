@@ -1,8 +1,9 @@
 import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
+import { useState } from 'react';
+import { CookieConsent } from '@/components/cookie-consent';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
-import { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -11,7 +12,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
-import { CookieConsent } from '@/components/cookie-consent';
 
 interface PublicLayoutProps {
   children: React.ReactNode;

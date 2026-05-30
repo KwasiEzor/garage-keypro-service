@@ -1,12 +1,12 @@
 import * as Inertia from '@inertiajs/react';
-import PublicLayout from '@/layouts/public-layout';
-import { HeroSection } from '@/components/brand/hero-section';
-import { ServiceCard } from '@/components/brand/service-card';
 import { BrandGrid } from '@/components/brand/brand-grid';
-import { TestimonialCard } from '@/components/brand/testimonial-card';
+import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
+import { ServiceCard } from '@/components/brand/service-card';
+import { CircularTestimonials } from '@/components/ui/circular-testimonials';
 import { Icon } from '@/components/ui/icon';
-import { Service, Brand, Testimonial } from '@/types';
+import PublicLayout from '@/layouts/public-layout';
+import type { Service, Brand, Testimonial } from '@/types';
 
 interface HomeProps {
   featuredServices: Service[];
@@ -174,10 +174,34 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
             <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white">Intelligence <span className="text-racing-red">Client</span></h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {testimonials.map((testimonial) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-            ))}
+          <div className="flex justify-center">
+            <CircularTestimonials 
+              testimonials={testimonials.map((t, i) => ({
+                quote: t.content,
+                name: t.customer_name,
+                designation: t.customer_location || t.vehicle_info || 'Client Satisfait',
+                src: `https://images.unsplash.com/photo-${[
+                  '1507003211169-0a1dd7228f2d',
+                  '1500648767791-00dcc994a43e',
+                  '1494790108377-be9c29b29330',
+                  '1534528741775-53994a69daeb',
+                  '1506794778202-cad84cf45f1d'
+                ][i % 5]}?q=80&w=800&auto=format&fit=crop`
+              }))}
+              colors={{
+                name: "#ffffff",
+                designation: "#ef4444",
+                testimony: "#a3a3a3",
+                arrowBackground: "#171717",
+                arrowForeground: "#ffffff",
+                arrowHoverBackground: "#ef4444",
+              }}
+              fontSizes={{
+                name: "24px",
+                designation: "14px",
+                quote: "18px",
+              }}
+            />
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
-import PublicLayout from '@/layouts/public-layout';
 import { ServiceCard } from '@/components/brand/service-card';
-import { Service } from '@/types';
+import PublicLayout from '@/layouts/public-layout';
+import type { Service } from '@/types';
 
 interface ServicesProps {
   services: Service[];

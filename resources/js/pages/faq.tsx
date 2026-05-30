@@ -1,7 +1,7 @@
-import PublicLayout from '@/layouts/public-layout';
+import { LeadForm } from '@/components/brand/lead-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible } from '@/components/ui/collapsible';
-import { LeadForm } from '@/components/brand/lead-form';
+import PublicLayout from '@/layouts/public-layout';
 
 interface FaqProps {
   faqs: Record<string, any[]>;
