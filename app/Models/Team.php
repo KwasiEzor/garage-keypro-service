@@ -82,6 +82,16 @@ class Team extends Model
     }
 
     /**
+     * Get all invoices for this team.
+     *
+     * @return HasMany<Invoice, $this>
+     */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

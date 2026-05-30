@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Faq;
 use App\Models\Service;
+use App\Models\Setting;
 use App\Models\Testimonial;
 use Inertia\Inertia;
 
@@ -45,6 +46,20 @@ class PublicController extends Controller
     {
         return Inertia::render('faq', [
             'faqs' => Faq::active()->get()->groupBy('category'),
+        ]);
+    }
+
+    public function privacyPolicy()
+    {
+        return Inertia::render('legal/privacy-policy', [
+            'content' => Setting::get('privacy_policy_content', 'Privacy Policy content not set yet.'),
+        ]);
+    }
+
+    public function termsOfService()
+    {
+        return Inertia::render('legal/terms-of-service', [
+            'content' => Setting::get('terms_of_service_content', 'Terms of Service content not set yet.'),
         ]);
     }
 }

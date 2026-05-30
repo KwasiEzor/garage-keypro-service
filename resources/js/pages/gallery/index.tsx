@@ -27,6 +27,7 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
+  const [lightboxImageError, setLightboxImageError] = useState(false);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -37,8 +38,12 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
     );
   }, []);
 
+  useEffect(() => {
+    setLightboxImageError(false);
+  }, [selectedItem]);
+
   const handleFilter = (category: string) => {
-    router.visit(galleryIndex().url(), {
+    router.visit(galleryIndex.url(), {
       data: { category },
       only: ['items', 'currentCategory'],
       reset: ['items'],
@@ -115,17 +120,32 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
       </div>
 
       {/* Lightbox Dialog */}
-      <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+      <Dialog open={!!selectedItem} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedItem(null);
+          setLightboxImageError(false);
+        }
+      }}>
         <DialogContent className="sm:max-w-none max-w-[95vw] lg:max-w-7xl bg-luxury-black border-white/10 p-0 overflow-hidden rounded-none gap-0 outline-none">
           <div className="flex flex-col lg:flex-row w-full min-h-[50vh] max-h-[90vh]">
             {/* Image Section */}
             <div className="lg:w-3/4 bg-black relative flex items-center justify-center min-h-[400px] lg:min-h-[700px] group/lightbox overflow-hidden">
               <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none" />
-              <img 
-                src={selectedItem?.image_path} 
-                alt={selectedItem?.title}
-                className="relative z-10 w-full h-full object-contain p-4 lg:p-12 transition-transform duration-700 group-hover/lightbox:scale-[1.02]"
-              />
+              {!lightboxImageError ? (
+                <img
+                  src={selectedItem?.image_path}
+                  alt={selectedItem?.title}
+                  className="relative z-10 w-full h-full object-contain p-4 lg:p-12 transition-transform duration-700 group-hover/lightbox:scale-[1.02]"
+                  onError={() => setLightboxImageError(true)}
+                />
+              ) : (
+                <div className="relative z-10 flex flex-col items-center justify-center gap-6">
+                  <Icon name="ImageOff" className="h-24 w-24 text-white/20" />
+                  <span className="text-[11px] font-heading font-bold uppercase tracking-[0.3em] text-white/40">
+                    Image indisponible
+                  </span>
+                </div>
+              )}
               
               {/* Luxury Accents */}
               <div className="absolute top-8 left-8 w-12 h-[1px] bg-racing-red/60 z-20" />

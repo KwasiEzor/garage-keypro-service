@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
@@ -11,6 +11,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
+import { CookieConsent } from '@/components/cookie-consent';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -25,6 +26,11 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   const openingHours = settings?.opening_hours || 'Lun - Sam : 08:00 - 19:00';
   const footerText = settings?.footer_text || `&copy; ${new Date().getFullYear()} KEYPRO. Ingénierie de Performance.`;
 
+  const seoTitle = settings?.seo_title || siteName;
+  const seoDescription = settings?.seo_description || 'Serrurerie automobile d\'élite et diagnostics techniques de pointe.';
+  const seoKeywords = settings?.seo_keywords || 'serrurerie, automobile, diagnostic, clé voiture, KEYPRO';
+  const seoRobots = settings?.seo_robots || 'index, follow';
+
   const navigation = [
     { name: 'Services', href: '/services' },
     { name: 'Marques', href: '/brands' },
@@ -34,6 +40,55 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground bg-grid-pattern">
+      <Head>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta name="keywords" content={seoKeywords} />
+        <meta name="robots" content={seoRobots} />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:site_name" content={siteName} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDescription} />
+
+        {/* Analytics & Tracking */}
+        {settings?.google_analytics_id && (
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=${settings.google_analytics_id}`} />
+        )}
+        {settings?.google_analytics_id && (
+          <script dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${settings.google_analytics_id}');
+            `
+          }} />
+        )}
+        
+        {settings?.facebook_pixel_id && (
+          <script dangerouslySetInnerHTML={{
+            __html: `
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '${settings.facebook_pixel_id}');
+              fbq('track', 'PageView');
+            `
+          }} />
+        )}
+      </Head>
       {/* Top Info Bar */}
       <div className="hidden lg:block w-full bg-luxury-black border-b border-white/5 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -219,13 +274,28 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               {footerText}
             </p>
             <div className="flex gap-8">
-              <a href="#" className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all">Confidentialité</a>
-              <a href="#" className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all">Conditions</a>
+              <Link 
+                href={settings?.privacy_policy_url || "/privacy-policy"} 
+                className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all"
+              >
+                Confidentialité
+              </Link>
+              <Link 
+                href={settings?.terms_of_service_url || "/terms-of-service"} 
+                className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all"
+              >
+                Conditions
+              </Link>
             </div>
           </div>
         </div>
       </footer>
       <WhatsAppButton />
+      <CookieConsent 
+        enabled={settings?.cookie_consent_enabled === "1" || settings?.cookie_consent_enabled === true}
+        message={settings?.cookie_consent_message || "Nous utilisons des cookies pour améliorer votre expérience sur notre site."}
+        privacyPolicyUrl={settings?.privacy_policy_url || "/privacy-policy"}
+      />
     </div>
   );
 }

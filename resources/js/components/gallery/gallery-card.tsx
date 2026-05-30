@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Icon } from '@/components/ui/icon';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
 interface GalleryCardProps {
@@ -19,6 +19,7 @@ export function GalleryCard({ item }: GalleryCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (cardRef.current) {
@@ -47,12 +48,22 @@ export function GalleryCard({ item }: GalleryCardProps) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <img 
-        ref={imageRef}
-        src={item.image_path} 
-        alt={item.title}
-        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
-      />
+      {!imageError ? (
+        <img
+          ref={imageRef}
+          src={item.image_path}
+          alt={item.title}
+          className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <div className="w-full h-full bg-luxury-charcoal flex flex-col items-center justify-center gap-4">
+          <Icon name="ImageOff" className="h-16 w-16 text-white/20" />
+          <span className="text-[10px] font-heading font-bold uppercase tracking-[0.3em] text-white/40">
+            Image indisponible
+          </span>
+        </div>
+      )}
       
       {/* Category Badge - Always visible */}
       <div className="absolute top-4 left-4 z-20">

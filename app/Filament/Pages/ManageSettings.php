@@ -3,6 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -54,6 +56,59 @@ class ManageSettings extends Page implements HasForms
                         Textarea::make('footer_text')
                             ->label('Footer Copyright Text')
                             ->rows(3),
+                    ]),
+
+                Section::make('SEO Settings')
+                    ->description('Manage search engine optimization.')
+                    ->components([
+                        TextInput::make('seo_title')
+                            ->label('Default SEO Title')
+                            ->helperText('Used when a specific page title is not set.'),
+                        Textarea::make('seo_description')
+                            ->label('Default SEO Description')
+                            ->rows(3),
+                        TextInput::make('seo_keywords')
+                            ->label('SEO Keywords')
+                            ->helperText('Comma separated keywords.'),
+                        Select::make('seo_robots')
+                            ->label('Robots Meta Tag')
+                            ->options([
+                                'index, follow' => 'Index, Follow',
+                                'noindex, follow' => 'No Index, Follow',
+                                'index, nofollow' => 'Index, No Follow',
+                                'noindex, nofollow' => 'No Index, No Follow',
+                            ])
+                            ->default('index, follow'),
+                        TextInput::make('google_analytics_id')
+                            ->label('Google Analytics (G-XXXXX)'),
+                        TextInput::make('facebook_pixel_id')
+                            ->label('Facebook Pixel ID'),
+                    ]),
+
+                Section::make('GDPR & Compliance')
+                    ->description('Manage cookie consent and privacy settings.')
+                    ->components([
+                        Toggle::make('cookie_consent_enabled')
+                            ->label('Enable Cookie Consent Banner'),
+                        Textarea::make('cookie_consent_message')
+                            ->label('Cookie Consent Message')
+                            ->rows(2)
+                            ->default('Nous utilisons des cookies pour améliorer votre expérience sur notre site.'),
+                        TextInput::make('privacy_policy_url')
+                            ->label('Privacy Policy URL')
+                            ->placeholder('/privacy-policy'),
+                        TextInput::make('terms_of_service_url')
+                            ->label('Terms of Service URL')
+                            ->placeholder('/terms-of-service'),
+                    ]),
+
+                Section::make('Legal Pages Content')
+                    ->description('Manage the content for your legal pages.')
+                    ->components([
+                        RichEditor::make('privacy_policy_content')
+                            ->label('Privacy Policy Content'),
+                        RichEditor::make('terms_of_service_content')
+                            ->label('Terms of Service Content'),
                     ]),
 
                 Section::make('WhatsApp Configuration')
