@@ -25,7 +25,7 @@ class ServiceResource extends Resource
         return ServiceForm::configure($schema);
     }
 
-    public static function table(Table $table): Table
+    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
     {
         return ServicesTable::configure($table);
     }

@@ -25,7 +25,7 @@ class FaqResource extends Resource
         return FaqForm::configure($schema);
     }
 
-    public static function table(Table $table): Table
+    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
     {
         return FaqsTable::configure($table);
     }

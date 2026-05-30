@@ -1,3 +1,4 @@
+import * as Inertia from '@inertiajs/react';
 import PublicLayout from '@/layouts/public-layout';
 import { HeroSection } from '@/components/brand/hero-section';
 import { ServiceCard } from '@/components/brand/service-card';
@@ -14,13 +15,16 @@ interface HomeProps {
 }
 
 export default function Home({ featuredServices, featuredBrands, testimonials }: HomeProps) {
+  const { settings } = Inertia.usePage().props as any;
+  const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
+
   return (
     <PublicLayout>
       <HeroSection
-        title="Ingénierie Technique"
-        subtitle="Protocoles de diagnostic avancés et systèmes de sécurité automobile. Unités mobiles à réponse rapide pour marques d'élite."
-        ctaPrimary={{ text: 'Initialiser le Protocole', href: '#contact' }}
-        ctaSecondary={{ text: 'Ligne Technique Prioritaire', href: 'tel:+33123456789' }}
+        title="Expert Clés Auto"
+        subtitle="Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs."
+        ctaPrimary={{ text: 'Réserver une Intervention', href: '#contact' }}
+        ctaSecondary={{ text: 'Appel d\'Urgence', href: `tel:${contactPhone.replace(/\s+/g, '')}` }}
       />
 
       {/* Featured Services */}
@@ -30,13 +34,13 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-8">
             <div className="max-w-2xl border-l-4 border-racing-red pl-8">
-              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Capacités de Terrain</span>
+              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Nos Spécialités</span>
               <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white leading-[1.1]">
-                Interventions <br /><span className="text-racing-red">Techniques</span>
+                Solutions <br /><span className="text-racing-red">Automobiles</span>
               </h2>
             </div>
             <p className="text-xs text-muted-foreground uppercase tracking-[0.25em] max-w-xs leading-loose font-bold">
-              Protocoles de diagnostic exclusifs conçus pour les architectures automobiles d'élite.
+              Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.
             </p>
           </div>
           
@@ -56,7 +60,7 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-32">
-            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Le Plan d'Opérations</span>
+            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Notre Méthodologie</span>
             <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter mb-8 text-white">Protocole <span className="text-racing-red">d'Exécution</span></h2>
             <div className="h-[2px] w-24 bg-racing-red mx-auto" />
           </div>
@@ -67,19 +71,19 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
                 step: '01', 
                 icon: 'Phone', 
                 title: 'Activation', 
-                desc: 'Consultation stratégique pour établir les besoins techniques spécifiques à la mission.' 
+                desc: 'Analyse rapide de votre besoin en clés ou diagnostic électronique par nos techniciens.' 
               },
               { 
                 step: '02', 
                 icon: 'Zap', 
-                title: 'Déploiement', 
-                desc: 'Déploiement tactique rapide d\'unités d\'intervention mobiles spécialisées.' 
+                title: 'Intervention', 
+                desc: 'Déploiement immédiat de notre unité mobile à Lomé pour une solution sur site.' 
               },
               { 
                 step: '03', 
                 icon: 'Award', 
                 title: 'Validation', 
-                desc: 'Calibration des systèmes, programmation avancée et vérification des performances.' 
+                desc: 'Programmation, test de conformité et remise des clés avec garantie de fiabilité.' 
               },
             ].map((item, i) => (
               <div key={i} className="group relative text-center">
@@ -115,22 +119,22 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
             <div className="space-y-10">
-              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red block">Standards d'Élite</span>
+              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red block">Notre Mission à Lomé</span>
               <h2 className="text-4xl md:text-7xl font-heading font-bold uppercase tracking-tighter text-white leading-none">
-                Solutions <br />d'Ingénierie <br /><span className="text-racing-red">de Précision</span>
+                Innovation <br />et Expertise <br /><span className="text-racing-red">Technique</span>
               </h2>
               <div className="h-[2px] w-32 bg-racing-red" />
               <p className="text-lg text-muted-foreground leading-loose tracking-wide max-w-xl font-medium italic border-l-4 border-racing-red/50 pl-8">
-                "Notre objectif est l'intégrité totale du système. Nous ne nous contentons pas de résoudre des problèmes ; nous concevons des résultats sécurisés pour les architectures automobiles les plus sophistiquées au monde."
+                "Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules."
               </p>
               <div className="flex gap-12 pt-6">
                 <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-2">100%</div>
-                  <div className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground font-bold">Succès Protocole</div>
+                  <div className="text-4xl font-heading font-bold text-white mb-2">98%</div>
+                  <div className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground font-bold">Client Satisfaits</div>
                 </div>
                 <div>
-                  <div className="text-4xl font-heading font-bold text-white mb-2">24/7</div>
-                  <div className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground font-bold">Prêt à l'Action</div>
+                  <div className="text-4xl font-heading font-bold text-white mb-2">24h/7</div>
+                  <div className="text-[10px] font-heading uppercase tracking-widest text-muted-foreground font-bold">Assistance Urgente</div>
                 </div>
               </div>
             </div>

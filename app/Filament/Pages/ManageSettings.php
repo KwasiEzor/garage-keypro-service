@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Setting;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -46,9 +47,27 @@ class ManageSettings extends Page implements HasForms
                             ->required(),
                         TextInput::make('contact_phone')
                             ->label('Contact Phone Number'),
+                        TextInput::make('site_address')
+                            ->label('Site Address'),
+                        TextInput::make('opening_hours')
+                            ->label('Opening Hours'),
                         Textarea::make('footer_text')
                             ->label('Footer Copyright Text')
                             ->rows(3),
+                    ]),
+
+                Section::make('WhatsApp Configuration')
+                    ->description('Manage WhatsApp floating button.')
+                    ->components([
+                        Toggle::make('whatsapp_enabled')
+                            ->label('Enable WhatsApp Button'),
+                        TextInput::make('whatsapp_number')
+                            ->label('WhatsApp Number')
+                            ->placeholder('+22890956935')
+                            ->helperText('Include country code, e.g., +22890956935'),
+                        TextInput::make('whatsapp_message')
+                            ->label('Default WhatsApp Message')
+                            ->placeholder('Bonjour, j\'aimerais avoir des informations sur vos services.'),
                     ]),
             ])
             ->statePath('data');

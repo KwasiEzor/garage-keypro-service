@@ -18,8 +18,8 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\ToggledFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -104,8 +104,8 @@ class GalleryItemResource extends Resource
                         'Unit Mobility' => 'Unit Mobility',
                         'Performance' => 'Performance',
                     ]),
-                ToggledFilter::make('is_featured'),
-                ToggledFilter::make('is_active')
+                Filter::make('is_featured'),
+                Filter::make('is_active')
                     ->default(),
             ])
             ->recordActions([

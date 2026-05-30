@@ -25,7 +25,7 @@ class TestimonialResource extends Resource
         return TestimonialForm::configure($schema);
     }
 
-    public static function table(Table $table): Table
+    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
     {
         return TestimonialsTable::configure($table);
     }

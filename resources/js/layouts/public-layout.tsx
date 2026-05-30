@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import * as Inertia from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { useState } from 'react';
@@ -9,6 +10,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import { WhatsAppButton } from '@/components/ui/whatsapp-button';
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -16,6 +18,12 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { settings } = Inertia.usePage().props as any;
+
+  const siteName = settings?.site_name || 'KEYPRO';
+  const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
+  const openingHours = settings?.opening_hours || 'Lun - Sam : 08:00 - 19:00';
+  const footerText = settings?.footer_text || `&copy; ${new Date().getFullYear()} KEYPRO. Ingénierie de Performance.`;
 
   const navigation = [
     { name: 'Services', href: '/services' },
@@ -32,11 +40,11 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           <div className="flex gap-8">
             <div className="flex items-center gap-2 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground">
               <Icon name="Phone" className="h-3 w-3 text-racing-red" />
-              <span>+33 1 23 45 67 89</span>
+              <span>{contactPhone}</span>
             </div>
             <div className="flex items-center gap-2 text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground">
               <Icon name="Clock" className="h-3 w-3 text-racing-red" />
-              <span>Lun - Sam : 09:00 - 19:00</span>
+              <span>{openingHours}</span>
             </div>
           </div>
           <div className="flex gap-6">
@@ -195,8 +203,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               <div className="bg-luxury-charcoal p-8 border border-white/5 relative group">
                 <div className="absolute top-0 left-0 w-1 h-0 bg-racing-red transition-all duration-500 group-hover:h-full" />
                 <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-3">Ligne Technique Prioritaire</p>
-                <a href="tel:+33123456789" className="text-2xl font-heading font-bold text-chrome hover:text-racing-red transition-all">
-                  +33 1 23 45 67 89
+                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className="text-2xl font-heading font-bold text-chrome hover:text-racing-red transition-all">
+                  {contactPhone}
                 </a>
                 <div className="mt-6 pt-6 border-t border-white/5 flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                   <div className="w-2.5 h-2.5 bg-racing-red animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
@@ -208,7 +216,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
           <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
             <p className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground">
-              &copy; {new Date().getFullYear()} GarageKeyPro. Ingénierie de Performance.
+              {footerText}
             </p>
             <div className="flex gap-8">
               <a href="#" className="text-[10px] font-heading uppercase tracking-[0.3em] text-muted-foreground hover:text-racing-red transition-all">Confidentialité</a>
@@ -217,6 +225,7 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </div>
         </div>
       </footer>
+      <WhatsAppButton />
     </div>
   );
 }
