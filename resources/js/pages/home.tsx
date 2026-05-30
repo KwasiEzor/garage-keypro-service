@@ -45,8 +45,8 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {featuredServices.map((service, i) => (
-              <div key={service.id} className="animate-in fade-in slide-in-from-bottom duration-1000">
+            {featuredServices.map((service) => (
+              <div key={service.id}>
                 <ServiceCard service={service} />
               </div>
             ))}

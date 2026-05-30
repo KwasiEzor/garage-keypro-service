@@ -17,8 +17,8 @@ export default function ServicesIndex({ services }: ServicesProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {services.map((service, i) => (
-            <div key={service.id} className="animate-in fade-in slide-in-from-bottom duration-1000">
+          {services.map((service) => (
+            <div key={service.id}>
               <ServiceCard service={service} />
             </div>
           ))}
