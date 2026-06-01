@@ -108,8 +108,10 @@
 
     /* Custom cursor - hide default on desktop only */
     @media (hover: hover) and (pointer: fine) {
-        * {
-            cursor: none !important;
+        @media (prefers-reduced-motion: no-preference) {
+            body, a, button, [role="button"], input, textarea, select, .cursor-pointer {
+                cursor: none !important;
+            }
         }
     }
 }
