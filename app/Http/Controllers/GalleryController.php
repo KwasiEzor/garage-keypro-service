@@ -20,9 +20,10 @@ class GalleryController extends Controller
     {
         $categories = ['All', 'Diagnostics', 'Key Programming', 'Unit Mobility', 'Performance'];
         $currentCategory = $request->query('category', 'All');
+        $search = $request->query('search');
 
         return Inertia::render('gallery/index', [
-            'items' => Inertia::scroll(function () use ($currentCategory) {
+            'items' => Inertia::scroll(function () use ($currentCategory, $search) {
                 $query = GalleryItem::query()
                     ->where('is_active', true)
                     ->orderBy('sort_order')->latest();
@@ -31,10 +32,18 @@ class GalleryController extends Controller
                     $query->where('category', $currentCategory);
                 }
 
+                if ($search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('title', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    });
+                }
+
                 return $query->paginate(12);
             }),
             'categories' => $categories,
             'currentCategory' => $currentCategory,
+            'search' => $search,
         ]);
     }
 }

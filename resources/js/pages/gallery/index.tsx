@@ -10,6 +10,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Icon } from '@/components/ui/icon';
+import { Input } from '@/components/ui/input';
 import PublicLayout from '@/layouts/public-layout';
 import { index as galleryIndex } from '@/routes/gallery';
 
@@ -21,13 +22,16 @@ interface GalleryIndexProps {
   };
   categories: string[];
   currentCategory: string;
+  search: string | null;
 }
 
-export default function GalleryIndex({ items, categories, currentCategory }: GalleryIndexProps) {
+export default function GalleryIndex({ items, categories, currentCategory, search: initialSearch }: GalleryIndexProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [lightboxImageError, setLightboxImageError] = useState(false);
+  const [search, setSearch] = useState(initialSearch || '');
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -42,11 +46,46 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
     setLightboxImageError(false);
   }, [selectedItem]);
 
+  // Sync search state with prop changes (e.g., browser navigation)
+  useEffect(() => {
+    setSearch(initialSearch || '');
+  }, [initialSearch]);
+
+  // Debounced Search
+  useEffect(() => {
+    // Skip if search matches what's already in the URL/props
+    if (search === (initialSearch || '')) {
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    const timeout = setTimeout(() => {
+      router.get(galleryIndex.url(), {
+        category: currentCategory,
+        search: search || undefined,
+      }, {
+        preserveState: true,
+        preserveScroll: true,
+        only: ['items', 'search'],
+        reset: ['items'],
+        replace: true,
+        onFinish: () => setIsSearching(false),
+      });
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [search, currentCategory]);
+
   const handleFilter = (category: string) => {
     router.visit(galleryIndex.url(), {
-      data: { category },
+      data: { 
+        category,
+        search: search || undefined,
+      },
       only: ['items', 'currentCategory'],
       reset: ['items'],
+      replace: true,
     });
   };
 
@@ -75,46 +114,99 @@ export default function GalleryIndex({ items, categories, currentCategory }: Gal
             </div>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap justify-center gap-4 mb-24">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => handleFilter(category)}
-                className={`
-                  px-8 py-3 text-[10px] font-heading font-bold uppercase tracking-[0.2em] transition-all transform -skew-x-12 border
-                  ${currentCategory === category 
-                    ? 'bg-racing-red border-racing-red text-white' 
-                    : 'bg-luxury-black border-white/10 text-muted-foreground hover:border-racing-red/50 hover:text-white'
-                  }
-                `}
-              >
-                <span className="inline-block skew-x-12">{category}</span>
-              </button>
-            ))}
+          {/* Search and Filters */}
+          <div className="max-w-4xl mx-auto mb-24">
+            <div className="relative group mb-12">
+              <div className="absolute -inset-1 bg-gradient-to-r from-racing-red/20 to-transparent blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
+              <div className="relative flex items-center bg-luxury-black border border-white/10 p-2 transform -skew-x-12">
+                <div className="px-6 skew-x-12 flex items-center">
+                  {isSearching ? (
+                    <div className="w-5 h-5 border-2 border-racing-red/20 border-t-racing-red rounded-full animate-spin" />
+                  ) : (
+                    <Icon name="Search" className="h-5 w-5 text-racing-red" />
+                  )}
+                </div>
+                <Input
+                  type="text"
+                  placeholder="Rechercher une intervention, un véhicule ou une technologie..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="bg-transparent border-none text-white font-heading text-[12px] uppercase tracking-[0.1em] placeholder:text-muted-foreground/30 focus-visible:ring-0 skew-x-12 h-12"
+                />
+                {search && !isSearching && (
+                  <button 
+                    onClick={() => setSearch('')}
+                    className="px-6 skew-x-12 text-muted-foreground hover:text-white transition-colors"
+                  >
+                    <Icon name="X" className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleFilter(category)}
+                  className={`
+                    px-8 py-3 text-[10px] font-heading font-bold uppercase tracking-[0.2em] transition-all transform -skew-x-12 border
+                    ${currentCategory === category 
+                      ? 'bg-racing-red border-racing-red text-white' 
+                      : 'bg-luxury-black border-white/10 text-muted-foreground hover:border-racing-red/50 hover:text-white'
+                    }
+                  `}
+                >
+                  <span className="inline-block skew-x-12">{category}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Gallery Grid with Infinite Scroll */}
           <div ref={containerRef} className="relative">
-            <InfiniteScroll data="items">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-                {items.data.map((item) => (
-                  <div key={item.id} onClick={() => setSelectedItem(item)}>
-                    <GalleryCard item={item} />
-                  </div>
-                ))}
-              </div>
-              
-              {/* Loading State for Infinite Scroll */}
-              <div className="mt-24 flex justify-center">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-12 h-12 border-2 border-racing-red/20 border-t-racing-red rounded-none animate-spin transform -skew-x-12" />
-                  <span className="text-[9px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground animate-pulse">
-                    Synchronisation des données...
-                  </span>
+            {items.data.length > 0 ? (
+              <InfiniteScroll data="items">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                  {items.data.map((item) => (
+                    <div key={item.id} onClick={() => setSelectedItem(item)} className="cursor-pointer">
+                      <GalleryCard item={item} />
+                    </div>
+                  ))}
                 </div>
+                
+                {/* Loading State for Infinite Scroll */}
+                <div className="mt-24 flex justify-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-2 border-racing-red/20 border-t-racing-red rounded-none animate-spin transform -skew-x-12" />
+                    <span className="text-[9px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground animate-pulse">
+                      Synchronisation des données...
+                    </span>
+                  </div>
+                </div>
+              </InfiniteScroll>
+            ) : (
+              <div className="py-32 flex flex-col items-center justify-center text-center">
+                <div className="w-24 h-24 border border-white/5 transform rotate-45 flex items-center justify-center mb-12 opacity-20">
+                  <Icon name="SearchX" className="h-10 w-10 text-white -rotate-45" />
+                </div>
+                <h3 className="text-2xl font-heading font-bold uppercase tracking-tighter text-white mb-4">
+                  Aucun résultat trouvé
+                </h3>
+                <p className="text-[11px] text-muted-foreground uppercase tracking-[0.3em] max-w-md mx-auto leading-loose">
+                  Votre recherche pour "<span className="text-racing-red">{search}</span>" n'a retourné aucune archive technique dans la catégorie <span className="text-white">{currentCategory}</span>.
+                </p>
+                <button 
+                  onClick={() => {
+                    setSearch('');
+                    handleFilter('All');
+                  }}
+                  className="mt-12 px-10 py-4 bg-white/5 border border-white/10 text-[10px] font-heading font-bold uppercase tracking-[0.3em] text-white hover:bg-racing-red hover:border-racing-red transition-all transform -skew-x-12"
+                >
+                  <span className="inline-block skew-x-12">Réinitialiser les filtres</span>
+                </button>
               </div>
-            </InfiniteScroll>
+            )}
           </div>
         </div>
       </div>
