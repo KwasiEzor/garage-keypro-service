@@ -25,126 +25,115 @@ export default function CustomCursor() {
 
         if (!cursorDot || !cursorOutline || !cursorText) return;
 
-        // Mouse position tracking
-        let mouseX = 0;
-        let mouseY = 0;
+        // GSAP quickTo for high-performance position updates
+        const moveDotX = gsap.quickTo(cursorDot, 'x', { duration: 0.016, ease: 'none' });
+        const moveDotY = gsap.quickTo(cursorDot, 'y', { duration: 0.016, ease: 'none' });
+
+        const moveOutlineX = gsap.quickTo(cursorOutline, 'x', { duration: 0.1, ease: 'power2.out' });
+        const moveOutlineY = gsap.quickTo(cursorOutline, 'y', { duration: 0.1, ease: 'power2.out' });
+
+        const moveTextX = gsap.quickTo(cursorText, 'x', { duration: 0.15, ease: 'power2.out' });
+        const moveTextY = gsap.quickTo(cursorText, 'y', { duration: 0.15, ease: 'power2.out' });
 
         const onMouseMove = (e: MouseEvent) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
 
-            // Instant position for dot
-            gsap.to(cursorDot, {
-                x: mouseX,
-                y: mouseY,
-                duration: 0,
-            });
-
-            // Smooth lag for outline
-            gsap.to(cursorOutline, {
-                x: mouseX,
-                y: mouseY,
-                duration: 0.15,
-                ease: 'power2.out',
-            });
-
-            // Even smoother for text
-            gsap.to(cursorText, {
-                x: mouseX,
-                y: mouseY,
-                duration: 0.2,
-                ease: 'power2.out',
-            });
+            // Use quickTo for instant, optimized updates
+            moveDotX(mouseX);
+            moveDotY(mouseY);
+            moveOutlineX(mouseX);
+            moveOutlineY(mouseY);
+            moveTextX(mouseX);
+            moveTextY(mouseY);
         };
 
-        // Interactive element hover effects
-        const interactiveElements = document.querySelectorAll(
-            'a, button, input, textarea, select, [role="button"], .cursor-pointer'
-        );
+        // Event delegation for hover effects (works with dynamic content)
+        const onMouseOver = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const interactive = target.closest('a, button, input, textarea, select, [role="button"], .cursor-pointer');
 
-        const onMouseEnter = (e: Event) => {
-            const target = e.currentTarget as HTMLElement;
-            const isLink = target.tagName === 'A';
+            if (interactive) {
+                const isLink = interactive.tagName === 'A';
 
-            gsap.to(cursorDot, {
-                scale: 0.5,
-                duration: 0.3,
-                ease: 'back.out(2)',
-            });
+                gsap.to(cursorDot, {
+                    scale: 0.5,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                    overwrite: 'auto',
+                });
 
-            gsap.to(cursorOutline, {
-                scale: 1.5,
-                borderWidth: 2,
-                duration: 0.3,
-                ease: 'back.out(2)',
-            });
+                gsap.to(cursorOutline, {
+                    scale: 1.5,
+                    borderWidth: 2,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                    overwrite: 'auto',
+                });
 
-            if (isLink && cursorText) {
-                const text = target.getAttribute('aria-label') || 'View';
-                cursorText.textContent = text;
-                gsap.to(cursorText, {
-                    opacity: 1,
+                if (isLink) {
+                    const text = interactive.getAttribute('aria-label') || 'View';
+                    cursorText.textContent = text;
+                    gsap.to(cursorText, {
+                        opacity: 1,
+                        scale: 1,
+                        duration: 0.15,
+                        overwrite: 'auto',
+                    });
+                }
+            }
+        };
+
+        const onMouseOut = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const interactive = target.closest('a, button, input, textarea, select, [role="button"], .cursor-pointer');
+
+            if (interactive) {
+                gsap.to(cursorDot, {
                     scale: 1,
                     duration: 0.2,
+                    ease: 'power2.out',
+                    overwrite: 'auto',
+                });
+
+                gsap.to(cursorOutline, {
+                    scale: 1,
+                    borderWidth: 1,
+                    duration: 0.2,
+                    ease: 'power2.out',
+                    overwrite: 'auto',
+                });
+
+                gsap.to(cursorText, {
+                    opacity: 0,
+                    scale: 0.8,
+                    duration: 0.15,
+                    overwrite: 'auto',
                 });
             }
         };
 
-        const onMouseLeave = () => {
-            gsap.to(cursorDot, {
-                scale: 1,
-                duration: 0.3,
-                ease: 'back.out(2)',
-            });
-
-            gsap.to(cursorOutline, {
-                scale: 1,
-                borderWidth: 1,
-                duration: 0.3,
-                ease: 'back.out(2)',
-            });
-
-            gsap.to(cursorText, {
-                opacity: 0,
-                scale: 0.8,
-                duration: 0.2,
-            });
-        };
-
         // Click effect
         const onClick = () => {
-            gsap.to(cursorDot, {
-                scale: 0.8,
-                duration: 0.1,
-                yoyo: true,
-                repeat: 1,
-            });
-
-            gsap.to(cursorOutline, {
-                scale: 1.3,
-                duration: 0.1,
-                yoyo: true,
-                repeat: 1,
-            });
+            gsap.timeline()
+                .to(cursorDot, { scale: 0.8, duration: 0.08 })
+                .to(cursorDot, { scale: 1, duration: 0.08 })
+                .to(cursorOutline, { scale: 1.3, duration: 0.08 }, 0)
+                .to(cursorOutline, { scale: 1, duration: 0.08 }, 0.08);
         };
 
         // Attach listeners
-        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mousemove', onMouseMove, { passive: true });
         window.addEventListener('click', onClick);
-
-        interactiveElements.forEach((el) => {
-            el.addEventListener('mouseenter', onMouseEnter);
-            el.addEventListener('mouseleave', onMouseLeave);
-        });
+        document.addEventListener('mouseover', onMouseOver);
+        document.addEventListener('mouseout', onMouseOut);
 
         // Cleanup
         return () => {
             window.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('click', onClick);
-            interactiveElements.forEach((el) => {
-                el.removeEventListener('mouseenter', onMouseEnter);
-                el.removeEventListener('mouseleave', onMouseLeave);
-            });
+            document.removeEventListener('mouseover', onMouseOver);
+            document.removeEventListener('mouseout', onMouseOut);
         };
     }, [isDesktop]);
 
