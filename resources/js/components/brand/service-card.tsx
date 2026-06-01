@@ -40,6 +40,9 @@ export function ServiceCard({ service }: ServiceCardProps) {
             src={serviceImage}
             alt={service.name}
             className="w-full h-full object-cover opacity-10"
+            loading="lazy"
+            width="800"
+            height="600"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-card via-card/90 to-card/40" />
         </div>

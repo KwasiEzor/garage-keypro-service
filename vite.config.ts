@@ -13,10 +13,12 @@ export default defineConfig({
             refresh: true,
             fonts: [
                 bunny('Outfit', {
-                    weights: [300, 400, 500, 600, 700],
+                    weights: [400, 500, 700],
+                    display: 'swap',
                 }),
                 bunny('Syncopate', {
-                    weights: [400, 700],
+                    weights: [700],
+                    display: 'swap',
                 }),
             ],
         }),
@@ -31,4 +33,27 @@ export default defineConfig({
             formVariants: true,
         }),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('react') || id.includes('react-dom')) {
+                            return 'react-vendor';
+                        }
+                        if (id.includes('@inertiajs')) {
+                            return 'inertia';
+                        }
+                        if (id.includes('gsap')) {
+                            return 'gsap';
+                        }
+                        if (id.includes('date-fns')) {
+                            return 'date-fns';
+                        }
+                    }
+                },
+            },
+        },
+        chunkSizeWarningLimit: 600,
+    },
 });

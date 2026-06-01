@@ -107,10 +107,13 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
       {/* High-Impact Mission Section */}
       <section className="relative py-48 overflow-hidden">
         <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1555212697-194d092e3b8f?q=80&w=2500&auto=format&fit=crop" 
+          <img
+            src="https://images.unsplash.com/photo-1555212697-194d092e3b8f?q=75&w=1920&auto=format&fit=crop&fm=webp"
             alt="Technical Precision"
             className="w-full h-full object-cover grayscale opacity-30"
+            fetchPriority="high"
+            width="1920"
+            height="1080"
           />
           <div className="absolute inset-0 bg-background/90" />
           <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background" />
@@ -142,10 +145,13 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
             <div className="relative group">
               <div className="absolute -inset-4 border border-racing-red/20 transform -skew-x-6 group-hover:border-racing-red/50 transition-all duration-700" />
               <div className="relative overflow-hidden transform -skew-x-6">
-                <img 
-                  src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1200&auto=format&fit=crop" 
+                <img
+                  src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=75&w=800&auto=format&fit=crop&fm=webp"
                   alt="High Performance Engineering"
                   className="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
+                  loading="lazy"
+                  width="800"
+                  height="600"
                 />
                 <div className="absolute inset-0 bg-racing-red/10 group-hover:opacity-0 transition-opacity" />
               </div>
@@ -186,7 +192,7 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
                   '1494790108377-be9c29b29330',
                   '1534528741775-53994a69daeb',
                   '1506794778202-cad84cf45f1d'
-                ][i % 5]}?q=80&w=800&auto=format&fit=crop`
+                ][i % 5]}?q=75&w=400&auto=format&fit=crop&fm=webp`
               }))}
               colors={{
                 name: "#ffffff",

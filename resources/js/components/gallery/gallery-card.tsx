@@ -54,6 +54,9 @@ export function GalleryCard({ item }: GalleryCardProps) {
           src={item.image_path}
           alt={item.title}
           className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+          loading="lazy"
+          width="800"
+          height="1000"
           onError={() => setImageError(true)}
         />
       ) : (
