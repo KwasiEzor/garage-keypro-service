@@ -2,7 +2,6 @@ import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
 import { useState } from 'react';
 import { CookieConsent } from '@/components/cookie-consent';
-import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import {
   Sheet,
@@ -105,7 +104,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
           </div>
           <div className="flex gap-6">
             {['Instagram', 'Facebook', 'Twitter'].map(social => (
-              <a key={social} href="#" className="text-muted-foreground hover:text-racing-red transition-colors">
+              <a 
+                key={social} 
+                href="#" 
+                className="text-muted-foreground hover:text-racing-red transition-colors"
+                aria-label={`Suivez-nous sur ${social}`}
+              >
                 <Icon name={social as any} className="h-3.5 w-3.5" />
               </a>
             ))}
@@ -196,7 +200,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
 
                     <div className="mt-12 pt-12 border-t border-white/5 flex gap-6">
                       {['Instagram', 'Facebook', 'Twitter'].map(social => (
-                        <a key={social} href="#" className="w-10 h-10 border border-white/10 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12">
+                        <a 
+                          key={social} 
+                          href="#" 
+                          className="w-10 h-10 border border-white/10 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12"
+                          aria-label={`Suivez-nous sur ${social}`}
+                        >
                           <Icon name={social as any} className="w-4 h-4 skew-x-12" />
                         </a>
                       ))}
@@ -232,7 +241,12 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
               
               <div className="mt-10 flex gap-4">
                 {['Instagram', 'Twitter', 'Facebook'].map(social => (
-                  <a key={social} href="#" className="w-12 h-12 border border-white/5 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12">
+                  <a 
+                    key={social} 
+                    href="#" 
+                    className="w-12 h-12 border border-white/5 flex items-center justify-center text-muted-foreground hover:bg-racing-red hover:text-white hover:border-racing-red transition-all transform -skew-x-12"
+                    aria-label={`Suivez-nous sur ${social}`}
+                  >
                     <Icon name={social as any} className="w-4 h-4 skew-x-12" />
                   </a>
                 ))}

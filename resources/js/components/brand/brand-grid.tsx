@@ -1,5 +1,4 @@
 import { Icon } from '@/components/ui/icon';
-import { BrandBadge } from './brand-badge';
 
 interface Brand {
   id: number;
@@ -59,6 +58,10 @@ export function BrandGrid({ brands, title }: BrandGridProps) {
                     src={brand.logo_path} 
                     alt={brand.name} 
                     className="max-w-[70%] max-h-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-700 brightness-200 group-hover:brightness-100 opacity-50 group-hover:opacity-100"
+                    loading="lazy"
+                    decoding="async"
+                    width="200"
+                    height="100"
                   />
                 </div>
               ) : (

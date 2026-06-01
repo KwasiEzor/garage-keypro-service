@@ -1,15 +1,13 @@
 import { useForm } from '@inertiajs/react';
-import { Alert } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { User, Car, Cog } from 'lucide-react';
+import { BrandSelect } from '@/components/brand/brand-select';
+import { ServiceSelect } from '@/components/brand/service-select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { BrandSelect } from '@/components/brand/brand-select';
-import { ServiceSelect } from '@/components/brand/service-select';
 import { cn } from '@/lib/utils';
-import { User, Mail, Phone, Car, Calendar, MessageSquare, Cog } from 'lucide-react';
 
 interface LeadFormProps {
   serviceId?: number;

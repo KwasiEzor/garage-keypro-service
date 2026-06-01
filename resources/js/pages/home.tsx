@@ -109,9 +109,10 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1555212697-194d092e3b8f?q=75&w=1920&auto=format&fit=crop&fm=webp"
-            alt="Technical Precision"
+            alt="Détails techniques d'une clé de voiture moderne - Précision Technique"
             className="w-full h-full object-cover grayscale opacity-30"
-            fetchPriority="high"
+            loading="lazy"
+            decoding="async"
             width="1920"
             height="1080"
           />
@@ -147,9 +148,10 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
               <div className="relative overflow-hidden transform -skew-x-6">
                 <img
                   src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=75&w=800&auto=format&fit=crop&fm=webp"
-                  alt="High Performance Engineering"
+                  alt="Expertise technique en ingénierie automobile haute performance"
                   className="w-full grayscale group-hover:grayscale-0 transition-all duration-1000 group-hover:scale-105"
                   loading="lazy"
+                  decoding="async"
                   width="800"
                   height="600"
                 />

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { useEffect, useRef, useState } from 'react';
 
 export default function CustomCursor() {
     const cursorDotRef = useRef<HTMLDivElement>(null);
@@ -30,13 +30,17 @@ export default function CustomCursor() {
     }, []);
 
     useEffect(() => {
-        if (!isDesktop || prefersReducedMotion) return;
+        if (!isDesktop || prefersReducedMotion) {
+return;
+}
 
         const cursorDot = cursorDotRef.current;
         const cursorOutline = cursorOutlineRef.current;
         const cursorText = cursorTextRef.current;
 
-        if (!cursorDot || !cursorOutline || !cursorText) return;
+        if (!cursorDot || !cursorOutline || !cursorText) {
+return;
+}
 
         // Hide cursors initially to avoid flash at 0,0
         gsap.set([cursorDot, cursorOutline, cursorText], { opacity: 0 });
@@ -81,6 +85,7 @@ export default function CustomCursor() {
                 // If no attribute, try to get clean text content for buttons and small links
                 if (!text) {
                     const innerText = interactive.innerText?.trim();
+
                     if (innerText && innerText.length > 0 && innerText.length < 25) {
                         text = innerText;
                     }
@@ -183,7 +188,9 @@ export default function CustomCursor() {
         };
     }, [isDesktop, prefersReducedMotion]);
 
-    if (!isDesktop) return null;
+    if (!isDesktop) {
+return null;
+}
 
     return (
         <>

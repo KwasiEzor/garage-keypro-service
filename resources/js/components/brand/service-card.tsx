@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 
@@ -41,6 +40,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
             alt={service.name}
             className="w-full h-full object-cover opacity-10"
             loading="lazy"
+            decoding="async"
             width="800"
             height="600"
           />

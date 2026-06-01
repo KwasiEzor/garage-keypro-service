@@ -1,7 +1,5 @@
-import { BrandBadge } from '@/components/brand/brand-badge';
 import { LeadForm } from '@/components/brand/lead-form';
 import { ServiceCard } from '@/components/brand/service-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
 
@@ -34,8 +32,12 @@ export default function ServiceShow({ service, relatedServices }: ServiceShowPro
         <div className="absolute inset-0 z-0">
           <img 
             src={serviceImage} 
-            alt={service.name}
+            alt={`Protocole technique pour ${service.name} - KeyPro`}
             className="w-full h-full object-cover opacity-30"
+            fetchPriority="high"
+            decoding="async"
+            width="2500"
+            height="1000"
           />
           <div className="absolute inset-0 bg-background/80" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />

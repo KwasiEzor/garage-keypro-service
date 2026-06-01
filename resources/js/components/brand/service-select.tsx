@@ -1,8 +1,7 @@
-import * as React from "react"
-import { Check, ChevronDown } from "lucide-react"
 import { usePage } from "@inertiajs/react"
+import { Check, ChevronDown } from "lucide-react"
+import * as React from "react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Select,
@@ -11,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 
 interface Service {
   id: number

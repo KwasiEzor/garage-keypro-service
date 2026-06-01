@@ -1,5 +1,5 @@
-import { ServiceCard } from '@/components/brand/service-card';
 import { LeadForm } from '@/components/brand/lead-form';
+import { ServiceCard } from '@/components/brand/service-card';
 import PublicLayout from '@/layouts/public-layout';
 import type { Service } from '@/types';
 

@@ -1,17 +1,16 @@
 import { InfiniteScroll, router } from '@inertiajs/react';
 import gsap from 'gsap';
 import { useEffect, useRef, useState } from 'react';
+import { LeadForm } from '@/components/brand/lead-form';
 import { GalleryCard } from '@/components/gallery/gallery-card';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
-import { LeadForm } from '@/components/brand/lead-form';
 import PublicLayout from '@/layouts/public-layout';
 import { index as galleryIndex } from '@/routes/gallery';
 
@@ -57,6 +56,7 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
     // Skip if search matches what's already in the URL/props
     if (search === (initialSearch || '')) {
       setIsSearching(false);
+
       return;
     }
 
@@ -138,6 +138,7 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
                   <button 
                     onClick={() => setSearch('')}
                     className="px-6 skew-x-12 text-muted-foreground hover:text-white transition-colors"
+                    aria-label="Effacer la recherche"
                   >
                     <Icon name="X" className="h-4 w-4" />
                   </button>
@@ -203,6 +204,7 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
                     handleFilter('All');
                   }}
                   className="mt-12 px-10 py-4 bg-white/5 border border-white/10 text-[10px] font-heading font-bold uppercase tracking-[0.3em] text-white hover:bg-racing-red hover:border-racing-red transition-all transform -skew-x-12"
+                  aria-label="Réinitialiser tous les filtres de recherche"
                 >
                   <span className="inline-block skew-x-12">Réinitialiser les filtres</span>
                 </button>
@@ -229,6 +231,9 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
                   src={selectedItem?.image_path}
                   alt={selectedItem?.title}
                   className="relative z-10 w-full h-full object-contain p-4 lg:p-12 transition-transform duration-700 group-hover/lightbox:scale-[1.02]"
+                  decoding="async"
+                  width="1200"
+                  height="800"
                   onError={() => setLightboxImageError(true)}
                 />
               ) : (
@@ -284,7 +289,10 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
               </div>
               
               <div className="relative z-10 mt-16 pt-12 border-t border-white/5">
-                <button className="group relative w-full bg-racing-red text-white py-6 font-bold uppercase tracking-[0.4em] text-[11px] overflow-hidden transition-all hover:bg-white hover:text-black">
+                <button 
+                  className="group relative w-full bg-racing-red text-white py-6 font-bold uppercase tracking-[0.4em] text-[11px] overflow-hidden transition-all hover:bg-white hover:text-black"
+                  aria-label={`Consulter l'expert pour le projet : ${selectedItem?.title}`}
+                >
                   <span className="relative z-10">Consulter l'Expert</span>
                 </button>
               </div>

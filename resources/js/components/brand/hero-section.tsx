@@ -1,6 +1,3 @@
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Icon } from '@/components/ui/icon';
 
 interface HeroSectionProps {
   title: string;
@@ -16,8 +13,12 @@ export function HeroSection({ title, subtitle, ctaPrimary, ctaSecondary }: HeroS
       <div className="absolute inset-0 z-0">
         <img 
           src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2500&auto=format&fit=crop" 
-          alt="Luxury Performance Car"
+          alt="Véhicule de luxe haute performance - Service de serrurerie KeyPro"
           className="w-full h-full object-cover opacity-40"
+          fetchPriority="high"
+          decoding="async"
+          width="2500"
+          height="1406"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background" />
