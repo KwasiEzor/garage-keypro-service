@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BrandGrid } from '@/components/brand/brand-grid';
+import { LeadForm } from '@/components/brand/lead-form';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import PublicLayout from '@/layouts/public-layout';
@@ -111,6 +112,31 @@ export default function BrandsIndex({ brands }: BrandsIndexProps) {
           </div>
         )}
       </div>
+
+      {/* Contact Section */}
+      <section id="contact" className="relative py-48 bg-luxury-charcoal/30 overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-24">
+            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-racing-red mb-6 block">Support Clientèle</span>
+            <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white mb-10 leading-[0.9]">
+              Votre Marque <br />
+              <span className="text-racing-red">N'est Pas Listée ?</span>
+            </h2>
+            <div className="flex items-center justify-center gap-6">
+              <div className="h-[2px] w-12 bg-white/10" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em] font-bold">
+                Contactez-nous pour une validation de compatibilité
+              </p>
+              <div className="h-[2px] w-12 bg-white/10" />
+            </div>
+          </div>
+
+          <div className="animate-in fade-in slide-in-from-bottom duration-1000">
+            <LeadForm title="Consultation Technique" />
+          </div>
+        </div>
+      </section>
 
       {/* Footer Decoration */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-racing-red/30 to-transparent" />

@@ -1,4 +1,5 @@
 import { ServiceCard } from '@/components/brand/service-card';
+import { LeadForm } from '@/components/brand/lead-form';
 import PublicLayout from '@/layouts/public-layout';
 import type { Service } from '@/types';
 
@@ -35,7 +36,7 @@ export default function ServicesIndex({ services }: ServicesProps) {
               Nos techniciens experts traitent les défis de diagnostic les plus complexes pour toutes les marques d'élite.
             </p>
             <div className="pt-4">
-              <a href="/#contact" className="inline-flex items-center justify-center px-12 py-5 bg-white text-luxury-black font-heading font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-racing-red hover:text-white transition-all rounded-none transform -skew-x-12">
+              <a href="#contact" className="inline-flex items-center justify-center px-12 py-5 bg-white text-luxury-black font-heading font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-racing-red hover:text-white transition-all rounded-none transform -skew-x-12">
                 <span className="skew-x-12">Demander une Consultation</span>
               </a>
             </div>
@@ -44,6 +45,28 @@ export default function ServicesIndex({ services }: ServicesProps) {
           {/* Decorative Corner */}
           <div className="absolute top-0 right-0 w-16 h-16 bg-racing-red/10 border-b border-l border-white/10 -translate-y-8 translate-x-8 rotate-45" />
         </div>
+
+        {/* Contact Section */}
+        <section id="contact" className="mt-40 pt-40 border-t border-white/5">
+          <div className="text-center mb-24">
+            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-racing-red mb-6 block">Assistance Technique</span>
+            <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white mb-10 leading-[0.9]">
+              Initialiser un <br />
+              <span className="text-racing-red">Nouveau Protocole</span>
+            </h2>
+            <div className="flex items-center justify-center gap-6">
+              <div className="h-[2px] w-12 bg-white/10" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em] font-bold">
+                Experts disponibles pour intervention immédiate
+              </p>
+              <div className="h-[2px] w-12 bg-white/10" />
+            </div>
+          </div>
+
+          <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom duration-1000">
+            <LeadForm />
+          </div>
+        </section>
       </div>
     </PublicLayout>
   );

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
+import { LeadForm } from '@/components/brand/lead-form';
 import PublicLayout from '@/layouts/public-layout';
 import { index as galleryIndex } from '@/routes/gallery';
 
@@ -292,8 +293,40 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
         </DialogContent>
       </Dialog>
 
+      {/* Contact Section */}
+      <section id="contact" className="relative py-48 bg-luxury-charcoal/30 overflow-hidden border-t border-white/5">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-racing-red/5 blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2" />
+        
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-24">
+            <span className="text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-racing-red mb-6 block">Assistance Opérationnelle</span>
+            <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white mb-10 leading-[0.9]">
+              Une Question sur <br />
+              <span className="text-racing-red">Nos Interventions ?</span>
+            </h2>
+            <div className="flex items-center justify-center gap-6">
+              <div className="h-[2px] w-12 bg-white/10" />
+              <p className="text-[10px] text-muted-foreground uppercase tracking-[0.4em] font-bold">
+                Experts disponibles pour analyse technique
+              </p>
+              <div className="h-[2px] w-12 bg-white/10" />
+            </div>
+          </div>
+
+          <div className="relative group">
+            <div className="absolute -inset-4 bg-racing-red/10 blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000" />
+            <LeadForm 
+              title="Formulaire de Liaison" 
+              description="Détaillez votre projet technique pour une réponse prioritaire"
+              className="relative z-10"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Decorative Footer Element */}
-      <div className="relative h-64 overflow-hidden">
+      <div className="relative h-64 overflow-hidden bg-luxury-black">
         <div className="absolute inset-0 bg-gradient-to-t from-luxury-black to-transparent" />
         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-racing-red/20" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

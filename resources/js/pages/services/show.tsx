@@ -121,7 +121,7 @@ export default function ServiceShow({ service, relatedServices }: ServiceShowPro
           </div>
 
           {/* Sidebar - Lead Form */}
-          <div className="lg:col-span-5 animate-in fade-in slide-in-from-right duration-1000">
+          <div id="contact" className="lg:col-span-5 animate-in fade-in slide-in-from-right duration-1000">
             <div className="sticky top-32">
               <LeadForm
                 serviceId={service.id}

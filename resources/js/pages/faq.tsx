@@ -57,7 +57,7 @@ export default function Faq({ faqs }: FaqProps) {
           ))}
         </div>
 
-        <div className="mt-40 pt-32 border-t border-white/5">
+        <div id="contact" className="mt-40 pt-32 border-t border-white/5">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-heading font-bold uppercase tracking-tighter text-white mb-6">Besoin d'Assistance Supplémentaire ?</h2>
             <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Connectez-vous avec nos consultants techniques</p>

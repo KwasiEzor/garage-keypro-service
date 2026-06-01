@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Brand;
+use App\Models\Service;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -47,6 +49,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $user,
             ],
             'settings' => Setting::all()->pluck('value', 'key'),
+            'brands' => Brand::active()->orderBy('name')->get(['id', 'name', 'slug']),
+            'services' => Service::active()->orderBy('sort_order')->get(['id', 'name', 'slug']),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'currentTeam' => fn () => $user?->currentTeam ? $user->toUserTeam($user->currentTeam) : null,
             'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [],
