@@ -105,6 +105,13 @@
     h1, h2, h3, h4, h5, h6 {
         @apply font-heading tracking-tight;
     }
+
+    /* Custom cursor - hide default on desktop only */
+    @media (hover: hover) and (pointer: fine) {
+        * {
+            cursor: none !important;
+        }
+    }
 }
 
 @layer utilities {
