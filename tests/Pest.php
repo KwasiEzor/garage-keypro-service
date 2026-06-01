@@ -19,7 +19,7 @@ pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
 
-beforeEach(function () {
+beforeEach(function (): void {
     $this->withoutMiddleware(PreventRequestForgery::class);
 })->in('Feature');
 
@@ -34,9 +34,7 @@ beforeEach(function () {
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+expect()->extend('toBeOne', fn () => $this->toBe(1));
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +47,7 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+function something(): void
 {
     // ..
 }

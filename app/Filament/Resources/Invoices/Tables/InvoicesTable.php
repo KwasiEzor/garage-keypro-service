@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Invoices\Tables;
 
 use App\Models\Invoice;
@@ -68,7 +70,7 @@ class InvoicesTable
                 Action::make('markAsPaid')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->hidden(fn (Invoice $record) => $record->status === 'paid')
+                    ->hidden(fn (Invoice $record): bool => $record->status === 'paid')
                     ->action(fn (Invoice $record) => $record->update(['status' => 'paid'])),
                 ViewAction::make()
                     ->url(fn (Invoice $record): string => route('invoices.show', $record->uuid))

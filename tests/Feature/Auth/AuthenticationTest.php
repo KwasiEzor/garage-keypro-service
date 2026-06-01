@@ -6,13 +6,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Fortify\Features;
 use Laravel\Passkeys\Contracts\PasskeyLoginResponse;
 
-test('login screen can be rendered', function () {
+test('login screen can be rendered', function (): void {
     $response = $this->get(route('login'));
 
     $response->assertOk();
 });
 
-test('users can authenticate using the login screen', function () {
+test('users can authenticate using the login screen', function (): void {
     $this->withoutExceptionHandling();
     $user = User::factory()->create();
 
@@ -25,7 +25,7 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('dashboard'));
 });
 
-test('passkey login response redirects to the current team dashboard', function () {
+test('passkey login response redirects to the current team dashboard', function (): void {
     $user = User::factory()->create();
 
     $request = Request::create(route('login', absolute: false), 'GET', server: [
@@ -34,12 +34,12 @@ test('passkey login response redirects to the current team dashboard', function 
     $request->setLaravelSession($this->app['session.store']);
     $request->setUserResolver(fn () => $user);
 
-    $jsonResponse = app(PasskeyLoginResponse::class)->toResponse($request);
+    $jsonResponse = resolve(PasskeyLoginResponse::class)->toResponse($request);
 
     expect($jsonResponse->getData()->redirect)->toBe(route('dashboard', ['current_team' => $user->personalTeam()->slug]));
 });
 
-test('users with two factor enabled are redirected to two factor challenge', function () {
+test('users with two factor enabled are redirected to two factor challenge', function (): void {
     if (! Features::canManageTwoFactorAuthentication()) {
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
@@ -61,7 +61,7 @@ test('users with two factor enabled are redirected to two factor challenge', fun
     $this->assertGuest();
 });
 
-test('users can not authenticate with invalid password', function () {
+test('users can not authenticate with invalid password', function (): void {
     $user = User::factory()->create();
 
     $this->post(route('login.store'), [
@@ -72,7 +72,7 @@ test('users can not authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('users can logout', function () {
+test('users can logout', function (): void {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->post(route('logout'));
@@ -81,7 +81,7 @@ test('users can logout', function () {
     $response->assertRedirect(route('home'));
 });
 
-test('users are rate limited', function () {
+test('users are rate limited', function (): void {
     $user = User::factory()->create();
 
     RateLimiter::increment(md5('login'.implode('|', [$user->email, '127.0.0.1'])), amount: 5);

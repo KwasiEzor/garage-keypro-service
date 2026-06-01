@@ -13,6 +13,7 @@ class RecentLeadsTable extends TableWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    #[\Override]
     public function table(Table $table): Table
     {
         return $table

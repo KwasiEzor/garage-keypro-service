@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Invoice;
@@ -22,15 +24,15 @@ class InvoiceFactory extends Factory
         return [
             'team_id' => Team::factory(),
             'client_id' => User::factory(),
-            'number' => 'INV-'.$this->faker->unique()->numberBetween(1000, 9999),
+            'number' => 'INV-'.fake()->unique()->numberBetween(1000, 9999),
             'issue_date' => now(),
             'due_date' => now()->addDays(14),
-            'status' => $this->faker->randomElement(['draft', 'sent', 'paid', 'cancelled']),
+            'status' => fake()->randomElement(['draft', 'sent', 'paid', 'cancelled']),
             'subtotal' => 0,
             'tax_total' => 0,
             'total_amount' => 0,
             'currency' => 'USD',
-            'notes' => $this->faker->sentence(),
+            'notes' => fake()->sentence(),
         ];
     }
 }

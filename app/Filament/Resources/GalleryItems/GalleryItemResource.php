@@ -23,12 +23,16 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
+/**
+ * Filament resource for managing gallery images and media.
+ */
 class GalleryItemResource extends Resource
 {
     protected static ?string $model = GalleryItem::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-photo';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -67,7 +71,8 @@ class GalleryItemResource extends Resource
             ]);
     }
 
-    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    #[\Override]
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
@@ -119,6 +124,7 @@ class GalleryItemResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

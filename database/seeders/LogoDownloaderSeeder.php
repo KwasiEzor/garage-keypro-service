@@ -17,7 +17,7 @@ class LogoDownloaderSeeder extends Seeder
         $baseUrl = 'https://www.stickpng.com/cat/icons-logos-emojis/car-logos?page=';
 
         for ($page = 1; $page <= 14; $page++) {
-            $this->command->info("Processing page $page...");
+            $this->command->info(sprintf('Processing page %d...', $page));
             $html = @file_get_contents($baseUrl.$page);
             if (! $html) {
                 continue;
@@ -30,11 +30,11 @@ class LogoDownloaderSeeder extends Seeder
                 $logoName = $match[2];
 
                 $cleanName = preg_replace('/ logo$/i', '', $logoName);
-                $cleanName = trim($cleanName);
+                $cleanName = trim((string) $cleanName);
 
                 $matchedBrand = null;
                 foreach ($brandsToFind as $brandName) {
-                    if (stripos($cleanName, $brandName) !== false || stripos($brandName, $cleanName) !== false) {
+                    if (stripos($cleanName, (string) $brandName) !== false || stripos((string) $brandName, $cleanName) !== false) {
                         $matchedBrand = $brandName;
                         break;
                     }
@@ -46,12 +46,13 @@ class LogoDownloaderSeeder extends Seeder
                     $filename = Str::slug($matchedBrand).'.'.$extension;
                     $savePath = public_path('images/brands/'.$filename);
 
-                    $this->command->info("Downloading $matchedBrand logo...");
+                    $this->command->info(sprintf('Downloading %s logo...', $matchedBrand));
                     $imageContent = @file_get_contents($imageUrl);
                     if ($imageContent) {
                         if (! is_dir(dirname($savePath))) {
                             mkdir(dirname($savePath), 0755, true);
                         }
+
                         file_put_contents($savePath, $imageContent);
                         $downloaded[$matchedBrand] = '/images/brands/'.$filename;
 

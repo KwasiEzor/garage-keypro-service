@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Testimonials\Pages;
 
 use App\Filament\Resources\Testimonials\TestimonialResource;
@@ -10,6 +12,7 @@ class ListTestimonials extends ListRecords
 {
     protected static string $resource = TestimonialResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

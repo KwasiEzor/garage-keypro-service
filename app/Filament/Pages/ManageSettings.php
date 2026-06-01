@@ -122,7 +122,7 @@ class ManageSettings extends Page implements HasForms
                             ->helperText('Include country code, e.g., +22890956935'),
                         TextInput::make('whatsapp_message')
                             ->label('Default WhatsApp Message')
-                            ->placeholder('Bonjour, j\'aimerais avoir des informations sur vos services.'),
+                            ->placeholder("Bonjour, j'aimerais avoir des informations sur vos services."),
                     ]),
             ])
             ->statePath('data');

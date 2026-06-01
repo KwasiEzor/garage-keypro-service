@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Faqs\Pages;
 
 use App\Filament\Resources\Faqs\FaqResource;
@@ -10,6 +12,7 @@ class ListFaqs extends ListRecords
 {
     protected static string $resource = FaqResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

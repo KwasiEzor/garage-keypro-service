@@ -7,7 +7,7 @@ use function Pest\Laravel\assertDatabaseHas;
 
 uses(RefreshDatabase::class);
 
-test('user can submit lead form with valid data', function () {
+test('user can submit lead form with valid data', function (): void {
     $service = Service::factory()->create();
 
     $this->post(route('leads.store'), [
@@ -23,20 +23,20 @@ test('user can submit lead form with valid data', function () {
     ]);
 });
 
-test('lead submission requires valid email', function () {
+test('lead submission requires valid email', function (): void {
     $this->post(route('leads.store'), [
         'name' => 'John Doe',
         'email' => 'invalid',
     ])->assertSessionHasErrors('email');
 });
 
-test('lead submission requires name', function () {
+test('lead submission requires name', function (): void {
     $this->post(route('leads.store'), [
         'email' => 'john@example.com',
     ])->assertSessionHasErrors('name');
 });
 
-test('lead can include vehicle information', function () {
+test('lead can include vehicle information', function (): void {
     $this->post(route('leads.store'), [
         'name' => 'John Doe',
         'email' => 'john@example.com',

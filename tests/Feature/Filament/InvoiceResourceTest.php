@@ -9,7 +9,7 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-it('can load the create invoice page', function () {
+it('can load the create invoice page', function (): void {
     $this->actingAs(User::factory()->create());
 
     Livewire::test(CreateInvoice::class)

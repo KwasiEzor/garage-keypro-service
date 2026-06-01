@@ -16,22 +16,28 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+/**
+ * Filament resource for managing invoices and billing.
+ */
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return InvoiceForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return InvoicesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -39,6 +45,7 @@ class InvoiceResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
@@ -48,6 +55,7 @@ class InvoiceResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

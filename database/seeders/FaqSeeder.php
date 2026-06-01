@@ -32,7 +32,7 @@ class FaqSeeder extends Seeder
                 'sort_order' => 3,
             ],
             [
-                'question' => 'Proposez-vous un service d\'urgence?',
+                'question' => "Proposez-vous un service d'urgence?",
                 'answer' => 'Oui, nous offrons un service d\'intervention rapide 24/7 pour les situations d\'urgence comme les véhicules verrouillés avec clés à l\'intérieur. Des frais supplémentaires s\'appliquent pour les interventions en dehors des heures normales.',
                 'category' => 'general',
                 'is_active' => true,
@@ -53,7 +53,7 @@ class FaqSeeder extends Seeder
                 'sort_order' => 6,
             ],
             [
-                'question' => 'Quelle est votre zone d\'intervention?',
+                'question' => "Quelle est votre zone d'intervention?",
                 'answer' => 'Nous intervenons principalement dans toute la région. Pour des interventions en dehors de notre zone habituelle, contactez-nous pour vérifier notre disponibilité et les conditions.',
                 'category' => 'general',
                 'is_active' => true,

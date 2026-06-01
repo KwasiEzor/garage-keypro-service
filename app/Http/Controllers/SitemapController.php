@@ -8,6 +8,9 @@ use Illuminate\Http\Response;
 
 class SitemapController extends Controller
 {
+    /**
+     * Generate the XML sitemap for the website.
+     */
     public function index(): Response
     {
         $urls = [
@@ -43,19 +46,23 @@ class SitemapController extends Controller
         return response($xml, 200)->header('Content-Type', 'text/xml');
     }
 
+    /**
+     * Generate the robots.txt file based on SEO settings.
+     */
     public function robots(): Response
     {
         $robots = Setting::get('seo_robots', 'index, follow');
         $disallow = str_contains($robots, 'noindex') ? '/' : '';
 
         $content = "User-agent: *\n";
-        if ($disallow) {
-            $content .= "Disallow: $disallow\n";
+        if ($disallow !== '' && $disallow !== '0') {
+            $content .= sprintf('Disallow: %s%s', $disallow, PHP_EOL);
         } else {
             $content .= "Disallow: /admin\n";
             $content .= "Disallow: /login\n";
             $content .= "Disallow: /register\n";
         }
+
         $content .= "\nSitemap: ".route('sitemap');
 
         return response($content, 200)->header('Content-Type', 'text/plain');

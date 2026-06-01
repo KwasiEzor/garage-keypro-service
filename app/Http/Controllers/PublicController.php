@@ -8,9 +8,15 @@ use App\Models\Service;
 use App\Models\Setting;
 use App\Models\Testimonial;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class PublicController extends Controller
 {
+    /**
+     * Display the homepage with featured services, brands, and testimonials.
+     *
+     * @return Response
+     */
     public function home()
     {
         return Inertia::render('home', [
@@ -20,6 +26,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display all active services.
+     *
+     * @return Response
+     */
     public function services()
     {
         return Inertia::render('services/index', [
@@ -27,6 +38,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display a single service with related services.
+     *
+     * @return Response
+     */
     public function serviceShow(Service $service)
     {
         return Inertia::render('services/show', [
@@ -35,6 +51,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display all active brands with their services.
+     *
+     * @return Response
+     */
     public function brands()
     {
         return Inertia::render('brands/index', [
@@ -42,6 +63,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display FAQs grouped by category.
+     *
+     * @return Response
+     */
     public function faq()
     {
         return Inertia::render('faq', [
@@ -49,6 +75,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display the privacy policy page.
+     *
+     * @return Response
+     */
     public function privacyPolicy()
     {
         return Inertia::render('legal/privacy-policy', [
@@ -56,6 +87,11 @@ class PublicController extends Controller
         ]);
     }
 
+    /**
+     * Display the terms of service page.
+     *
+     * @return Response
+     */
     public function termsOfService()
     {
         return Inertia::render('legal/terms-of-service', [

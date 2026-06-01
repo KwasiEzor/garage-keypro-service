@@ -8,6 +8,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class LeadsOverview extends StatsOverviewWidget
 {
+    #[\Override]
     protected function getStats(): array
     {
         $newToday = Lead::whereDate('created_at', today())->where('status', 'new')->count();

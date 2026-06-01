@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Users;
 
 use App\Filament\Resources\Users\Pages\CreateUser;
@@ -14,6 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+/**
+ * Filament resource for managing user accounts and authentication.
+ */
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -22,21 +27,25 @@ class UserResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Administration';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);
     }
 
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return UserInfolist::configure($schema);
     }
 
-    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    #[\Override]
+    public static function table(Table $table): Table
     {
         return UsersTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -44,6 +53,7 @@ class UserResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

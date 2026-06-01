@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Testimonials;
 
 use App\Filament\Resources\Testimonials\Pages\CreateTestimonial;
@@ -12,6 +14,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+/**
+ * Filament resource for managing customer testimonials and reviews.
+ */
 class TestimonialResource extends Resource
 {
     protected static ?string $model = Testimonial::class;
@@ -20,16 +25,19 @@ class TestimonialResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'CMS Content';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return TestimonialForm::configure($schema);
     }
 
-    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    #[\Override]
+    public static function table(Table $table): Table
     {
         return TestimonialsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -37,6 +45,7 @@ class TestimonialResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

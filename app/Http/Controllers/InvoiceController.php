@@ -30,6 +30,8 @@ class InvoiceController extends Controller
 
     /**
      * Display the specified invoice.
+     *
+     * @param  string  $identifier  Invoice UUID or ID
      */
     public function show(Request $request, string $identifier): Response
     {

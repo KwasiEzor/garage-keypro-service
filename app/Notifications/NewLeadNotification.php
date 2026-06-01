@@ -33,7 +33,7 @@ class NewLeadNotification extends Notification
             ->lineIf($this->lead->vehicle_make, 'Véhicule: '.$this->lead->vehicle_make.' '.$this->lead->vehicle_model.' '.$this->lead->vehicle_year)
             ->lineIf($this->lead->message, 'Message: '.$this->lead->message)
             ->action('Voir le lead', $url)
-            ->line('Merci d\'utiliser GarageKeyPro!');
+            ->line("Merci d'utiliser GarageKeyPro!");
     }
 
     public function toArray(object $notifiable): array

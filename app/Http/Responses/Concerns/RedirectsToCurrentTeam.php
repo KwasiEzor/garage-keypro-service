@@ -12,7 +12,7 @@ trait RedirectsToCurrentTeam
 
         URL::defaults(['current_team' => $team->slug]);
 
-        return "/{$team->slug}{$redirect}";
+        return sprintf('/%s%s', $team->slug, $redirect);
     }
 
     protected function currentTeam($request)

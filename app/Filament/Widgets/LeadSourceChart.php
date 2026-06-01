@@ -12,6 +12,7 @@ class LeadSourceChart extends ChartWidget
 
     protected int|string|array $columnSpan = 'one-third';
 
+    #[\Override]
     protected function getData(): array
     {
         $data = Lead::query()
@@ -33,7 +34,7 @@ class LeadSourceChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->pluck('source')->map(fn ($source) => ucfirst($source))->toArray(),
+            'labels' => $data->pluck('source')->map(fn ($source): string => ucfirst((string) $source))->toArray(),
         ];
     }
 

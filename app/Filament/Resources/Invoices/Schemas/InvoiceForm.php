@@ -88,7 +88,7 @@ class InvoiceForm
                                     ->relationship('service', 'name')
                                     ->searchable()
                                     ->live()
-                                    ->afterStateUpdated(function (Set $set, ?string $state) {
+                                    ->afterStateUpdated(function (Set $set, ?string $state): void {
                                         if ($state) {
                                             $service = Service::find($state);
                                             if ($service) {
@@ -178,7 +178,7 @@ class InvoiceForm
     public static function updateInvoiceTotals(Set $set, Get $get): void
     {
         $items = collect($get('items') ?? []);
-        $subtotal = $items->reduce(fn ($carry, $item) => $carry + (float) ($item['total_price'] ?? 0), 0);
+        $subtotal = $items->reduce(fn ($carry, $item): float => $carry + (float) ($item['total_price'] ?? 0), 0);
         $tax = (float) ($get('tax_total') ?? 0);
 
         $set('subtotal', number_format($subtotal, 2, '.', ''));

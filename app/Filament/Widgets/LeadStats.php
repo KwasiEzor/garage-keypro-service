@@ -9,6 +9,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class LeadStats extends StatsOverviewWidget
 {
+    #[\Override]
     protected function getStats(): array
     {
         return [

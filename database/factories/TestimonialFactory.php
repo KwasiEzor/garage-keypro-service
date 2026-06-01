@@ -32,7 +32,7 @@ class TestimonialFactory extends Factory
 
     public function featured(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'is_featured' => true,
         ]);
     }

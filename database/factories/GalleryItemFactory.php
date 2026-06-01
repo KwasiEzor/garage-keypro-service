@@ -19,8 +19,8 @@ class GalleryItemFactory extends Factory
     public function definition(): array
     {
         $categories = ['Diagnostics', 'Key Programming', 'Unit Mobility', 'Performance'];
-        $title = $this->faker->words(3, true);
-        
+        $title = fake()->words(3, true);
+
         // Collection of valid automotive-related Unsplash photo IDs
         $photoIds = [
             '1533473359331-0135ef1b58bf', // car
@@ -36,18 +36,18 @@ class GalleryItemFactory extends Factory
             '1557597774-9d2739f85a76', // lock
             '1486262715619-67b85e0b08d3', // mechanic
         ];
-        
-        $photoId = $this->faker->randomElement($photoIds);
-        
+
+        $photoId = fake()->randomElement($photoIds);
+
         return [
             'title' => $title,
-            'slug' => \Illuminate\Support\Str::slug($title),
-            'description' => $this->faker->paragraph(),
-            'image_path' => "https://images.unsplash.com/photo-{$photoId}?auto=format&fit=crop&q=80&w=1200",
-            'category' => $this->faker->randomElement($categories),
-            'is_featured' => $this->faker->boolean(20),
+            'slug' => Str::slug($title),
+            'description' => fake()->paragraph(),
+            'image_path' => sprintf('https://images.unsplash.com/photo-%s?auto=format&fit=crop&q=80&w=1200', $photoId),
+            'category' => fake()->randomElement($categories),
+            'is_featured' => fake()->boolean(20),
             'is_active' => true,
-            'sort_order' => $this->faker->numberBetween(0, 100),
+            'sort_order' => fake()->numberBetween(0, 100),
         ];
     }
 }

@@ -12,6 +12,7 @@ class LeadsChart extends ChartWidget
 
     protected int|string|array $columnSpan = 'two-thirds';
 
+    #[\Override]
     protected function getData(): array
     {
         $data = Lead::query()
@@ -46,7 +47,7 @@ class LeadsChart extends ChartWidget
                     'fill' => 'start',
                 ],
             ],
-            'labels' => $dates->map(fn ($date) => date('j M', strtotime($date)))->toArray(),
+            'labels' => $dates->map(fn ($date): string => date('j M', strtotime((string) $date)))->toArray(),
         ];
     }
 

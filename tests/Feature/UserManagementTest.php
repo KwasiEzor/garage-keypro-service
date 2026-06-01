@@ -9,7 +9,7 @@ use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
-test('admin can access user resource', function () {
+test('admin can access user resource', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -17,7 +17,7 @@ test('admin can access user resource', function () {
         ->assertStatus(200);
 });
 
-test('admin can access settings page', function () {
+test('admin can access settings page', function (): void {
     $user = User::factory()->create();
 
     actingAs($user)
@@ -25,7 +25,7 @@ test('admin can access settings page', function () {
         ->assertStatus(200);
 });
 
-test('admin can save settings', function () {
+test('admin can save settings', function (): void {
     $user = User::factory()->create();
 
     Livewire::actingAs($user)

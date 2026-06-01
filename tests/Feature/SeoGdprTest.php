@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('privacy policy page is accessible', function () {
+test('privacy policy page is accessible', function (): void {
     Setting::updateOrCreate(['key' => 'privacy_policy_content'], ['value' => 'Test Privacy Policy Content']);
 
     $this->get(route('privacy-policy'))
@@ -14,7 +14,7 @@ test('privacy policy page is accessible', function () {
         ->assertSee('Test Privacy Policy Content');
 });
 
-test('terms of service page is accessible', function () {
+test('terms of service page is accessible', function (): void {
     Setting::updateOrCreate(['key' => 'terms_of_service_content'], ['value' => 'Test Terms of Service Content']);
 
     $this->get(route('terms-of-service'))
@@ -22,7 +22,7 @@ test('terms of service page is accessible', function () {
         ->assertSee('Test Terms of Service Content');
 });
 
-test('sitemap.xml is accessible and contains urls', function () {
+test('sitemap.xml is accessible and contains urls', function (): void {
     Service::factory()->count(3)->create();
 
     $response = $this->get('/sitemap.xml');
@@ -33,7 +33,7 @@ test('sitemap.xml is accessible and contains urls', function () {
     $this->assertStringContainsString(route('home'), $response->getContent());
 });
 
-test('robots.txt is accessible', function () {
+test('robots.txt is accessible', function (): void {
     Setting::updateOrCreate(['key' => 'seo_robots'], ['value' => 'index, follow']);
 
     $response = $this->get('/robots.txt');
@@ -44,7 +44,7 @@ test('robots.txt is accessible', function () {
     $this->assertStringContainsString('Sitemap:', $response->getContent());
 });
 
-test('seo tags are present in inertia shared data', function () {
+test('seo tags are present in inertia shared data', function (): void {
     Setting::updateOrCreate(['key' => 'seo_title'], ['value' => 'Custom SEO Title']);
 
     $this->get(route('home'))

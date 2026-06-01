@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Leads;
 
 use App\Filament\Resources\Leads\Pages\CreateLead;
@@ -14,6 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 
+/**
+ * Filament resource for managing lead submissions and customer inquiries.
+ */
 class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
@@ -22,21 +27,25 @@ class LeadResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Operations';
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return LeadForm::configure($schema);
     }
 
+    #[\Override]
     public static function infolist(Schema $schema): Schema
     {
         return LeadInfolist::configure($schema);
     }
 
-    public static function table(\Filament\Tables\Table $table): \Filament\Tables\Table
+    #[\Override]
+    public static function table(Table $table): Table
     {
         return LeadsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -44,6 +53,7 @@ class LeadResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

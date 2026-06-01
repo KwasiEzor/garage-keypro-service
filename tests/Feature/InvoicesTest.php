@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('user can view their own invoices in dashboard', function () {
+test('user can view their own invoices in dashboard', function (): void {
     $user = User::factory()->create();
     $invoice = Invoice::factory()->create([
         'client_id' => $user->id,
@@ -23,7 +23,7 @@ test('user can view their own invoices in dashboard', function () {
         );
 });
 
-test('user can view their own specific invoice', function () {
+test('user can view their own specific invoice', function (): void {
     $user = User::factory()->create();
     $invoice = Invoice::factory()->create([
         'client_id' => $user->id,
@@ -39,7 +39,7 @@ test('user can view their own specific invoice', function () {
         );
 });
 
-test('user cannot view others invoices in dashboard', function () {
+test('user cannot view others invoices in dashboard', function (): void {
     $user = User::factory()->create();
     $otherUser = User::factory()->create();
     $invoice = Invoice::factory()->create([
@@ -51,7 +51,7 @@ test('user cannot view others invoices in dashboard', function () {
         ->assertStatus(403);
 });
 
-test('anyone can view invoice via public uuid', function () {
+test('anyone can view invoice via public uuid', function (): void {
     $invoice = Invoice::factory()->create();
     InvoiceItem::factory()->count(3)->create(['invoice_id' => $invoice->id]);
 

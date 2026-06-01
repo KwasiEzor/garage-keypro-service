@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Invoice;
@@ -19,13 +21,13 @@ class InvoiceItemFactory extends Factory
      */
     public function definition(): array
     {
-        $quantity = $this->faker->numberBetween(1, 5);
-        $unitPrice = $this->faker->randomFloat(2, 50, 500);
+        $quantity = fake()->numberBetween(1, 5);
+        $unitPrice = fake()->randomFloat(2, 50, 500);
 
         return [
             'invoice_id' => Invoice::factory(),
             'service_id' => Service::factory(),
-            'description' => $this->faker->sentence(),
+            'description' => fake()->sentence(),
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
             'total_price' => $quantity * $unitPrice,
