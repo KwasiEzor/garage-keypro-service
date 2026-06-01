@@ -7,6 +7,7 @@ import { Icon } from '@/components/ui/icon';
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -168,6 +169,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                         </span>
                       </Link>
                     </SheetTitle>
+                    <SheetDescription className="sr-only">
+                      Menu de navigation principal
+                    </SheetDescription>
                   </SheetHeader>
 
                   <div className="flex flex-col p-8 gap-8">
