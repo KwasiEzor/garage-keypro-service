@@ -34,7 +34,7 @@ class LeadSourceChart extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $data->pluck('source')->map(fn ($source): string => ucfirst((string) $source))->toArray(),
+            'labels' => $data->pluck('source')->map(fn (?string $source): string => ucfirst((string) ($source ?? '')))->toArray(),
         ];
     }
 

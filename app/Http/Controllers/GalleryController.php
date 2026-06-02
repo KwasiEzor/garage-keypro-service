@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\GalleryItem;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,9 +15,10 @@ class GalleryController extends Controller
     /**
      * Display the gallery with optional category filtering and infinite scroll.
      *
-     * @return Response
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Inertia\Response
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $categories = ['All', 'Diagnostics', 'Key Programming', 'Unit Mobility', 'Performance'];
         $currentCategory = $request->query('category', 'All');
@@ -33,7 +35,7 @@ class GalleryController extends Controller
                 }
 
                 if ($search) {
-                    $query->where(function ($q) use ($search) {
+                    $query->where(function (Builder $q) use ($search): void {
                         $q->where('title', 'like', "%{$search}%")
                             ->orWhere('description', 'like', "%{$search}%");
                     });

@@ -1,12 +1,5 @@
 import { Icon } from '@/components/ui/icon';
-
-interface Brand {
-  id: number;
-  name: string;
-  slug: string;
-  logo_path?: string;
-  is_featured?: boolean;
-}
+import { Brand } from '@/types/models';
 
 interface BrandGridProps {
   brands: Brand[];

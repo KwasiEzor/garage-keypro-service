@@ -15,6 +15,9 @@ class SecurityController extends Controller
 {
     /**
      * Show the user's security settings page.
+     *
+     * @param  \App\Http\Requests\Settings\TwoFactorAuthenticationRequest  $request
+     * @return \Inertia\Response
      */
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
@@ -27,7 +30,7 @@ class SecurityController extends Controller
                     ->select(['id', 'name', 'credential', 'created_at', 'last_used_at'])
                     ->latest()
                     ->get()
-                    ->map(fn ($passkey): array => [
+                    ->map(fn (\Laravel\Passkeys\Models\Passkey $passkey): array => [
                         'id' => $passkey->id,
                         'name' => $passkey->name,
                         'authenticator' => $passkey->authenticator,
@@ -52,6 +55,9 @@ class SecurityController extends Controller
 
     /**
      * Update the user's password.
+     *
+     * @param  \App\Http\Requests\Settings\PasswordUpdateRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(PasswordUpdateRequest $request): RedirectResponse
     {

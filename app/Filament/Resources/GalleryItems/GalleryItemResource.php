@@ -40,7 +40,7 @@ class GalleryItemResource extends Resource
                 TextInput::make('title')
                     ->required()
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (string $operation, $state, $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                    ->afterStateUpdated(fn (string $operation, ?string $state, \Filament\Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state ?? '')) : null),
                 TextInput::make('slug')
                     ->disabled()
                     ->dehydrated()

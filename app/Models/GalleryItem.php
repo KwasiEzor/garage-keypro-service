@@ -63,7 +63,7 @@ class GalleryItem extends Model
     protected function imagePath(): Attribute
     {
         return Attribute::make(
-            get: function ($value) {
+            get: function (?string $value): ?string {
                 if (filter_var($value, FILTER_VALIDATE_URL)) {
                     return $value;
                 }
@@ -77,11 +77,11 @@ class GalleryItem extends Model
      * Boot function from Laravel.
      */
     #[\Override]
-    protected static function boot()
+    protected static function boot(): void
     {
         parent::boot();
 
-        static::creating(function ($galleryItem): void {
+        static::creating(function (self $galleryItem): void {
             if (empty($galleryItem->slug)) {
                 $galleryItem->slug = Str::slug($galleryItem->title);
             }

@@ -79,6 +79,11 @@ class Invoice extends Model
         'notes',
     ];
 
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
     #[\Override]
     protected static function booted(): void
     {
@@ -90,7 +95,7 @@ class Invoice extends Model
     /**
      * Get the team that owns the invoice.
      *
-     * @return BelongsTo<Team, Invoice>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Team, \App\Models\Invoice>
      */
     public function team(): BelongsTo
     {
@@ -100,7 +105,7 @@ class Invoice extends Model
     /**
      * Get the client (user) for the invoice.
      *
-     * @return BelongsTo<User, Invoice>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\Invoice>
      */
     public function client(): BelongsTo
     {
@@ -110,7 +115,7 @@ class Invoice extends Model
     /**
      * Get the line items for the invoice.
      *
-     * @return HasMany<InvoiceItem>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\InvoiceItem, \App\Models\Invoice>
      */
     public function items(): HasMany
     {

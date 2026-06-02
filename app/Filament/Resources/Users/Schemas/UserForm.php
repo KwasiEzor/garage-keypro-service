@@ -23,7 +23,7 @@ class UserForm
                     ->unique(ignoreRecord: true),
                 TextInput::make('password')
                     ->password()
-                    ->dehydrated(fn ($state): bool => filled($state))
+                    ->dehydrated(fn (?string $state): bool => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
                 Select::make('current_team_id')
                     ->relationship('currentTeam', 'name'),

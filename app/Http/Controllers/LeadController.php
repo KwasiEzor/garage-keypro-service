@@ -13,9 +13,10 @@ class LeadController extends Controller
     /**
      * Store a new lead submission from the website contact form.
      *
-     * @return RedirectResponse
+     * @param  \App\Http\Requests\StoreLeadRequest  $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(StoreLeadRequest $request)
+    public function store(StoreLeadRequest $request): RedirectResponse
     {
         $lead = Lead::create([
             ...$request->validated(),

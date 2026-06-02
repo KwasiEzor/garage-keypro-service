@@ -51,11 +51,21 @@ class InvoiceItem extends Model
         'total_price',
     ];
 
+    /**
+     * Get the invoice that owns this item.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Invoice, \App\Models\InvoiceItem>
+     */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
+    /**
+     * Get the service associated with this item.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Service, \App\Models\InvoiceItem>
+     */
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);

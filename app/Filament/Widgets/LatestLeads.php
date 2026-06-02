@@ -33,7 +33,7 @@ class LatestLeads extends TableWidget
                     ->icon('heroicon-m-phone'),
                 TextColumn::make('vehicle_make')
                     ->label('Vehicle')
-                    ->formatStateUsing(fn ($record): string => sprintf('%s %s %s', $record->vehicle_year, $record->vehicle_make, $record->vehicle_model))
+                    ->formatStateUsing(fn (Lead $record): string => sprintf('%s %s %s', $record->vehicle_year, $record->vehicle_make, $record->vehicle_model))
                     ->color('gray'),
                 TextColumn::make('status')
                     ->badge()

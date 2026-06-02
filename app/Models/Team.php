@@ -78,6 +78,8 @@ class Team extends Model
 
     /**
      * Get the owner of the team.
+     *
+     * @return \App\Models\User|null
      */
     public function owner(): ?Model
     {
@@ -89,7 +91,7 @@ class Team extends Model
     /**
      * Get all members of this team.
      *
-     * @return BelongsToMany<Model, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<\App\Models\User, \App\Models\Team>
      */
     public function members(): BelongsToMany
     {
@@ -102,7 +104,7 @@ class Team extends Model
     /**
      * Get all memberships for this team.
      *
-     * @return HasMany<Membership, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Membership, \App\Models\Team>
      */
     public function memberships(): HasMany
     {
@@ -112,7 +114,7 @@ class Team extends Model
     /**
      * Get all invitations for this team.
      *
-     * @return HasMany<TeamInvitation, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\TeamInvitation, \App\Models\Team>
      */
     public function invitations(): HasMany
     {
@@ -122,7 +124,7 @@ class Team extends Model
     /**
      * Get all invoices for this team.
      *
-     * @return HasMany<Invoice, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, \App\Models\Team>
      */
     public function invoices(): HasMany
     {
@@ -144,6 +146,8 @@ class Team extends Model
 
     /**
      * Get the route key for the model.
+     *
+     * @return string
      */
     #[\Override]
     public function getRouteKeyName(): string

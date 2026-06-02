@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\LeadFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property int $id
@@ -90,22 +92,45 @@ class Lead extends Model
         ];
     }
 
-    public function service()
+    /**
+     * Get the service requested by the lead.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Service, \App\Models\Lead>
+     */
+    public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
     }
 
-    public function assignedUser()
+    /**
+     * Get the user assigned to this lead.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\Lead>
+     */
+    public function assignedUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    protected function scopeNew($query)
+    /**
+     * Scope a query to only include new leads.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    protected function scopeNew(Builder $query): Builder
     {
         return $query->where('status', 'new');
     }
 
-    protected function scopeBySource($query, string $source)
+    /**
+     * Scope a query to filter leads by source.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @param  string  $source
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    protected function scopeBySource(Builder $query, string $source): Builder
     {
         return $query->where('source', $source);
     }

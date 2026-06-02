@@ -1,18 +1,10 @@
 import { Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
+import { Service } from '@/types/models';
 
 interface ServiceCardProps {
-  service: {
-    id: number;
-    name: string;
-    slug: string;
-    description: string;
-    icon?: string;
-    starting_price?: number;
-    estimated_duration?: number;
-    is_featured: boolean;
-  };
+  service: Service;
 }
 
 export function ServiceCard({ service }: ServiceCardProps) {

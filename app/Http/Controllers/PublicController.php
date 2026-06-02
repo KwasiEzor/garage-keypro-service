@@ -18,7 +18,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function home()
+    public function home(): Response
     {
         return Inertia::render('home', [
             'featuredServices' => Cache::remember('home.featured_services', 3600, fn () => Service::featured()->with('brands')->take(6)->get()->values()->toArray()),
@@ -32,7 +32,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function services()
+    public function services(): Response
     {
         return Inertia::render('services/index', [
             'services' => Cache::remember('services.all', 3600, fn () => Service::active()->with('brands')->get()->values()->toArray()),
@@ -42,9 +42,10 @@ class PublicController extends Controller
     /**
      * Display a single service with related services.
      *
-     * @return Response
+     * @param  \App\Models\Service  $service
+     * @return \Inertia\Response
      */
-    public function serviceShow(Service $service)
+    public function serviceShow(Service $service): Response
     {
         return Inertia::render('services/show', [
             'service' => $service->load('brands'),
@@ -57,7 +58,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function brands()
+    public function brands(): Response
     {
         return Inertia::render('brands/index', [
             'brands' => Cache::remember('brands.all', 3600, fn () => Brand::active()->with('services')->get()->values()->toArray()),
@@ -69,7 +70,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function faq()
+    public function faq(): Response
     {
         return Inertia::render('faq', [
             'faqs' => Faq::active()->get()->groupBy('category'),
@@ -81,7 +82,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function privacyPolicy()
+    public function privacyPolicy(): Response
     {
         return Inertia::render('legal/privacy-policy', [
             'content' => Setting::get('privacy_policy_content', 'Privacy Policy content not set yet.'),
@@ -93,7 +94,7 @@ class PublicController extends Controller
      *
      * @return Response
      */
-    public function termsOfService()
+    public function termsOfService(): Response
     {
         return Inertia::render('legal/terms-of-service', [
             'content' => Setting::get('terms_of_service_content', 'Terms of Service content not set yet.'),

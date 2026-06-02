@@ -27,8 +27,8 @@ class LeadsChart extends ChartWidget
             $dates->push(now()->subDays($i)->format('Y-m-d'));
         }
 
-        $newLeads = $dates->map(fn ($date) => $data->where('date', $date)->where('status', 'new')->sum('count'));
-        $convertedLeads = $dates->map(fn ($date) => $data->where('date', $date)->where('status', 'converted')->sum('count'));
+        $newLeads = $dates->map(fn (string $date): int => (int) $data->where('date', $date)->where('status', 'new')->sum('count'));
+        $convertedLeads = $dates->map(fn (string $date): int => (int) $data->where('date', $date)->where('status', 'converted')->sum('count'));
 
         return [
             'datasets' => [
@@ -47,7 +47,7 @@ class LeadsChart extends ChartWidget
                     'fill' => 'start',
                 ],
             ],
-            'labels' => $dates->map(fn ($date): string => date('j M', strtotime((string) $date)))->toArray(),
+            'labels' => $dates->map(fn (string $date): string => date('j M', strtotime((string) $date)))->toArray(),
         ];
     }
 

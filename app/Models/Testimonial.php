@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\TestimonialFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,12 +70,24 @@ class Testimonial extends Model
         ];
     }
 
-    public function scopeFeatured($query)
+    /**
+     * Scope a query to only include featured and active testimonials.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true)->where('is_active', true);
     }
 
-    public function scopeActive($query)
+    /**
+     * Scope a query to only include active testimonials.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
     }

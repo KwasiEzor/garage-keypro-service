@@ -20,6 +20,9 @@ class TeamController extends Controller
 {
     /**
      * Display a listing of the user's teams.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Inertia\Response
      */
     public function index(Request $request): Response
     {
@@ -32,6 +35,10 @@ class TeamController extends Controller
 
     /**
      * Store a newly created team.
+     *
+     * @param  \App\Http\Requests\Teams\SaveTeamRequest  $request
+     * @param  \App\Actions\Teams\CreateTeam  $createTeam
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(SaveTeamRequest $request, CreateTeam $createTeam): RedirectResponse
     {
@@ -44,6 +51,10 @@ class TeamController extends Controller
 
     /**
      * Show the team edit page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Team  $team
+     * @return \Inertia\Response
      */
     public function edit(Request $request, Team $team): Response
     {
@@ -56,7 +67,7 @@ class TeamController extends Controller
                 'slug' => $team->slug,
                 'isPersonal' => $team->is_personal,
             ],
-            'members' => $team->members()->get()->map(fn ($member): array => [
+            'members' => $team->members()->get()->map(fn (User $member): array => [
                 'id' => $member->id,
                 'name' => $member->name,
                 'email' => $member->email,
@@ -67,7 +78,7 @@ class TeamController extends Controller
             'invitations' => $team->invitations()
                 ->whereNull('accepted_at')
                 ->get()
-                ->map(fn ($invitation): array => [
+                ->map(fn (\App\Models\TeamInvitation $invitation): array => [
                     'code' => $invitation->code,
                     'email' => $invitation->email,
                     'role' => $invitation->role->value,
@@ -81,6 +92,10 @@ class TeamController extends Controller
 
     /**
      * Update the specified team.
+     *
+     * @param  \App\Http\Requests\Teams\SaveTeamRequest  $request
+     * @param  \App\Models\Team  $team
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(SaveTeamRequest $request, Team $team): RedirectResponse
     {
@@ -101,6 +116,10 @@ class TeamController extends Controller
 
     /**
      * Switch the user's current team.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Team  $team
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function switch(Request $request, Team $team): RedirectResponse
     {
@@ -113,6 +132,10 @@ class TeamController extends Controller
 
     /**
      * Delete the specified team.
+     *
+     * @param  \App\Http\Requests\Teams\DeleteTeamRequest  $request
+     * @param  \App\Models\Team  $team
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(DeleteTeamRequest $request, Team $team): RedirectResponse
     {

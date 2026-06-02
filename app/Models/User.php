@@ -81,6 +81,9 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     /**
      * Determine if the user can access the Filament admin panel.
+     *
+     * @param  \Filament\Panel  $panel
+     * @return bool
      */
     public function canAccessPanel(Panel $panel): bool
     {
@@ -89,6 +92,8 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     /**
      * Determine if the user is an admin.
+     *
+     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -97,6 +102,8 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     /**
      * Get the invoices where the user is the client.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, \App\Models\User>
      */
     public function client_invoices(): HasMany
     {

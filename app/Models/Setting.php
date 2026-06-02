@@ -27,6 +27,13 @@ class Setting extends Model
 {
     protected $fillable = ['key', 'value'];
 
+    /**
+     * Get a setting value by key.
+     *
+     * @param  string  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
     public static function get(string $key, mixed $default = null): mixed
     {
         return static::where('key', $key)->first()?->value ?? $default;

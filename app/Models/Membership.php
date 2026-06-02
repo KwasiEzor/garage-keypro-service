@@ -51,7 +51,7 @@ class Membership extends Pivot
     /**
      * Get the team that the membership belongs to.
      *
-     * @return BelongsTo<Team, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Team, \App\Models\Membership>
      */
     public function team(): BelongsTo
     {
@@ -61,7 +61,7 @@ class Membership extends Pivot
     /**
      * Get the user that belongs to this membership.
      *
-     * @return BelongsTo<Model, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\Membership>
      */
     public function user(): BelongsTo
     {

@@ -1,0 +1,79 @@
+
+> build
+> vite build
+
+vite v8.0.14 building client environment for production...
+[plugin @laravel/vite-plugin-wayfinder] Types generated for actions, routes, form variants
+[2Ktransforming...✓ 2367 modules transformed.
+rendering chunks...
+computing gzip size...
+public/build/assets/instrument-sans-400-normal-Q_nF8v4l.woff2    6.85 kB
+public/build/assets/instrument-sans-600-normal-BsaQcF38.woff2    6.94 kB
+public/build/assets/instrument-sans-500-normal-CTEe1bJa.woff2    6.98 kB
+public/build/assets/instrument-sans-400-normal-r32jotim.woff     8.96 kB
+public/build/assets/instrument-sans-500-normal-CAxz3nsc.woff     9.06 kB
+public/build/assets/instrument-sans-600-normal-DMks36a2.woff     9.10 kB
+public/build/fonts-manifest.json                                11.19 kB │ gzip:   0.97 kB
+public/build/manifest.json                                      13.70 kB │ gzip:   1.85 kB
+public/build/assets/instrument-sans-400-normal-DRC__1Mx.woff2   16.86 kB
+public/build/assets/instrument-sans-500-normal-Dk9ku72i.woff2   17.23 kB
+public/build/assets/instrument-sans-600-normal-B7fBEWYG.woff2   17.40 kB
+public/build/assets/instrument-sans-400-normal-D1W7dsQl.woff    21.24 kB
+public/build/assets/instrument-sans-500-normal-Z6ESRlEs.woff    21.65 kB
+public/build/assets/instrument-sans-600-normal-B9e8oLYv.woff    21.67 kB
+public/build/assets/fonts-DkuEHybc.css                           4.76 kB │ gzip:   0.55 kB
+public/build/assets/app-gNAY4o_3.css                           135.27 kB │ gzip:  20.57 kB
+public/build/assets/theme-DM4AmP5T.css                         618.10 kB │ gzip:  63.85 kB
+public/build/assets/loader-circle-C2jbd5Q9.js                    0.13 kB │ gzip:   0.14 kB
+public/build/assets/eye-DhgyXCcb.js                              0.24 kB │ gzip:   0.19 kB
+public/build/assets/dist-Bs8i_STU.js                             0.25 kB │ gzip:   0.18 kB
+public/build/assets/shield-check-dmYyCLkT.js                     0.30 kB │ gzip:   0.24 kB
+public/build/assets/key-round-CxuADceX.js                        0.34 kB │ gzip:   0.25 kB
+public/build/assets/confirm-vT3yb-zj.js                          0.36 kB │ gzip:   0.22 kB
+public/build/assets/spinner-D2pNg5aM.js                          0.44 kB │ gzip:   0.33 kB
+public/build/assets/text-link-DTD9_QFf.js                        0.57 kB │ gzip:   0.39 kB
+public/build/assets/verify-email-BNV-Js-T.js                     1.28 kB │ gzip:   0.69 kB
+public/build/assets/badge-jnoU7A1-.js                            1.43 kB │ gzip:   0.73 kB
+public/build/assets/verification-Cv_Jx-f0.js                     1.47 kB │ gzip:   0.52 kB
+public/build/assets/password-input-_JcPEus9.js                   1.62 kB │ gzip:   0.94 kB
+public/build/assets/passkey-verify-D7PAojuA.js                   1.80 kB │ gzip:   1.03 kB
+public/build/assets/forgot-password-CEnwiFTu.js                  1.83 kB │ gzip:   0.86 kB
+public/build/assets/card-CMEsr32z.js                             2.00 kB │ gzip:   0.47 kB
+public/build/assets/reset-password-LbRHuoeJ.js                   2.19 kB │ gzip:   0.90 kB
+public/build/assets/confirm-password-tORF1Mjn.js                 2.23 kB │ gzip:   0.96 kB
+public/build/assets/appearance-zzWGUjSx.js                       2.52 kB │ gzip:   1.23 kB
+public/build/assets/dashboard-_ohlMzxr.js                        2.53 kB │ gzip:   0.88 kB
+public/build/assets/two-factor-challenge-C9vA5ifK.js             2.67 kB │ gzip:   1.23 kB
+public/build/assets/password-mdVY6puo.js                         2.73 kB │ gzip:   0.73 kB
+public/build/assets/register-C0ukkX5S.js                         2.74 kB │ gzip:   1.05 kB
+public/build/assets/teams-CF-YIkVy.js                            2.85 kB │ gzip:   1.14 kB
+public/build/assets/services-mfwpQM6g.js                         2.92 kB │ gzip:   1.23 kB
+public/build/assets/brand-grid-DUN-cX1U.js                       3.83 kB │ gzip:   1.39 kB
+public/build/assets/service-card-BcIfi1bm.js                     5.75 kB │ gzip:   2.14 kB
+public/build/assets/brands-tvQGOXzF.js                           5.96 kB │ gzip:   2.28 kB
+public/build/assets/profile-MhcM-b9E.js                          6.69 kB │ gzip:   2.27 kB
+public/build/assets/faq-DwouT1D4.js                              8.38 kB │ gzip:   3.27 kB
+public/build/assets/show-CSVrIN3e.js                             8.83 kB │ gzip:   2.88 kB
+public/build/assets/login-Bmu8XByB.js                            9.63 kB │ gzip:   3.88 kB
+public/build/assets/lead-form-jZOlxr41.js                       10.06 kB │ gzip:   3.48 kB
+public/build/assets/react-C29RA7eh.js                           13.51 kB │ gzip:   4.38 kB
+public/build/assets/public-layout-DNFkffHI.js                   15.45 kB │ gzip:   4.78 kB
+public/build/assets/use-two-factor-auth-CJ1QWAgy.js             16.62 kB │ gzip:   5.99 kB
+public/build/assets/home-BOtnYx2F.js                            19.59 kB │ gzip:   5.43 kB
+public/build/assets/security-CYJWZOdB.js                        29.29 kB │ gzip:   9.54 kB
+public/build/assets/welcome-2XO92cBq.js                         30.72 kB │ gzip:   6.51 kB
+public/build/assets/edit-DGb0bVbF.js                            40.42 kB │ gzip:  13.01 kB
+public/build/assets/app-DUZMKWYW.js                            569.25 kB │ gzip: 170.64 kB
+
+[33m[PLUGIN_TIMINGS] [0mYour build spent significant time in plugins. Here is a breakdown:
+  - @inertiajs/vite (93%)
+  - laravel (3%)
+  - vite:react-babel (3%)
+See https://rolldown.rs/options/checks#plugintimings for more details.
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 6.58s

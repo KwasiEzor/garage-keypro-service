@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\CarbonImmutable;
 use Database\Factories\FaqFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,12 +56,25 @@ class Faq extends Model
         ];
     }
 
-    public function scopeActive($query)
+    /**
+     * Scope a query to only include active FAQs.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }
 
-    public function scopeByCategory($query, string $category)
+    /**
+     * Scope a query to filter FAQs by category.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
+     * @param  string  $category
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public function scopeByCategory(Builder $query, string $category): Builder
     {
         return $query->where('category', $category);
     }

@@ -85,7 +85,7 @@ class Service extends Model
      *
      * @return BelongsToMany<Brand>
      */
-    public function brands()
+    public function brands(): BelongsToMany
     {
         return $this->belongsToMany(Brand::class)->withPivot('price', 'notes')->withTimestamps();
     }
@@ -95,7 +95,7 @@ class Service extends Model
      *
      * @return HasMany<Lead>
      */
-    public function leads()
+    public function leads(): HasMany
     {
         return $this->hasMany(Lead::class);
     }
@@ -106,7 +106,7 @@ class Service extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeFeatured($query)
+    public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true)->where('is_active', true);
     }
@@ -117,7 +117,7 @@ class Service extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }

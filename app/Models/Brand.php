@@ -69,7 +69,7 @@ class Brand extends Model
      *
      * @return BelongsToMany<Service>
      */
-    public function services()
+    public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class)->withPivot('price', 'notes')->withTimestamps();
     }
@@ -80,7 +80,7 @@ class Brand extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeFeatured($query)
+    public function scopeFeatured(Builder $query): Builder
     {
         return $query->where('is_featured', true)->where('is_active', true);
     }
@@ -91,7 +91,7 @@ class Brand extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }

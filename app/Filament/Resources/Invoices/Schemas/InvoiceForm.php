@@ -178,10 +178,9 @@ class InvoiceForm
     public static function updateInvoiceTotals(Set $set, Get $get): void
     {
         $items = collect($get('items') ?? []);
-        $subtotal = $items->reduce(fn ($carry, $item): float => $carry + (float) ($item['total_price'] ?? 0), 0);
-        $tax = (float) ($get('tax_total') ?? 0);
+        $subtotal = $items->reduce(fn (float $carry, array $item): float => $carry + (float) ($item['total_price'] ?? 0), 0.0);
 
         $set('subtotal', number_format($subtotal, 2, '.', ''));
-        $set('total_amount', number_format($subtotal + $tax, 2, '.', ''));
+        $set('total_amount', number_format($subtotal + (float) ($get('tax_total') ?? 0), 2, '.', ''));
     }
 }
