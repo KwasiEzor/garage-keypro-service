@@ -69,12 +69,12 @@ class Testimonial extends Model
         ];
     }
 
-    protected function scopeFeatured($query)
+    public function scopeFeatured($query)
     {
         return $query->where('is_featured', true)->where('is_active', true);
     }
 
-    protected function scopeActive($query)
+    public function scopeActive($query)
     {
         return $query->where('is_active', true);
     }

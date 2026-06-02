@@ -21,9 +21,9 @@ class PublicController extends Controller
     public function home()
     {
         return Inertia::render('home', [
-            'featuredServices' => Cache::remember('home.featured_services', 3600, fn () => Service::featured()->with('brands')->take(6)->get()),
-            'featuredBrands' => Cache::remember('home.featured_brands', 3600, fn () => Brand::featured()->take(12)->get()),
-            'testimonials' => Cache::remember('home.testimonials', 3600, fn () => Testimonial::featured()->take(3)->get()),
+            'featuredServices' => Cache::remember('home.featured_services', 3600, fn () => Service::featured()->with('brands')->take(6)->get()->values()->toArray()),
+            'featuredBrands' => Cache::remember('home.featured_brands', 3600, fn () => Brand::featured()->take(12)->get()->values()->toArray()),
+            'testimonials' => Cache::remember('home.testimonials', 3600, fn () => Testimonial::featured()->take(3)->get()->values()->toArray()),
         ]);
     }
 
@@ -35,7 +35,7 @@ class PublicController extends Controller
     public function services()
     {
         return Inertia::render('services/index', [
-            'services' => Cache::remember('services.all', 3600, fn () => Service::active()->with('brands')->get()),
+            'services' => Cache::remember('services.all', 3600, fn () => Service::active()->with('brands')->get()->values()->toArray()),
         ]);
     }
 
@@ -48,7 +48,7 @@ class PublicController extends Controller
     {
         return Inertia::render('services/show', [
             'service' => $service->load('brands'),
-            'relatedServices' => Service::active()->where('id', '!=', $service->id)->take(3)->get(),
+            'relatedServices' => Service::active()->where('id', '!=', $service->id)->take(3)->get()->values()->toArray(),
         ]);
     }
 
@@ -60,7 +60,7 @@ class PublicController extends Controller
     public function brands()
     {
         return Inertia::render('brands/index', [
-            'brands' => Cache::remember('brands.all', 3600, fn () => Brand::active()->with('services')->get()),
+            'brands' => Cache::remember('brands.all', 3600, fn () => Brand::active()->with('services')->get()->values()->toArray()),
         ]);
     }
 

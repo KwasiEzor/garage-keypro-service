@@ -55,12 +55,12 @@ class Faq extends Model
         ];
     }
 
-    protected function scopeActive($query)
+    public function scopeActive($query)
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }
 
-    protected function scopeByCategory($query, string $category)
+    public function scopeByCategory($query, string $category)
     {
         return $query->where('category', $category);
     }

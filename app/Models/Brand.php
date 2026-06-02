@@ -80,7 +80,7 @@ class Brand extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    protected function scopeFeatured($query)
+    public function scopeFeatured($query)
     {
         return $query->where('is_featured', true)->where('is_active', true);
     }
@@ -91,7 +91,7 @@ class Brand extends Model
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
-    protected function scopeActive($query)
+    public function scopeActive($query)
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }

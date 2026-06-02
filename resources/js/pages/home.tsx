@@ -18,6 +18,11 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
   const { settings } = Inertia.usePage().props as any;
   const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
 
+  // Safety fallbacks for props that might arrive as objects due to corrupted cache
+  const servicesList = Array.isArray(featuredServices) ? featuredServices : [];
+  const brandsList = Array.isArray(featuredBrands) ? featuredBrands : [];
+  const testimonialsList = Array.isArray(testimonials) ? testimonials : [];
+
   return (
     <PublicLayout>
       <HeroSection
@@ -45,7 +50,7 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {featuredServices.map((service) => (
+            {servicesList.map((service) => (
               <div key={service.id}>
                 <ServiceCard service={service} />
               </div>
@@ -166,7 +171,7 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
       <section className="bg-background relative py-32 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BrandGrid
-            brands={featuredBrands}
+            brands={brandsList}
             title="Capacité Marques"
           />
         </div>
@@ -184,7 +189,7 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
           
           <div className="flex justify-center">
             <CircularTestimonials 
-              testimonials={testimonials.map((t, i) => ({
+              testimonials={testimonialsList.map((t, i) => ({
                 quote: t.content,
                 name: t.customer_name,
                 designation: t.customer_location || t.vehicle_info || 'Client Satisfait',

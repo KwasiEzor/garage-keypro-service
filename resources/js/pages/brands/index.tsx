@@ -12,9 +12,10 @@ interface BrandsIndexProps {
 }
 
 export default function BrandsIndex({ brands }: BrandsIndexProps) {
+  const brandsList = Array.isArray(brands) ? brands : [];
   const [search, setSearch] = useState('');
 
-  const filteredBrands = brands.filter(brand =>
+  const filteredBrands = brandsList.filter(brand =>
     brand.name.toLowerCase().includes(search.toLowerCase())
   );
 
