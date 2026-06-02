@@ -15,22 +15,18 @@ class PublicController extends Controller
 {
     /**
      * Display the homepage with featured services, brands, and testimonials.
-     *
-     * @return Response
      */
     public function home(): Response
     {
         return Inertia::render('home', [
             'featuredServices' => Cache::remember('home.featured_services', 3600, fn () => Service::featured()->with('brands')->take(6)->get()->values()->toArray()),
-            'featuredBrands' => Cache::remember('home.featured_brands', 3600, fn () => Brand::featured()->take(12)->get()->values()->toArray()),
-            'testimonials' => Cache::remember('home.testimonials', 3600, fn () => Testimonial::featured()->take(3)->get()->values()->toArray()),
+            'featuredBrands' => Inertia::defer(fn () => Cache::remember('home.featured_brands', 3600, fn () => Brand::featured()->take(12)->get()->values()->toArray())),
+            'testimonials' => Inertia::defer(fn () => Cache::remember('home.testimonials', 3600, fn () => Testimonial::featured()->take(3)->get()->values()->toArray())),
         ]);
     }
 
     /**
      * Display all active services.
-     *
-     * @return Response
      */
     public function services(): Response
     {
@@ -41,9 +37,6 @@ class PublicController extends Controller
 
     /**
      * Display a single service with related services.
-     *
-     * @param  \App\Models\Service  $service
-     * @return \Inertia\Response
      */
     public function serviceShow(Service $service): Response
     {
@@ -55,8 +48,6 @@ class PublicController extends Controller
 
     /**
      * Display all active brands with their services.
-     *
-     * @return Response
      */
     public function brands(): Response
     {
@@ -67,8 +58,6 @@ class PublicController extends Controller
 
     /**
      * Display FAQs grouped by category.
-     *
-     * @return Response
      */
     public function faq(): Response
     {
@@ -79,8 +68,6 @@ class PublicController extends Controller
 
     /**
      * Display the privacy policy page.
-     *
-     * @return Response
      */
     public function privacyPolicy(): Response
     {
@@ -91,8 +78,6 @@ class PublicController extends Controller
 
     /**
      * Display the terms of service page.
-     *
-     * @return Response
      */
     public function termsOfService(): Response
     {

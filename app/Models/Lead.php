@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
@@ -65,6 +66,8 @@ class Lead extends Model
     /** @use HasFactory<LeadFactory> */
     use HasFactory;
 
+    use SoftDeletes;
+
     protected $fillable = [
         'name',
         'email',
@@ -95,7 +98,7 @@ class Lead extends Model
     /**
      * Get the service requested by the lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Service, \App\Models\Lead>
+     * @return BelongsTo<Service, Lead>
      */
     public function service(): BelongsTo
     {
@@ -105,7 +108,7 @@ class Lead extends Model
     /**
      * Get the user assigned to this lead.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\Lead>
+     * @return BelongsTo<User, Lead>
      */
     public function assignedUser(): BelongsTo
     {
@@ -115,8 +118,8 @@ class Lead extends Model
     /**
      * Scope a query to only include new leads.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     protected function scopeNew(Builder $query): Builder
     {
@@ -126,9 +129,8 @@ class Lead extends Model
     /**
      * Scope a query to filter leads by source.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @param  string  $source
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     protected function scopeBySource(Builder $query, string $source): Builder
     {

@@ -2,6 +2,7 @@ import { LeadForm } from '@/components/brand/lead-form';
 import { ServiceCard } from '@/components/brand/service-card';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
+import { Head, usePage } from '@inertiajs/react';
 
 import type { Service } from '@/types';
 
@@ -11,6 +12,9 @@ interface ServiceShowProps {
 }
 
 export default function ServiceShow({ service, relatedServices }: ServiceShowProps) {
+  const { settings } = usePage().props as any;
+  const siteName = settings?.site_name || 'KeyPro';
+
   const getServiceImage = (slug: string) => {
     const images: Record<string, string> = {
       'diagnostic-technique': 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2500&auto=format&fit=crop',
@@ -25,8 +29,39 @@ export default function ServiceShow({ service, relatedServices }: ServiceShowPro
 
   const serviceImage = getServiceImage(service.slug);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    'name': service.name,
+    'description': service.description,
+    'provider': {
+      '@type': 'LocalBusiness',
+      'name': siteName,
+      'image': serviceImage,
+      'telephone': settings?.contact_phone || '+228 72 11 44 44',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'Lomé',
+        'addressCountry': 'TG'
+      }
+    },
+    'areaServed': 'Lomé, Togo',
+    'offers': {
+      '@type': 'Offer',
+      'price': service.starting_price || '0',
+      'priceCurrency': 'EUR'
+    }
+  };
+
   return (
     <PublicLayout>
+      <Head>
+        <title>{`${service.name} | ${siteName}`}</title>
+        <meta name="description" content={service.description} />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Head>
       {/* Service Header Section */}
       <section className="relative py-32 overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 z-0">

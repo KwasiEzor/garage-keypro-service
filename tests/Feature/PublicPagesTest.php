@@ -20,8 +20,12 @@ test('home page loads with featured content', function (): void {
         ->assertInertia(fn (Assert $page): AssertableInertia => $page
             ->component('home')
             ->has('featuredServices', 6)
-            ->has('featuredBrands', 12)
-            ->has('testimonials', 3)
+            ->missing('featuredBrands')
+            ->missing('testimonials')
+            ->loadDeferredProps(fn (Assert $reload) => $reload
+                ->has('featuredBrands', 12)
+                ->has('testimonials', 3)
+            )
         );
 });
 

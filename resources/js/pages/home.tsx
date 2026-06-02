@@ -1,4 +1,3 @@
-import * as Inertia from '@inertiajs/react';
 import { BrandGrid } from '@/components/brand/brand-grid';
 import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
@@ -6,6 +5,7 @@ import { ServiceCard } from '@/components/brand/service-card';
 import { CircularTestimonials } from '@/components/ui/circular-testimonials';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
+import { Head, usePage, Deferred } from '@inertiajs/react';
 import type { Service, Brand, Testimonial } from '@/types';
 
 interface HomeProps {
@@ -15,16 +15,20 @@ interface HomeProps {
 }
 
 export default function Home({ featuredServices, featuredBrands, testimonials }: HomeProps) {
-  const { settings } = Inertia.usePage().props as any;
+  const { settings } = usePage().props as any;
+  const siteName = settings?.site_name || 'KeyPro';
   const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
 
   // Safety fallbacks for props that might arrive as objects due to corrupted cache
   const servicesList = Array.isArray(featuredServices) ? featuredServices : [];
-  const brandsList = Array.isArray(featuredBrands) ? featuredBrands : [];
-  const testimonialsList = Array.isArray(testimonials) ? testimonials : [];
 
   return (
     <PublicLayout>
+      <Head>
+        <title>{`${settings?.seo_title || 'Expert Clés Auto & Diagnostic'} | ${siteName}`}</title>
+        <meta name="description" content={settings?.seo_description || 'Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile à Lomé.'} />
+      </Head>
+
       <HeroSection
         title="Expert Clés Auto"
         subtitle="Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs."
@@ -170,10 +174,24 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
       {/* Brand Compatibility */}
       <section className="bg-background relative py-32 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <BrandGrid
-            brands={brandsList}
-            title="Capacité Marques"
-          />
+          <Deferred 
+            data="featuredBrands" 
+            fallback={
+              <div className="animate-pulse space-y-12">
+                <div className="h-12 w-64 bg-white/5 mx-auto rounded-none" />
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+                  {[...Array(12)].map((_, i) => (
+                    <div key={i} className="h-24 bg-white/5 rounded-none" />
+                  ))}
+                </div>
+              </div>
+            }
+          >
+            <BrandGrid
+              brands={Array.isArray(featuredBrands) ? featuredBrands : []}
+              title="Capacité Marques"
+            />
+          </Deferred>
         </div>
       </section>
 
@@ -187,34 +205,47 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
             <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white">Intelligence <span className="text-racing-red">Client</span></h2>
           </div>
           
-          <div className="flex justify-center">
-            <CircularTestimonials 
-              testimonials={testimonialsList.map((t, i) => ({
-                quote: t.content,
-                name: t.customer_name,
-                designation: t.customer_location || t.vehicle_info || 'Client Satisfait',
-                src: `https://images.unsplash.com/photo-${[
-                  '1507003211169-0a1dd7228f2d',
-                  '1500648767791-00dcc994a43e',
-                  '1494790108377-be9c29b29330',
-                  '1534528741775-53994a69daeb',
-                  '1506794778202-cad84cf45f1d'
-                ][i % 5]}?q=75&w=400&auto=format&fit=crop&fm=webp`
-              }))}
-              colors={{
-                name: "#ffffff",
-                designation: "#ef4444",
-                testimony: "#a3a3a3",
-                arrowBackground: "#171717",
-                arrowForeground: "#ffffff",
-                arrowHoverBackground: "#ef4444",
-              }}
-              fontSizes={{
-                name: "24px",
-                designation: "14px",
-                quote: "18px",
-              }}
-            />
+          <div className="flex justify-center min-h-[500px]">
+            <Deferred 
+              data="testimonials"
+              fallback={
+                <div className="animate-pulse flex flex-col items-center gap-12">
+                  <div className="w-64 h-64 rounded-full bg-white/5 border border-white/10" />
+                  <div className="space-y-4 text-center">
+                    <div className="h-8 w-48 bg-white/5 rounded-none mx-auto" />
+                    <div className="h-4 w-64 bg-white/5 rounded-none mx-auto" />
+                  </div>
+                </div>
+              }
+            >
+              <CircularTestimonials 
+                testimonials={(Array.isArray(testimonials) ? testimonials : []).map((t, i) => ({
+                  quote: t.content,
+                  name: t.customer_name,
+                  designation: t.customer_location || t.vehicle_info || 'Client Satisfait',
+                  src: `https://images.unsplash.com/photo-${[
+                    '1507003211169-0a1dd7228f2d',
+                    '1500648767791-00dcc994a43e',
+                    '1494790108377-be9c29b29330',
+                    '1534528741775-53994a69daeb',
+                    '1506794778202-cad84cf45f1d'
+                  ][i % 5]}?q=75&w=400&auto=format&fit=crop&fm=webp`
+                }))}
+                colors={{
+                  name: "#ffffff",
+                  designation: "#ef4444",
+                  testimony: "#a3a3a3",
+                  arrowBackground: "#171717",
+                  arrowForeground: "#ffffff",
+                  arrowHoverBackground: "#ef4444",
+                }}
+                fontSizes={{
+                  name: "24px",
+                  designation: "14px",
+                  quote: "18px",
+                }}
+              />
+            </Deferred>
           </div>
         </div>
       </section>
@@ -241,4 +272,3 @@ export default function Home({ featuredServices, featuredBrands, testimonials }:
     </PublicLayout>
   );
 }
-

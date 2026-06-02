@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -77,13 +78,11 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     use HasTeams;
     use Notifiable;
     use PasskeyAuthenticatable;
+    use SoftDeletes;
     use TwoFactorAuthenticatable;
 
     /**
      * Determine if the user can access the Filament admin panel.
-     *
-     * @param  \Filament\Panel  $panel
-     * @return bool
      */
     public function canAccessPanel(Panel $panel): bool
     {
@@ -92,8 +91,6 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
 
     /**
      * Determine if the user is an admin.
-     *
-     * @return bool
      */
     public function isAdmin(): bool
     {
@@ -103,7 +100,7 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     /**
      * Get the invoices where the user is the client.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Invoice, \App\Models\User>
+     * @return HasMany<Invoice, User>
      */
     public function client_invoices(): HasMany
     {

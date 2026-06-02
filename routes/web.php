@@ -21,7 +21,9 @@ Route::inertia('/testimonials-demo', 'testimonials-demo')->name('testimonials-de
 Route::get('/faq', [PublicController::class, 'faq'])->name('faq');
 Route::get('/privacy-policy', [PublicController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms-of-service', [PublicController::class, 'termsOfService'])->name('terms-of-service');
-Route::post('/leads', [LeadController::class, 'store'])->name('leads.store');
+Route::post('/leads', [LeadController::class, 'store'])
+    ->middleware(['throttle:3,1'])
+    ->name('leads.store');
 
 Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])->name('invoices.show');
 
