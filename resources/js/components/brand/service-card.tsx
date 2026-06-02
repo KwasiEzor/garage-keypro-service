@@ -91,12 +91,20 @@ export function ServiceCard({ service }: ServiceCardProps) {
             </div>
           </CardContent>
           
-          <CardFooter className="px-8 pb-8 pt-0">
+          <CardFooter className="px-8 pb-10 pt-0">
             <Link
               href={`/services/${service.slug}`}
-              className="skewed-btn w-full bg-white/5 border border-white/10 text-white hover:bg-racing-red hover:border-racing-red transition-colors duration-200"
+              className="skewed-btn w-full bg-white/5 border border-white/10 text-white hover:bg-racing-red hover:border-racing-red transition-all duration-300 group/btn"
             >
-              <span className="text-[11px]">Explorer le Protocole</span>
+              <span className="flex items-center justify-center gap-3">
+                <span className="text-[10px] font-heading font-bold uppercase tracking-[0.3em]">
+                  DÉCOUVRIR
+                </span>
+                <Icon 
+                  name="ArrowRight" 
+                  className="h-3.5 w-3.5 text-racing-red group-hover/btn:text-white transition-all duration-300 transform group-hover/btn:translate-x-1" 
+                />
+              </span>
             </Link>
           </CardFooter>
         </div>
