@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\PublicController;
@@ -8,6 +9,8 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/health', HealthController::class)->name('health');
 
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/services', [PublicController::class, 'services'])->name('services.index');
