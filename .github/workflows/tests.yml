@@ -54,5 +54,11 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Tests
-        run: ./vendor/bin/pest
+      - name: Run Pint (Code Style)
+        run: ./vendor/bin/pint --test
+
+      - name: Run Tests
+        run: php artisan test
+
+      - name: Run Architecture Tests
+        run: php artisan test --testsuite=Architecture
