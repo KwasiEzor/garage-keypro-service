@@ -107,5 +107,11 @@ class FortifyServiceProvider extends ServiceProvider
                 ($credentialId ?: $request->session()->getId()).'|'.$request->ip(),
             );
         });
+
+        RateLimiter::for('password-reset', function (Request $request) {
+            $throttleKey = Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
+
+            return Limit::perMinute(3)->by($throttleKey);
+        });
     }
 }
