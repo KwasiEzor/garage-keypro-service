@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property numeric $quantity
  * @property numeric $unit_price
  * @property numeric $total_price
+ * @property numeric|null $tax_rate
+ * @property numeric $tax_amount
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read Invoice|null $invoice
@@ -48,13 +50,14 @@ class InvoiceItem extends Model
         'description',
         'quantity',
         'unit_price',
-        'total_price',
+        'tax_rate',
+        // Note: total_price and tax_amount are calculated by InvoiceItemObserver
     ];
 
     /**
      * Get the invoice that owns this item.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Invoice, \App\Models\InvoiceItem>
+     * @return BelongsTo<Invoice, InvoiceItem>
      */
     public function invoice(): BelongsTo
     {
@@ -64,7 +67,7 @@ class InvoiceItem extends Model
     /**
      * Get the service associated with this item.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Service, \App\Models\InvoiceItem>
+     * @return BelongsTo<Service, InvoiceItem>
      */
     public function service(): BelongsTo
     {
@@ -78,6 +81,8 @@ class InvoiceItem extends Model
             'quantity' => 'decimal:2',
             'unit_price' => 'decimal:2',
             'total_price' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
+            'tax_amount' => 'decimal:2',
         ];
     }
 }

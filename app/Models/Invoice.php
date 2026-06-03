@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\InvoiceStatus;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -19,10 +20,16 @@ use Illuminate\Support\Str;
  * @property string $number
  * @property CarbonImmutable $issue_date
  * @property CarbonImmutable $due_date
- * @property string $status
+ * @property InvoiceStatus $status
  * @property numeric $subtotal
+ * @property numeric $tax_rate
  * @property numeric $tax_total
  * @property numeric $total_amount
+ * @property numeric $amount_paid
+ * @property CarbonImmutable|null $sent_at
+ * @property CarbonImmutable|null $paid_at
+ * @property string|null $payment_method
+ * @property string|null $payment_reference
  * @property string $currency
  * @property string|null $notes
  * @property CarbonImmutable|null $created_at
@@ -73,29 +80,31 @@ class Invoice extends Model
         'due_date',
         'status',
         'subtotal',
+        'tax_rate',
         'tax_total',
         'total_amount',
+        'amount_paid',
         'currency',
         'notes',
+        'sent_at',
+        'paid_at',
+        'payment_method',
+        'payment_reference',
     ];
 
     /**
      * Bootstrap the model and its traits.
-     *
-     * @return void
      */
     #[\Override]
     protected static function booted(): void
     {
-        static::creating(function (Invoice $invoice): void {
-            $invoice->uuid = (string) Str::uuid();
-        });
+        // UUID generation moved to InvoiceObserver
     }
 
     /**
      * Get the team that owns the invoice.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Team, \App\Models\Invoice>
+     * @return BelongsTo<Team, Invoice>
      */
     public function team(): BelongsTo
     {
@@ -105,7 +114,7 @@ class Invoice extends Model
     /**
      * Get the client (user) for the invoice.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\Invoice>
+     * @return BelongsTo<User, Invoice>
      */
     public function client(): BelongsTo
     {
@@ -115,22 +124,55 @@ class Invoice extends Model
     /**
      * Get the line items for the invoice.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\InvoiceItem, \App\Models\Invoice>
+     * @return HasMany<InvoiceItem, Invoice>
      */
     public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
 
+    /**
+     * Get the payments for the invoice.
+     *
+     * @return HasMany<Payment, Invoice>
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    /**
+     * Scope a query to only include overdue invoices.
+     */
+    public function scopeOverdue(Builder $query): void
+    {
+        $query->where('status', InvoiceStatus::Sent)
+            ->where('due_date', '<', now());
+    }
+
+    /**
+     * Scope a query to only include invoices due soon.
+     */
+    public function scopeDueSoon(Builder $query, int $days = 7): void
+    {
+        $query->where('status', InvoiceStatus::Sent)
+            ->whereBetween('due_date', [now(), now()->addDays($days)]);
+    }
+
     #[\Override]
     protected function casts(): array
     {
         return [
+            'status' => InvoiceStatus::class,
             'issue_date' => 'date',
             'due_date' => 'date',
+            'sent_at' => 'datetime',
+            'paid_at' => 'datetime',
             'subtotal' => 'decimal:2',
+            'tax_rate' => 'decimal:2',
             'tax_total' => 'decimal:2',
             'total_amount' => 'decimal:2',
+            'amount_paid' => 'decimal:2',
         ];
     }
 }

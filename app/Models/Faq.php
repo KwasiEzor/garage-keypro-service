@@ -59,8 +59,8 @@ class Faq extends Model
     /**
      * Scope a query to only include active FAQs.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeActive(Builder $query): Builder
     {
@@ -70,9 +70,8 @@ class Faq extends Model
     /**
      * Scope a query to filter FAQs by category.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @param  string  $category
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeByCategory(Builder $query, string $category): Builder
     {

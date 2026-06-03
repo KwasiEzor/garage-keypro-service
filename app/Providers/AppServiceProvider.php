@@ -2,10 +2,16 @@
 
 namespace App\Providers;
 
+use App\Listeners\LogInvoiceActivity;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\User;
+use App\Observers\InvoiceItemObserver;
+use App\Observers\InvoiceObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -34,6 +40,25 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureMonitoring();
+        $this->registerObservers();
+        $this->registerEventListeners();
+    }
+
+    /**
+     * Register model observers.
+     */
+    protected function registerObservers(): void
+    {
+        Invoice::observe(InvoiceObserver::class);
+        InvoiceItem::observe(InvoiceItemObserver::class);
+    }
+
+    /**
+     * Register event listeners and subscribers.
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::subscribe(LogInvoiceActivity::class);
     }
 
     /**

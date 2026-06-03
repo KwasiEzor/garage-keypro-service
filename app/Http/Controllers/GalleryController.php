@@ -14,9 +14,6 @@ class GalleryController extends Controller
 {
     /**
      * Display the gallery with optional category filtering and infinite scroll.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Inertia\Response
      */
     public function index(Request $request): Response
     {

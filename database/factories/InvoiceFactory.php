@@ -22,6 +22,7 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         return [
+            'uuid' => fake()->uuid(),
             'team_id' => Team::factory(),
             'client_id' => User::factory(),
             'number' => 'INV-'.fake()->unique()->numberBetween(1000, 9999),
@@ -29,6 +30,7 @@ class InvoiceFactory extends Factory
             'due_date' => now()->addDays(14),
             'status' => fake()->randomElement(['draft', 'sent', 'paid', 'cancelled']),
             'subtotal' => 0,
+            'tax_rate' => 0,
             'tax_total' => 0,
             'total_amount' => 0,
             'currency' => 'USD',

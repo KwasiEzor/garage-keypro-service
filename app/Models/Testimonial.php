@@ -73,8 +73,8 @@ class Testimonial extends Model
     /**
      * Scope a query to only include featured and active testimonials.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeFeatured(Builder $query): Builder
     {
@@ -84,8 +84,8 @@ class Testimonial extends Model
     /**
      * Scope a query to only include active testimonials.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<static>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     public function scopeActive(Builder $query): Builder
     {

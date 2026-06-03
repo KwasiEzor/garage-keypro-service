@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -17,10 +18,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string|null $event
  * @property string|null $ip_address
  * @property string|null $user_agent
- * @property \Carbon\CarbonImmutable|null $created_at
- * @property \Carbon\CarbonImmutable|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Model|null $causer
- * @property-read \Illuminate\Database\Eloquent\Model|null $subject
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read Model|null $causer
+ * @property-read Model|null $subject
  *
  * @mixin \Eloquent
  */
@@ -57,7 +58,7 @@ class Activity extends Model
     /**
      * Get the subject of the activity.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, \App\Models\Activity>
+     * @return MorphTo<Model, Activity>
      */
     public function subject(): MorphTo
     {
@@ -67,7 +68,7 @@ class Activity extends Model
     /**
      * Get the causer of the activity.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, \App\Models\Activity>
+     * @return MorphTo<Model, Activity>
      */
     public function causer(): MorphTo
     {

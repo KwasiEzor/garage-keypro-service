@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\InvoiceMail;
 use App\Models\Invoice;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,10 +29,9 @@ class SendInvoiceEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        // TODO: Implement actual email sending
-        // Mail::to($this->recipient)->send(new InvoiceMail($this->invoice, $this->type));
+        Mail::to($this->recipient)->send(new InvoiceMail($this->invoice, $this->type));
 
-        logger()->info('Invoice email queued for sending', [
+        logger()->info('Invoice email sent', [
             'invoice_id' => $this->invoice->id,
             'recipient_id' => $this->recipient->id,
             'type' => $this->type,

@@ -66,7 +66,7 @@ class TeamInvitation extends Model
     /**
      * Get the team that the invitation belongs to.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\Team, \App\Models\TeamInvitation>
+     * @return BelongsTo<Team, TeamInvitation>
      */
     public function team(): BelongsTo
     {
@@ -76,7 +76,7 @@ class TeamInvitation extends Model
     /**
      * Get the user who sent the invitation.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, \App\Models\TeamInvitation>
+     * @return BelongsTo<User, TeamInvitation>
      */
     public function inviter(): BelongsTo
     {
@@ -85,8 +85,6 @@ class TeamInvitation extends Model
 
     /**
      * Determine if the invitation has been accepted.
-     *
-     * @return bool
      */
     public function isAccepted(): bool
     {
@@ -95,8 +93,6 @@ class TeamInvitation extends Model
 
     /**
      * Determine if the invitation is pending.
-     *
-     * @return bool
      */
     public function isPending(): bool
     {
@@ -105,8 +101,6 @@ class TeamInvitation extends Model
 
     /**
      * Determine if the invitation has expired.
-     *
-     * @return bool
      */
     public function isExpired(): bool
     {
@@ -130,8 +124,6 @@ class TeamInvitation extends Model
 
     /**
      * Get the route key for the model.
-     *
-     * @return string
      */
     #[\Override]
     public function getRouteKeyName(): string

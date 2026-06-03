@@ -29,10 +29,6 @@ class Setting extends Model
 
     /**
      * Get a setting value by key.
-     *
-     * @param  string  $key
-     * @param  mixed  $default
-     * @return mixed
      */
     public static function get(string $key, mixed $default = null): mixed
     {

@@ -10,14 +10,12 @@ use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
+use Laravel\Passkeys\Models\Passkey;
 
 class SecurityController extends Controller
 {
     /**
      * Show the user's security settings page.
-     *
-     * @param  \App\Http\Requests\Settings\TwoFactorAuthenticationRequest  $request
-     * @return \Inertia\Response
      */
     public function edit(TwoFactorAuthenticationRequest $request): Response
     {
@@ -30,7 +28,7 @@ class SecurityController extends Controller
                     ->select(['id', 'name', 'credential', 'created_at', 'last_used_at'])
                     ->latest()
                     ->get()
-                    ->map(fn (\Laravel\Passkeys\Models\Passkey $passkey): array => [
+                    ->map(fn (Passkey $passkey): array => [
                         'id' => $passkey->id,
                         'name' => $passkey->name,
                         'authenticator' => $passkey->authenticator,
@@ -55,9 +53,6 @@ class SecurityController extends Controller
 
     /**
      * Update the user's password.
-     *
-     * @param  \App\Http\Requests\Settings\PasswordUpdateRequest  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(PasswordUpdateRequest $request): RedirectResponse
     {

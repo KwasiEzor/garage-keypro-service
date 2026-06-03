@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -26,7 +27,7 @@ class ServiceForm
                                 TextInput::make('name')
                                     ->required()
                                     ->live(onBlur: true)
-                                    ->afterStateUpdated(fn (string $operation, ?string $state, \Filament\Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state ?? '')) : null),
+                                    ->afterStateUpdated(fn (string $operation, ?string $state, Set $set) => $operation === 'create' ? $set('slug', Str::slug($state ?? '')) : null),
                                 TextInput::make('slug')
                                     ->required()
                                     ->unique('services', 'slug', ignoreRecord: true),

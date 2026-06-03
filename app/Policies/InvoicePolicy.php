@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\User;
 
@@ -49,7 +50,8 @@ class InvoicePolicy
      */
     public function update(User $user, Invoice $invoice): bool
     {
-        return $user->belongsToTeam($invoice->team);
+        return $user->belongsToTeam($invoice->team)
+            && $invoice->status->canBeEdited();
     }
 
     /**
@@ -74,5 +76,40 @@ class InvoicePolicy
     public function forceDelete(User $user, Invoice $invoice): bool
     {
         return false;
+    }
+
+    /**
+     * Determine whether the user can send the invoice.
+     */
+    public function send(User $user, Invoice $invoice): bool
+    {
+        return $user->belongsToTeam($invoice->team)
+            && $invoice->status->canBeSent();
+    }
+
+    /**
+     * Determine whether the user can mark the invoice as paid.
+     */
+    public function markAsPaid(User $user, Invoice $invoice): bool
+    {
+        return $user->belongsToTeam($invoice->team)
+            && in_array($invoice->status, [InvoiceStatus::Sent, InvoiceStatus::Draft]);
+    }
+
+    /**
+     * Determine whether the user can cancel the invoice.
+     */
+    public function cancel(User $user, Invoice $invoice): bool
+    {
+        return $user->belongsToTeam($invoice->team)
+            && $invoice->status->canBeCancelled();
+    }
+
+    /**
+     * Determine whether the user can download the invoice PDF.
+     */
+    public function download(User $user, Invoice $invoice): bool
+    {
+        return $this->view($user, $invoice);
     }
 }
