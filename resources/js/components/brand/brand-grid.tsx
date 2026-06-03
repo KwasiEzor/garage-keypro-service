@@ -1,5 +1,5 @@
 import { Icon } from '@/components/ui/icon';
-import { Brand } from '@/types/models';
+import type { Brand } from '@/types/models';
 
 interface BrandGridProps {
   brands: Brand[];

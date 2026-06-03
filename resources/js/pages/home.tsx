@@ -1,3 +1,4 @@
+import { Head, usePage, Deferred } from '@inertiajs/react';
 import { BrandGrid } from '@/components/brand/brand-grid';
 import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
@@ -5,7 +6,6 @@ import { ServiceCard } from '@/components/brand/service-card';
 import { CircularTestimonials } from '@/components/ui/circular-testimonials';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
-import { Head, usePage, Deferred } from '@inertiajs/react';
 import type { Service, Brand, Testimonial } from '@/types';
 
 interface HomeProps {

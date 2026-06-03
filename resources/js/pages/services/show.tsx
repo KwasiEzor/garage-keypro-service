@@ -1,8 +1,8 @@
+import { Head, usePage } from '@inertiajs/react';
 import { LeadForm } from '@/components/brand/lead-form';
 import { ServiceCard } from '@/components/brand/service-card';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
-import { Head, usePage } from '@inertiajs/react';
 
 import type { Service } from '@/types';
 

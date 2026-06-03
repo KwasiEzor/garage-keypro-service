@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Icon } from '@/components/ui/icon';
-import { Service } from '@/types/models';
+import type { Service } from '@/types/models';
 
 interface ServiceCardProps {
   service: Service;
