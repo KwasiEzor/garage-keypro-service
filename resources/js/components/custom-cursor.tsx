@@ -5,17 +5,18 @@ export default function CustomCursor() {
     const cursorDotRef = useRef<HTMLDivElement>(null);
     const cursorOutlineRef = useRef<HTMLDivElement>(null);
     const cursorTextRef = useRef<HTMLDivElement>(null);
-    const [isDesktop, setIsDesktop] = useState(false);
-    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    });
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+        if (typeof window === 'undefined') return false;
+        return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    });
 
     useEffect(() => {
-        // Only show on desktop with fine pointer (not touch devices)
         const hoverMediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-        setIsDesktop(hoverMediaQuery.matches);
-
-        // Check for reduced motion preference
         const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-        setPrefersReducedMotion(motionMediaQuery.matches);
 
         const hoverHandler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
         const motionHandler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);

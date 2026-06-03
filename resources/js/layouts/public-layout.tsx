@@ -1,6 +1,7 @@
 import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
 import { useState } from 'react';
+import BackgroundSpotlight from '@/components/background-spotlight';
 import { CookieConsent } from '@/components/cookie-consent';
 import { Icon } from '@/components/ui/icon';
 import {
@@ -39,7 +40,8 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground bg-grid-pattern">
+    <div className="min-h-screen flex flex-col bg-background text-foreground bg-grid-pattern relative overflow-hidden">
+      <BackgroundSpotlight />
       <Head>
         <title>{seoTitle}</title>
         <meta name="description" content={seoDescription} />
