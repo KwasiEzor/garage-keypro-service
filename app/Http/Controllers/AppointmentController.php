@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\AppointmentStatus;
 use App\Exceptions\SlotUnavailableException;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Models\Appointment;
@@ -30,6 +29,17 @@ class AppointmentController extends Controller
         return Inertia::render('appointments/index', [
             'services' => Service::where('is_active', true)->get(),
             'teams' => Team::all(),
+            'availableSlots' => Inertia::optional(function () {
+                if (request('date') && request('team_id') && request('service_id')) {
+                    $team = Team::find(request('team_id'));
+                    $service = Service::find(request('service_id'));
+                    $date = Carbon::parse(request('date'));
+
+                    return $this->appointmentService->getAvailableSlots($team, $date, $service);
+                }
+
+                return [];
+            }),
         ]);
     }
 
@@ -86,7 +96,7 @@ class AppointmentController extends Controller
                 ->description($appointment->notes ?? '')
                 ->address($team->name);
 
-            return redirect()->route('home')->with([
+            return redirect()->route('appointments.show', $appointment)->with([
                 'success' => 'Appointment confirmed! Check your email for details.',
                 'calendar_links' => [
                     'google' => $link->google(),
@@ -136,10 +146,10 @@ class AppointmentController extends Controller
     {
         $this->authorize('cancel', $appointment);
 
-        $appointment->update([
-            'status' => AppointmentStatus::Cancelled,
-            'cancellation_reason' => request('reason') ?? 'Cancelled by user',
-        ]);
+        $this->appointmentService->cancelAppointment(
+            $appointment,
+            request('reason') ?? 'Cancelled by user'
+        );
 
         return redirect()->route('appointments.my')
             ->with('success', 'Appointment cancelled successfully.');

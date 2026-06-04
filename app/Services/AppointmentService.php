@@ -7,11 +7,15 @@ use App\Exceptions\SlotUnavailableException;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
+use App\Models\TeamSettings;
 use App\Models\User;
+use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Zap\Facades\Zap;
+use Zap\Models\Schedule;
 
 class AppointmentService
 {
@@ -35,7 +39,17 @@ class AppointmentService
     public function createAppointment(Team $team, User $client, Service $service, CarbonInterface $startAt, ?string $notes = null): Appointment
     {
         return DB::transaction(function () use ($team, $client, $service, $startAt, $notes) {
+            $teamTz = new \DateTimeZone($team->timezone ?? 'Europe/Paris');
+            $startAt = Carbon::parse($startAt, $teamTz)->utc();
             $endAt = $startAt->copy()->addMinutes($service->estimated_duration);
+
+            $settings = $team->settings ?? new TeamSettings(['team_id' => $team->id]);
+
+            if ($startAt->lt(now()->addHours($settings->min_advance_booking_hours))) {
+                throw ValidationException::withMessages([
+                    'slot' => 'Must book at least '.$settings->min_advance_booking_hours.' hours in advance',
+                ]);
+            }
 
             // CRITICAL: Lock check - prevent double-booking
             $conflict = Appointment::where('team_id', $team->id)
@@ -81,6 +95,21 @@ class AppointmentService
                 ->save();
 
             return $appointment;
+        });
+    }
+
+    /**
+     * Cancel an appointment and clean up Zap schedules.
+     */
+    public function cancelAppointment(Appointment $appointment, string $reason): void
+    {
+        DB::transaction(function () use ($appointment, $reason) {
+            $appointment->update([
+                'status' => AppointmentStatus::Cancelled,
+                'cancellation_reason' => $reason,
+            ]);
+
+            Schedule::where('metadata->appointment_id', $appointment->id)->delete();
         });
     }
 

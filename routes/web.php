@@ -28,7 +28,7 @@ Route::post('/leads', [LeadController::class, 'store'])
 
 Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])->name('invoices.show');
 
-Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
 Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
 Route::post('/appointments', [AppointmentController::class, 'store'])->middleware('auth')->name('appointments.store');
 
