@@ -30,12 +30,15 @@ Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])->name('invoic
 
 Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
 Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
+Route::get('/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
 Route::post('/appointments', [AppointmentController::class, 'store'])->middleware('auth')->name('appointments.store');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/my-appointments', [AppointmentController::class, 'myAppointments'])->name('appointments.my');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    Route::get('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->name('appointments.reschedule');
+    Route::post('/appointments/{appointment}/reschedule', [AppointmentController::class, 'processReschedule'])->name('appointments.reschedule.process');
     Route::get('/appointments/{appointment}/calendar', [AppointmentController::class, 'downloadCalendar'])->name('appointments.calendar');
 });
 

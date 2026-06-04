@@ -68,6 +68,18 @@ class AppointmentPolicy
     }
 
     /**
+     * Determine whether the user can reschedule the appointment.
+     */
+    public function reschedule(User $user, Appointment $appointment): bool
+    {
+        // Same rules as cancel - owner can reschedule with 2h notice
+        return $user->id === $appointment->user_id
+            && $appointment->status->canBeCancelled()
+            && $appointment->start_at->isFuture()
+            && $appointment->start_at->isAfter(now()->addHours(2));
+    }
+
+    /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Appointment $appointment): bool

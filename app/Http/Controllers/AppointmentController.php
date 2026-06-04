@@ -10,13 +10,17 @@ use App\Models\Team;
 use App\Notifications\AppointmentConfirmation;
 use App\Services\AppointmentService;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\CalendarLinks\Link;
 
 class AppointmentController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         protected AppointmentService $appointmentService
     ) {}
@@ -62,6 +66,57 @@ class AppointmentController extends Controller
 
         return response()->json([
             'slots' => $slots,
+        ]);
+    }
+
+    /**
+     * Get monthly availability overview for a team and service.
+     * Returns slot counts per day to power calendar indicators.
+     */
+    public function availability(Request $request)
+    {
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'service_id' => 'required|exists:services,id',
+            'month' => 'required|date_format:Y-m',
+        ]);
+
+        $team = Team::findOrFail($request->team_id);
+        $service = Service::findOrFail($request->service_id);
+        $month = Carbon::parse($request->month.'-01');
+
+        // Cache key for this combination
+        $cacheKey = "availability:{$team->id}:{$service->id}:{$month->format('Y-m')}";
+
+        $availability = cache()->remember($cacheKey, now()->addMinutes(5), function () use ($team, $service, $month) {
+            $daysInMonth = $month->daysInMonth;
+            $result = [];
+            $today = Carbon::today();
+
+            for ($day = 1; $day <= $daysInMonth; $day++) {
+                $date = $month->copy()->day($day);
+
+                // Skip past dates
+                if ($date->lt($today)) {
+                    continue;
+                }
+
+                $slots = $this->appointmentService->getAvailableSlots($team, $date, $service);
+                $slotCount = count($slots);
+
+                if ($slotCount > 0) {
+                    $result[$date->format('Y-m-d')] = [
+                        'slots' => $slotCount,
+                        'first' => $slots[0]['start_time'] ?? null,
+                    ];
+                }
+            }
+
+            return $result;
+        });
+
+        return response()->json([
+            'availability' => $availability,
         ]);
     }
 
@@ -113,17 +168,16 @@ class AppointmentController extends Controller
     }
 
     /**
-     * Show user's appointments.
+     * Show user's appointments with tabs for upcoming, past, and cancelled.
      */
     public function myAppointments(): Response
     {
+        $user = auth()->user();
+
         return Inertia::render('appointments/my-appointments', [
-            'appointments' => auth()->user()->appointments()
-                ->with(['team', 'service'])
-                ->where('start_at', '>=', now())
-                ->whereNotIn('status', ['cancelled', 'no_show'])
-                ->orderBy('start_at')
-                ->get(),
+            'upcoming' => $user->appointments()->with(['team', 'service'])->upcoming()->get(),
+            'past' => $user->appointments()->with(['team', 'service'])->past()->get(),
+            'cancelled' => $user->appointments()->with(['team', 'service'])->cancelled()->get(),
         ]);
     }
 
@@ -153,6 +207,65 @@ class AppointmentController extends Controller
 
         return redirect()->route('appointments.my')
             ->with('success', 'Appointment cancelled successfully.');
+    }
+
+    /**
+     * Show reschedule page with wizard pre-filled.
+     */
+    public function reschedule(Appointment $appointment): Response
+    {
+        $this->authorize('reschedule', $appointment);
+
+        return Inertia::render('appointments/index', [
+            'services' => Service::where('is_active', true)->get(),
+            'teams' => Team::all(),
+            'rescheduleAppointment' => $appointment->load(['team', 'service']),
+        ]);
+    }
+
+    /**
+     * Process appointment reschedule.
+     */
+    public function processReschedule(Appointment $appointment, StoreAppointmentRequest $request)
+    {
+        $this->authorize('reschedule', $appointment);
+
+        $validated = $request->validated();
+
+        $team = Team::findOrFail($validated['team_id']);
+        $service = Service::findOrFail($validated['service_id']);
+        $startAt = Carbon::parse($validated['date'].' '.$validated['slot']);
+
+        try {
+            DB::transaction(function () use ($appointment, $team, $service, $startAt, $validated) {
+                // Cancel old appointment
+                $this->appointmentService->cancelAppointment(
+                    $appointment,
+                    'Rescheduled to new time'
+                );
+
+                // Create new appointment
+                $newAppointment = $this->appointmentService->createAppointment(
+                    $team,
+                    auth()->user(),
+                    $service,
+                    $startAt,
+                    $validated['notes'] ?? null
+                );
+
+                // Send confirmation email
+                auth()->user()->notify(new AppointmentConfirmation($newAppointment));
+
+                return $newAppointment;
+            });
+
+            return redirect()->route('appointments.my')
+                ->with('success', 'Appointment rescheduled successfully.');
+        } catch (SlotUnavailableException $e) {
+            return back()
+                ->withInput()
+                ->withErrors(['slot' => 'This time slot is no longer available. Please choose another.']);
+        }
     }
 
     /**

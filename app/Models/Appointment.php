@@ -77,6 +77,38 @@ class Appointment extends Model
     }
 
     /**
+     * Scope for upcoming appointments (future, not cancelled/no-show).
+     */
+    public function scopeUpcoming($query)
+    {
+        return $query->where('start_at', '>=', now())
+            ->whereNotIn('status', [AppointmentStatus::Cancelled->value, AppointmentStatus::NoShow->value])
+            ->orderBy('start_at');
+    }
+
+    /**
+     * Scope for past appointments (completed or in the past).
+     */
+    public function scopePast($query)
+    {
+        return $query->where(function ($q) {
+            $q->where('start_at', '<', now())
+                ->orWhere('status', AppointmentStatus::Completed->value);
+        })
+            ->whereNotIn('status', [AppointmentStatus::Cancelled->value, AppointmentStatus::NoShow->value])
+            ->orderBy('start_at', 'desc');
+    }
+
+    /**
+     * Scope for cancelled appointments.
+     */
+    public function scopeCancelled($query)
+    {
+        return $query->whereIn('status', [AppointmentStatus::Cancelled->value, AppointmentStatus::NoShow->value])
+            ->orderBy('start_at', 'desc');
+    }
+
+    /**
      * Get the attributes that should be cast.
      */
     protected function casts(): array
