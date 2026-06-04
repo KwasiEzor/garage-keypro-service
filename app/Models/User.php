@@ -108,6 +108,14 @@ class User extends Authenticatable implements FilamentUser, PasskeyUser
     }
 
     /**
+     * Get the appointments for the user.
+     */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

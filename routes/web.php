@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\InvoiceController;
@@ -26,6 +27,17 @@ Route::post('/leads', [LeadController::class, 'store'])
     ->name('leads.store');
 
 Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])->name('invoices.show');
+
+Route::get('/appointments', [AppointmentController::class, 'index'])->name('appointments.index');
+Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
+Route::post('/appointments', [AppointmentController::class, 'store'])->middleware('auth')->name('appointments.store');
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/my-appointments', [AppointmentController::class, 'myAppointments'])->name('appointments.my');
+    Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
+    Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
+    Route::get('/appointments/{appointment}/calendar', [AppointmentController::class, 'downloadCalendar'])->name('appointments.calendar');
+});
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
