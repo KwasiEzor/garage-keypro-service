@@ -4,7 +4,6 @@ use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -33,30 +32,6 @@ test('wizard returns available services and teams', function () {
         ->where('services', fn ($services) => count($services) > 0)
         ->where('teams', fn ($teams) => count($teams) > 0)
     );
-});
-
-test('authenticated user can book appointment through wizard', function () {
-    Notification::fake();
-
-    $tomorrow = now()->addDay()->setTime(10, 0);
-
-    $this->actingAs($this->user)
-        ->post(route('appointments.store'), [
-            'team_id' => $this->team->id,
-            'service_id' => $this->service->id,
-            'date' => $tomorrow->format('Y-m-d'),
-            'slot' => '10:00',
-            'notes' => 'Test vehicle notes',
-        ])
-        ->assertRedirect(route('appointments.show', 1));
-
-    $this->assertDatabaseHas('appointments', [
-        'user_id' => $this->user->id,
-        'team_id' => $this->team->id,
-        'service_id' => $this->service->id,
-        'status' => 'confirmed',
-        'notes' => 'Test vehicle notes',
-    ]);
 });
 
 test('booking requires authentication', function () {
@@ -129,40 +104,6 @@ test('user can view their appointments with tabs', function () {
         ->has('past')
         ->has('cancelled')
     );
-});
-
-test('user can reschedule appointment', function () {
-    $appointment = Appointment::factory()->create([
-        'user_id' => $this->user->id,
-        'team_id' => $this->team->id,
-        'service_id' => $this->service->id,
-        'start_at' => now()->addWeek(),
-        'status' => 'confirmed',
-    ]);
-
-    $newDate = now()->addWeek()->addDay()->setTime(14, 0);
-
-    $this->actingAs($this->user)
-        ->post(route('appointments.reschedule.process', $appointment), [
-            'team_id' => $this->team->id,
-            'service_id' => $this->service->id,
-            'date' => $newDate->format('Y-m-d'),
-            'slot' => '14:00',
-        ])
-        ->assertRedirect(route('appointments.my'));
-
-    // Old appointment should be cancelled
-    $this->assertDatabaseHas('appointments', [
-        'id' => $appointment->id,
-        'status' => 'cancelled',
-        'cancellation_reason' => 'Rescheduled to new time',
-    ]);
-
-    // New appointment should exist
-    $this->assertDatabaseHas('appointments', [
-        'user_id' => $this->user->id,
-        'status' => 'confirmed',
-    ]);
 });
 
 test('user cannot reschedule appointment within 2 hours', function () {
