@@ -1,14 +1,14 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { 
-    CalendarIcon, 
-    MapPinIcon, 
-    XIcon, 
-    DownloadIcon, 
-    ArrowLeftIcon, 
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    CalendarIcon,
+    MapPinIcon,
+    XIcon,
+    DownloadIcon,
+    ArrowLeftIcon,
     UserIcon,
     ShieldCheckIcon,
     ClockIcon,
-    KeyRoundIcon,
     WrenchIcon,
     ChevronRightIcon,
     FileTextIcon,
@@ -17,11 +17,9 @@ import {
     ExternalLinkIcon,
     InfoIcon,
     AlertCircleIcon,
-    CheckCircle2Icon
+    CheckCircle2Icon,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -53,6 +51,13 @@ interface Appointment {
     end_at: string;
     status: 'confirmed' | 'pending' | 'completed' | 'cancelled';
     notes: string | null;
+    vehicle_make: string | null;
+    vehicle_model: string | null;
+    vehicle_year: string | null;
+    vehicle_vin: string | null;
+    vehicle_license_plate: string | null;
+    vehicle_color: string | null;
+    vehicle_notes: string | null;
     service: Service;
     team: Team;
     user: User;
@@ -65,28 +70,84 @@ interface Props {
 }
 
 const statusSteps = [
-    { key: 'pending', label: 'En attente', icon: ClockIcon, description: 'Analyse technique' },
-    { key: 'confirmed', label: 'Confirmé', icon: ShieldCheckIcon, description: 'Protocole activé' },
-    { key: 'completed', label: 'Terminé', icon: CheckCircle2Icon, description: 'Succès total' },
+    {
+        key: 'pending',
+        label: 'En attente',
+        icon: ClockIcon,
+        description: 'Analyse technique',
+    },
+    {
+        key: 'confirmed',
+        label: 'Confirmé',
+        icon: ShieldCheckIcon,
+        description: 'Protocole activé',
+    },
+    {
+        key: 'completed',
+        label: 'Terminé',
+        icon: CheckCircle2Icon,
+        description: 'Succès total',
+    },
 ];
 
 export default function AppointmentShow({ appointment }: Props) {
     const handleCancel = () => {
-        if (confirm('Voulez-vous vraiment interrompre ce protocole d\'intervention ?')) {
+        if (
+            confirm(
+                "Voulez-vous vraiment interrompre ce protocole d'intervention ?",
+            )
+        ) {
             router.delete(appointments.cancel(appointment.id).url, {
-                onSuccess: () => toast.success('Protocole interrompu avec succès.'),
+                onSuccess: () =>
+                    toast.success('Protocole interrompu avec succès.'),
             });
         }
     };
 
     const getStatusInfo = (status: string) => {
         switch (status) {
-            case 'confirmed': return { label: 'Protocole Confirmé', color: 'bg-green-500', text: 'text-green-500', icon: ShieldCheckIcon };
-            case 'pending': return { label: 'Analyse Technique', color: 'bg-yellow-500', text: 'text-yellow-500', icon: ClockIcon };
-            case 'completed': return { label: 'Opération Terminée', color: 'bg-blue-500', text: 'text-blue-500', icon: CheckCircle2Icon };
-            case 'cancelled': return { label: 'Protocole Interrompu', color: 'bg-racing-red', text: 'text-racing-red', icon: XIcon };
-            case 'no_show': return { label: 'Client Absent', color: 'bg-gray-500', text: 'text-gray-500', icon: AlertCircleIcon };
-            default: return { label: status, color: 'bg-gray-500', text: 'text-gray-500', icon: InfoIcon };
+            case 'confirmed':
+                return {
+                    label: 'Protocole Confirmé',
+                    color: 'bg-green-500',
+                    text: 'text-green-500',
+                    icon: ShieldCheckIcon,
+                };
+            case 'pending':
+                return {
+                    label: 'Analyse Technique',
+                    color: 'bg-yellow-500',
+                    text: 'text-yellow-500',
+                    icon: ClockIcon,
+                };
+            case 'completed':
+                return {
+                    label: 'Opération Terminée',
+                    color: 'bg-blue-500',
+                    text: 'text-blue-500',
+                    icon: CheckCircle2Icon,
+                };
+            case 'cancelled':
+                return {
+                    label: 'Protocole Interrompu',
+                    color: 'bg-racing-red',
+                    text: 'text-racing-red',
+                    icon: XIcon,
+                };
+            case 'no_show':
+                return {
+                    label: 'Client Absent',
+                    color: 'bg-gray-500',
+                    text: 'text-gray-500',
+                    icon: AlertCircleIcon,
+                };
+            default:
+                return {
+                    label: status,
+                    color: 'bg-gray-500',
+                    text: 'text-gray-500',
+                    icon: InfoIcon,
+                };
         }
     };
 
@@ -100,101 +161,152 @@ export default function AppointmentShow({ appointment }: Props) {
             opacity: 1,
             transition: {
                 staggerChildren: 0.1,
-                delayChildren: 0.2
-            }
-        }
+                delayChildren: 0.2,
+            },
+        },
     };
 
     const itemVariants = {
         hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+        },
     };
 
     return (
         <PublicLayout>
-            <Head title={`Protocole #${appointment.id} - ${appointment.service.name}`} />
-            
-            <div className="relative min-h-screen pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <Head
+                title={`Protocole #${appointment.id} - ${appointment.service.name}`}
+            />
+
+            <div className="relative mx-auto min-h-screen max-w-7xl px-4 pt-32 pb-24 sm:px-6 lg:px-8">
                 {/* Visual Accent */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-racing-red/5 blur-[150px] rounded-full pointer-events-none -mr-96 -mt-96 animate-pulse" />
-                
-                <motion.div 
+                <div className="pointer-events-none absolute top-0 right-0 -mt-96 -mr-96 h-[800px] w-[800px] animate-pulse rounded-full bg-racing-red/5 blur-[150px]" />
+
+                <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-12"
+                    className="mb-16 flex flex-col justify-between gap-8 border-b border-white/5 pb-12 md:flex-row md:items-end"
                 >
                     <div className="space-y-6">
-                        <Link 
-                            href={appointments.my().url} 
-                            className="inline-flex items-center text-[10px] font-heading font-bold uppercase tracking-[0.4em] text-muted-foreground hover:text-racing-red transition-all group"
+                        <Link
+                            href={appointments.my().url}
+                            className="group inline-flex items-center font-heading text-[10px] font-bold tracking-wider text-white/70 uppercase transition-all hover:text-racing-red"
                         >
-                            <ArrowLeftIcon className="h-3.5 w-3.5 mr-3 transition-transform group-hover:-translate-x-1" />
+                            <ArrowLeftIcon className="mr-3 h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
                             Accès Console
                         </Link>
                         <div className="space-y-2">
-                            <h1 className="text-5xl md:text-7xl font-heading font-bold uppercase tracking-tighter text-chrome leading-none">
-                                Mission <span className="text-racing-red">#{appointment.id}</span>
+                            <h1 className="font-heading text-5xl leading-none font-bold tracking-tighter text-chrome uppercase md:text-7xl">
+                                Mission{' '}
+                                <span className="text-racing-red">
+                                    #{appointment.id}
+                                </span>
                             </h1>
-                            <p className="text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-muted-foreground flex items-center gap-3">
-                                <span className="w-12 h-[1px] bg-racing-red" />
+                            <p className="flex items-center gap-3 font-heading text-xs font-bold tracking-wider text-white/70 uppercase">
+                                <span className="h-[1px] w-12 bg-racing-red" />
                                 {appointment.service.name}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-start md:items-end gap-4">
+                    <div className="flex flex-col items-start gap-4 md:items-end">
                         <div className="flex items-center gap-3">
-                            <div className={`w-2 h-2 rounded-full ${statusInfo.color} animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]`} />
-                            <span className={`text-[12px] font-heading font-bold uppercase tracking-[0.2em] ${statusInfo.text}`}>
+                            <div
+                                className={`h-2 w-2 rounded-full ${statusInfo.color} animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]`}
+                            />
+                            <span
+                                className={`font-heading text-[12px] font-bold tracking-[0.2em] uppercase ${statusInfo.text}`}
+                            >
                                 {statusInfo.label}
                             </span>
                         </div>
-                        <div className="bg-luxury-charcoal border border-white/5 px-6 py-3 flex items-center gap-4">
-                            <span className="text-[9px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground">Auth Token</span>
-                            <span className="text-[11px] font-mono font-bold text-white tracking-widest">
-                                KP-{appointment.id.toString().padStart(6, '0')}-{new Date(appointment.created_at || '').getTime().toString().slice(-4)}
+                        <div className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal px-6 py-3">
+                            <span className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                Auth Token
+                            </span>
+                            <span className="font-mono text-[11px] font-bold tracking-widest text-white">
+                                KP-{appointment.id.toString().padStart(6, '0')}-
+                                {new Date(appointment.created_at || '')
+                                    .getTime()
+                                    .toString()
+                                    .slice(-4)}
                             </span>
                         </div>
                     </div>
                 </motion.div>
 
                 {/* Main Dashboard Grid */}
-                <motion.div 
+                <motion.div
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-10"
+                    className="grid grid-cols-1 gap-6 lg:grid-cols-12"
                 >
                     {/* Left Column: Mission Details */}
-                    <div className="lg:col-span-8 space-y-10">
+                    <div className="space-y-6 lg:col-span-8">
                         {/* Timeline Status */}
-                        <motion.div variants={itemVariants} className="bg-luxury-black/40 border border-white/5 p-10 glass-panel relative overflow-hidden">
-                            <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-[0.03] pointer-events-none" />
-                            <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <motion.div
+                            variants={itemVariants}
+                            className="glass-panel relative overflow-hidden border border-white/5 bg-luxury-black/40 p-6"
+                        >
+                            <div className="bg-grid-pattern pointer-events-none absolute top-0 left-0 h-full w-full opacity-[0.03]" />
+                            <div className="relative grid grid-cols-1 gap-12 md:grid-cols-3">
                                 {statusSteps.map((step, index) => {
-                                    const isPast = ['pending', 'confirmed', 'completed', 'cancelled'].indexOf(appointment.status) >= ['pending', 'confirmed', 'completed'].indexOf(step.key);
-                                    const isActive = appointment.status === step.key;
-                                    const isCancelled = appointment.status === 'cancelled' && index === 1;
+                                    const isPast =
+                                        [
+                                            'pending',
+                                            'confirmed',
+                                            'completed',
+                                            'cancelled',
+                                        ].indexOf(appointment.status) >=
+                                        [
+                                            'pending',
+                                            'confirmed',
+                                            'completed',
+                                        ].indexOf(step.key);
+                                    const isActive =
+                                        appointment.status === step.key;
+                                    const isCancelled =
+                                        appointment.status === 'cancelled' &&
+                                        index === 1;
 
                                     return (
-                                        <div key={step.key} className="relative flex flex-col items-center md:items-start text-center md:text-left gap-4 group">
-                                            <div className={`w-14 h-14 flex items-center justify-center transition-all duration-700 ${
-                                                isCancelled ? 'bg-racing-red text-white' : 
-                                                isActive ? 'bg-racing-red text-white shadow-[0_0_30px_rgba(239,68,68,0.3)] scale-110' : 
-                                                isPast ? 'bg-white text-luxury-black' : 'bg-white/5 text-muted-foreground border border-white/10'
-                                            }`}>
+                                        <div
+                                            key={step.key}
+                                            className="group relative flex flex-col items-center gap-4 text-center md:items-start md:text-left"
+                                        >
+                                            <div
+                                                className={`flex h-14 w-14 items-center justify-center transition-all duration-700 ${
+                                                    isCancelled
+                                                        ? 'bg-racing-red text-white'
+                                                        : isActive
+                                                          ? 'scale-110 bg-racing-red text-white shadow-[0_0_30px_rgba(239,68,68,0.3)]'
+                                                          : isPast
+                                                            ? 'bg-white text-luxury-black'
+                                                            : 'border border-white/10 bg-white/5 text-muted-foreground'
+                                                }`}
+                                            >
                                                 <step.icon className="h-6 w-6" />
                                             </div>
                                             <div className="space-y-1">
-                                                <p className={`text-[10px] font-heading font-bold uppercase tracking-[0.2em] ${isActive || isCancelled ? 'text-white' : 'text-muted-foreground'}`}>
+                                                <p
+                                                    className={`font-heading text-[10px] font-bold tracking-wide uppercase ${isActive || isCancelled ? 'text-white' : 'text-white/70'}`}
+                                                >
                                                     {step.label}
                                                 </p>
-                                                <p className="text-[9px] font-medium text-muted-foreground/60 uppercase tracking-widest">{step.description}</p>
+                                                <p className="text-[9px] font-medium tracking-wide text-white/60 uppercase">
+                                                    {step.description}
+                                                </p>
                                             </div>
-                                            
+
                                             {index < statusSteps.length - 1 && (
-                                                <div className="hidden md:block absolute top-7 left-14 w-full h-[1px] bg-white/5 -z-10">
-                                                    <div className={`h-full bg-racing-red/50 transition-all duration-1000 origin-left ${isPast && !isActive ? 'w-full' : 'w-0'}`} />
+                                                <div className="absolute top-7 left-14 -z-10 hidden h-[1px] w-full bg-white/5 md:block">
+                                                    <div
+                                                        className={`h-full origin-left bg-racing-red/50 transition-all duration-1000 ${isPast && !isActive ? 'w-full' : 'w-0'}`}
+                                                    />
                                                 </div>
                                             )}
                                         </div>
@@ -205,55 +317,106 @@ export default function AppointmentShow({ appointment }: Props) {
 
                         {/* Mission Specs Card */}
                         <motion.div variants={itemVariants}>
-                            <Card className="bg-luxury-charcoal border-white/5 overflow-hidden glass-panel group border-l-4 border-l-racing-red">
+                            <Card className="glass-panel group overflow-hidden border-l-4 border-white/5 border-l-racing-red bg-luxury-charcoal">
                                 <CardContent className="p-0">
                                     <div className="grid grid-cols-1 md:grid-cols-2">
-                                        <div className="p-10 space-y-8 border-r border-white/5">
+                                        <div className="space-y-6 border-r border-white/5 p-6">
                                             <div className="space-y-2">
-                                                <h3 className="text-[10px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red flex items-center gap-2">
-                                                    <WrenchIcon className="h-3 w-3" /> Paramètres d'Intervention
+                                                <h3 className="flex items-center gap-2 font-heading text-xs font-bold tracking-wider text-racing-red uppercase">
+                                                    <WrenchIcon className="h-3 w-3" />{' '}
+                                                    Paramètres d'Intervention
                                                 </h3>
-                                                <p className="text-2xl font-heading font-bold text-white uppercase tracking-wider">{appointment.service.name}</p>
+                                                <p className="font-heading text-2xl font-bold tracking-wider text-white uppercase">
+                                                    {appointment.service.name}
+                                                </p>
                                             </div>
-                                            
+
                                             <div className="grid grid-cols-1 gap-6">
-                                                <div className="flex items-start gap-4 p-4 bg-luxury-black/50 border border-white/5">
-                                                    <CalendarIcon className="h-5 w-5 text-racing-red mt-1" />
+                                                <div className="flex items-start gap-4 border border-white/5 bg-luxury-black/50 p-4">
+                                                    <CalendarIcon className="mt-1 h-5 w-5 text-racing-red" />
                                                     <div>
-                                                        <p className="text-[9px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground mb-1">Date d'Opération</p>
-                                                        <p className="text-sm font-bold text-white uppercase">{date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                                        <p className="mb-1 font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                            Date d'Opération
+                                                        </p>
+                                                        <p className="text-sm font-bold text-white uppercase">
+                                                            {date.toLocaleDateString(
+                                                                'fr-FR',
+                                                                {
+                                                                    weekday:
+                                                                        'long',
+                                                                    day: 'numeric',
+                                                                    month: 'long',
+                                                                    year: 'numeric',
+                                                                },
+                                                            )}
+                                                        </p>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-start gap-4 p-4 bg-luxury-black/50 border border-white/5">
-                                                    <ClockIcon className="h-5 w-5 text-racing-red mt-1" />
+                                                <div className="flex items-start gap-4 border border-white/5 bg-luxury-black/50 p-4">
+                                                    <ClockIcon className="mt-1 h-5 w-5 text-racing-red" />
                                                     <div>
-                                                        <p className="text-[9px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground mb-1">Fenêtre Temporelle</p>
+                                                        <p className="mb-1 font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                            Fenêtre Temporelle
+                                                        </p>
                                                         <p className="text-sm font-bold text-white uppercase">
-                                                            {date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} - {endDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                                                            {date.toLocaleTimeString(
+                                                                'fr-FR',
+                                                                {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                },
+                                                            )}{' '}
+                                                            -{' '}
+                                                            {endDate.toLocaleTimeString(
+                                                                'fr-FR',
+                                                                {
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                },
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="p-10 space-y-8 bg-luxury-black/30">
+                                        <div className="space-y-6 bg-luxury-black/30 p-6">
                                             <div className="space-y-6">
                                                 <div className="space-y-2">
-                                                    <h3 className="text-[10px] font-heading font-bold uppercase tracking-[0.4em] text-muted-foreground">Localisation</h3>
+                                                    <h3 className="font-heading text-xs font-bold tracking-wider text-white/80 uppercase">
+                                                        Localisation
+                                                    </h3>
                                                     <div className="flex items-center gap-3">
                                                         <MapPinIcon className="h-5 w-5 text-racing-red" />
-                                                        <p className="text-lg font-bold text-white uppercase tracking-wider">{appointment.team.name}</p>
+                                                        <p className="text-lg font-bold tracking-wider text-white uppercase">
+                                                            {
+                                                                appointment.team
+                                                                    .name
+                                                            }
+                                                        </p>
                                                     </div>
-                                                    <p className="text-[10px] text-muted-foreground/60 uppercase tracking-widest pl-8">Garage Partenaire Certifié KeyPro</p>
+                                                    <p className="pl-8 text-[10px] tracking-wide text-white/60 uppercase">
+                                                        Garage Partenaire
+                                                        Certifié KeyPro
+                                                    </p>
                                                 </div>
 
                                                 <Separator className="bg-white/5" />
 
                                                 <div className="space-y-2">
-                                                    <h3 className="text-[10px] font-heading font-bold uppercase tracking-[0.4em] text-muted-foreground">Durée de Mission</h3>
+                                                    <h3 className="font-heading text-xs font-bold tracking-wider text-white/80 uppercase">
+                                                        Durée de Mission
+                                                    </h3>
                                                     <div className="flex items-center gap-3">
                                                         <ClockIcon className="h-5 w-5 text-racing-red" />
-                                                        <p className="text-lg font-bold text-white uppercase tracking-wider">{appointment.service.estimated_duration} Minutes</p>
+                                                        <p className="text-lg font-bold tracking-wider text-white uppercase">
+                                                            {
+                                                                appointment
+                                                                    .service
+                                                                    .estimated_duration
+                                                            }{' '}
+                                                            Minutes
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -263,24 +426,112 @@ export default function AppointmentShow({ appointment }: Props) {
                             </Card>
                         </motion.div>
 
-                        {/* Technical Log */}
-                        {appointment.notes && (
-                            <motion.div variants={itemVariants} className="space-y-6">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="flex items-center gap-3 text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-white">
-                                        <FileTextIcon className="h-4 w-4 text-racing-red" />
-                                        Spécifications Véhicule
-                                    </h4>
-                                    <Badge variant="outline" className="border-racing-red/20 text-racing-red text-[8px] uppercase tracking-[0.3em] font-bold">Secret Technique</Badge>
-                                </div>
-                                <div className="bg-luxury-black border border-white/5 p-10 relative group overflow-hidden">
-                                    <div className="absolute top-0 right-0 p-4 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity">
-                                        <KeyRoundIcon className="h-32 w-32" />
+                        {/* Vehicle Specifications */}
+                        {(appointment.vehicle_make ||
+                            appointment.vehicle_model) && (
+                            <motion.div
+                                variants={itemVariants}
+                                className="space-y-4"
+                            >
+                                <h4 className="flex items-center gap-3 border-b border-white/10 pb-3 font-heading text-sm font-bold tracking-wider text-white uppercase">
+                                    <WrenchIcon className="h-5 w-5 text-racing-red" />
+                                    Spécifications Véhicule
+                                </h4>
+                                <div className="group relative overflow-hidden border border-white/5 bg-luxury-black p-6">
+                                    <div className="absolute top-0 right-0 -mt-16 -mr-16 h-32 w-32 rounded-full bg-racing-red/5 opacity-50" />
+                                    <div className="relative z-10 grid grid-cols-2 gap-x-6 gap-y-4">
+                                        {appointment.vehicle_make && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Marque
+                                                </p>
+                                                <p className="text-base font-medium text-white">
+                                                    {appointment.vehicle_make}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {appointment.vehicle_model && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Modèle
+                                                </p>
+                                                <p className="text-base font-medium text-white">
+                                                    {appointment.vehicle_model}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {appointment.vehicle_year && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Année
+                                                </p>
+                                                <p className="text-base font-medium text-white">
+                                                    {appointment.vehicle_year}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {appointment.vehicle_color && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Couleur
+                                                </p>
+                                                <p className="text-base font-medium text-white">
+                                                    {appointment.vehicle_color}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {appointment.vehicle_license_plate && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Plaque
+                                                </p>
+                                                <p className="font-mono text-base font-bold tracking-wider text-white">
+                                                    {
+                                                        appointment.vehicle_license_plate
+                                                    }
+                                                </p>
+                                            </div>
+                                        )}
+                                        {appointment.vehicle_vin && (
+                                            <div className="space-y-1">
+                                                <p className="font-heading text-[10px] font-bold tracking-wide text-white/70 uppercase">
+                                                    VIN
+                                                </p>
+                                                <p className="font-mono text-xs font-medium tracking-wide text-white/80">
+                                                    {appointment.vehicle_vin}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="relative z-10">
-                                        <div className="font-mono text-sm text-white/70 leading-relaxed whitespace-pre-wrap border-l-4 border-racing-red pl-8 py-4 bg-white/[0.02]">
-                                            {appointment.notes}
+                                    {appointment.vehicle_notes && (
+                                        <div className="mt-4 border-t border-white/10 pt-4">
+                                            <p className="mb-2 font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                                                Notes
+                                            </p>
+                                            <p className="text-sm leading-relaxed text-white/70">
+                                                {appointment.vehicle_notes}
+                                            </p>
                                         </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* Service Notes */}
+                        {appointment.notes && (
+                            <motion.div
+                                variants={itemVariants}
+                                className="space-y-4"
+                            >
+                                <h4 className="flex items-center gap-3 border-b border-white/10 pb-3 font-heading text-sm font-bold tracking-wider text-white uppercase">
+                                    <FileTextIcon className="h-5 w-5 text-racing-red" />
+                                    Notes de Service
+                                </h4>
+                                <div className="group relative overflow-hidden border border-white/5 bg-luxury-black p-6">
+                                    <div className="relative z-10">
+                                        <p className="text-sm leading-relaxed text-white/80">
+                                            {appointment.notes}
+                                        </p>
                                     </div>
                                 </div>
                             </motion.div>
@@ -288,78 +539,110 @@ export default function AppointmentShow({ appointment }: Props) {
 
                         {/* Incident Report */}
                         <AnimatePresence>
-                            {appointment.status === 'cancelled' && appointment.cancellation_reason && (
-                                <motion.div 
-                                    initial={{ opacity: 0, height: 0 }}
-                                    animate={{ opacity: 1, height: 'auto' }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="space-y-6"
-                                >
-                                    <h4 className="flex items-center gap-3 text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-racing-red">
-                                        <AlertCircleIcon className="h-4 w-4" /> 
-                                        Rapport d'Interruption
-                                    </h4>
-                                    <div className="bg-red-900/5 border border-red-900/20 p-10 relative overflow-hidden group">
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-red-600/50" />
-                                        <p className="text-[10px] font-heading font-bold uppercase tracking-[0.3em] text-red-600 mb-4">Motif de l'arrêt du protocole</p>
-                                        <p className="text-white/80 text-sm leading-relaxed font-medium italic">"{appointment.cancellation_reason}"</p>
-                                    </div>
-                                </motion.div>
-                            )}
+                            {appointment.status === 'cancelled' &&
+                                appointment.cancellation_reason && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="space-y-6"
+                                    >
+                                        <h4 className="flex items-center gap-3 font-heading text-[11px] font-bold tracking-[0.5em] text-racing-red uppercase">
+                                            <AlertCircleIcon className="h-4 w-4" />
+                                            Rapport d'Interruption
+                                        </h4>
+                                        <div className="group relative overflow-hidden border border-red-900/20 bg-red-900/5 p-10">
+                                            <div className="absolute top-0 left-0 h-full w-1 bg-red-600/50" />
+                                            <p className="mb-4 font-heading text-[10px] font-bold tracking-[0.3em] text-red-600 uppercase">
+                                                Motif de l'arrêt du protocole
+                                            </p>
+                                            <p className="text-sm leading-relaxed font-medium text-white/80 italic">
+                                                "
+                                                {
+                                                    appointment.cancellation_reason
+                                                }
+                                                "
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                )}
                         </AnimatePresence>
                     </div>
 
                     {/* Right Column: Profile & Actions */}
-                    <div className="lg:col-span-4 space-y-10">
+                    <div className="space-y-6 lg:col-span-4">
                         {/* Client Card */}
                         <motion.div variants={itemVariants}>
-                            <div className="bg-luxury-charcoal border border-white/5 glass-panel relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-racing-red/5 rounded-full -mr-24 -mt-24 group-hover:scale-125 transition-transform duration-1000" />
-                                <div className="p-10 space-y-8">
+                            <div className="glass-panel group relative overflow-hidden border border-white/5 bg-luxury-charcoal">
+                                <div className="absolute top-0 right-0 -mt-24 -mr-24 h-48 w-48 rounded-full bg-racing-red/5 transition-transform duration-1000 group-hover:scale-125" />
+                                <div className="space-y-6 p-6">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="text-[10px] font-heading font-bold uppercase tracking-[0.4em] text-muted-foreground">Passport Client</h4>
+                                        <h4 className="font-heading text-xs font-bold tracking-wider text-white/80 uppercase">
+                                            Passport Client
+                                        </h4>
                                         <UserIcon className="h-3.5 w-3.5 text-racing-red" />
                                     </div>
-                                    
-                                    <div className="flex flex-col items-center text-center space-y-4">
-                                        <div className="w-24 h-24 bg-white relative group">
-                                            <div className="absolute inset-0 bg-racing-red/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                            <span className="absolute inset-0 flex items-center justify-center text-luxury-black text-4xl font-heading font-bold">
-                                                {appointment.user.name.charAt(0)}
+
+                                    <div className="flex flex-col items-center space-y-4 text-center">
+                                        <div className="group relative h-24 w-24 bg-white">
+                                            <div className="absolute inset-0 bg-racing-red/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                                            <span className="absolute inset-0 flex items-center justify-center font-heading text-4xl font-bold text-luxury-black">
+                                                {appointment.user.name.charAt(
+                                                    0,
+                                                )}
                                             </span>
                                         </div>
                                         <div>
-                                            <p className="text-xl font-heading font-bold text-white uppercase tracking-wider leading-tight">{appointment.user.name}</p>
-                                            <p className="text-[9px] font-bold text-racing-red uppercase tracking-[0.4em] mt-2">Accréditation Elite</p>
+                                            <p className="font-heading text-xl leading-tight font-bold tracking-wider text-white uppercase">
+                                                {appointment.user.name}
+                                            </p>
+                                            <p className="mt-2 text-[9px] font-bold tracking-[0.4em] text-racing-red uppercase">
+                                                Accréditation Elite
+                                            </p>
                                         </div>
                                     </div>
 
                                     <div className="space-y-5 pt-4">
-                                        <div className="flex items-center gap-4 text-sm group/item cursor-pointer">
-                                            <div className="w-10 h-10 border border-white/5 flex items-center justify-center group-hover/item:border-racing-red transition-colors">
+                                        <div className="group/item flex cursor-pointer items-center gap-4 text-sm">
+                                            <div className="flex h-10 w-10 items-center justify-center border border-white/5 transition-colors group-hover/item:border-racing-red">
                                                 <MailIcon className="h-4 w-4 text-racing-red" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-[8px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground">Email</span>
-                                                <span className="text-white font-medium">{appointment.user.email}</span>
+                                                <span className="font-heading text-[9px] font-bold tracking-wide text-white/70 uppercase">
+                                                    Email
+                                                </span>
+                                                <span className="font-medium text-white">
+                                                    {appointment.user.email}
+                                                </span>
                                             </div>
                                         </div>
                                         {appointment.user.phone && (
-                                            <div className="flex items-center gap-4 text-sm group/item cursor-pointer">
-                                                <div className="w-10 h-10 border border-white/5 flex items-center justify-center group-hover/item:border-racing-red transition-colors">
+                                            <div className="group/item flex cursor-pointer items-center gap-4 text-sm">
+                                                <div className="flex h-10 w-10 items-center justify-center border border-white/5 transition-colors group-hover/item:border-racing-red">
                                                     <PhoneIcon className="h-4 w-4 text-racing-red" />
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="text-[8px] font-heading font-bold uppercase tracking-[0.3em] text-muted-foreground">Communication</span>
-                                                    <span className="text-white font-medium">{appointment.user.phone}</span>
+                                                    <span className="font-heading text-[9px] font-bold tracking-wide text-white/70 uppercase">
+                                                        Communication
+                                                    </span>
+                                                    <span className="font-medium text-white">
+                                                        {appointment.user.phone}
+                                                    </span>
                                                 </div>
                                             </div>
                                         )}
                                     </div>
 
-                                    <Link href="/settings/profile" className="block w-full">
-                                        <Button variant="outline" className="w-full rounded-none border-white/10 hover:border-racing-red hover:bg-racing-red/5 text-[10px] font-bold uppercase tracking-[0.3em] h-14 transition-all group">
-                                            Dossier Client <ChevronRightIcon className="h-3 w-3 ml-2 group-hover:translate-x-1 transition-transform" />
+                                    <Link
+                                        href="/settings/profile"
+                                        className="block w-full"
+                                    >
+                                        <Button
+                                            variant="outline"
+                                            className="group h-14 w-full rounded-none border-white/10 text-[10px] font-bold tracking-[0.3em] uppercase transition-all hover:border-racing-red hover:bg-racing-red/5"
+                                        >
+                                            Dossier Client{' '}
+                                            <ChevronRightIcon className="ml-2 h-3 w-3 transition-transform group-hover:translate-x-1" />
                                         </Button>
                                     </Link>
                                 </div>
@@ -367,62 +650,89 @@ export default function AppointmentShow({ appointment }: Props) {
                         </motion.div>
 
                         {/* Protocol Actions */}
-                        <motion.div variants={itemVariants} className="space-y-6">
-                            <h4 className="text-[11px] font-heading font-bold uppercase tracking-[0.5em] text-white pl-2 border-l-2 border-racing-red">Console d'Actions</h4>
+                        <motion.div
+                            variants={itemVariants}
+                            className="space-y-4"
+                        >
+                            <h4 className="border-l-4 border-racing-red pl-3 font-heading text-sm font-bold tracking-wider text-white uppercase">
+                                Console d'Actions
+                            </h4>
                             <div className="space-y-4">
                                 {appointment.status === 'confirmed' && (
                                     <>
-                                        <motion.a 
+                                        <motion.a
                                             whileHover={{ scale: 1.02 }}
-                                            href={appointments.calendar(appointment.id).url} 
-                                            className="block group"
+                                            href={
+                                                appointments.calendar(
+                                                    appointment.id,
+                                                ).url
+                                            }
+                                            className="group block"
                                         >
-                                            <div className="flex items-center justify-between p-6 bg-luxury-black border border-white/5 hover:border-racing-red transition-all shadow-md">
+                                            <div className="flex items-center justify-between border-2 border-white/10 bg-luxury-black p-5 transition-all duration-300 hover:border-racing-red hover:bg-luxury-black/80 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                                                 <div className="flex items-center gap-5">
-                                                    <div className="w-12 h-12 bg-white/5 flex items-center justify-center group-hover:bg-racing-red/10 transition-colors">
+                                                    <div className="flex h-12 w-12 items-center justify-center border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-racing-red group-hover:bg-racing-red/20">
                                                         <DownloadIcon className="h-5 w-5 text-racing-red" />
                                                     </div>
                                                     <div>
-                                                        <span className="block text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-white">Sync Calendrier</span>
-                                                        <span className="text-[8px] text-muted-foreground uppercase tracking-widest mt-1">Format Universel .ics</span>
+                                                        <span className="block font-heading text-xs font-bold tracking-wider text-white uppercase transition-colors group-hover:text-chrome">
+                                                            Sync Calendrier
+                                                        </span>
+                                                        <span className="mt-1 text-[9px] tracking-wide text-white/60 uppercase transition-colors group-hover:text-white/80">
+                                                            Format Universel
+                                                            .ics
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <ChevronRightIcon className="h-4 w-4 text-muted-foreground group-hover:text-racing-red" />
+                                                <ChevronRightIcon className="h-5 w-5 text-white/40 transition-all group-hover:translate-x-1 group-hover:text-racing-red" />
                                             </div>
                                         </motion.a>
 
-                                        <motion.a 
+                                        <motion.a
                                             whileHover={{ scale: 1.02 }}
-                                            href={appointments.reschedule(appointment.id).url} 
-                                            className="block group"
+                                            href={
+                                                appointments.reschedule(
+                                                    appointment.id,
+                                                ).url
+                                            }
+                                            className="group block"
                                         >
-                                            <div className="flex items-center justify-between p-6 bg-luxury-black border border-white/5 hover:border-racing-red transition-all shadow-md">
+                                            <div className="flex items-center justify-between border-2 border-white/10 bg-luxury-black p-5 transition-all duration-300 hover:border-racing-red hover:bg-luxury-black/80 hover:shadow-[0_0_20px_rgba(239,68,68,0.2)]">
                                                 <div className="flex items-center gap-5">
-                                                    <div className="w-12 h-12 bg-white/5 flex items-center justify-center group-hover:bg-racing-red/10 transition-colors">
+                                                    <div className="flex h-12 w-12 items-center justify-center border border-white/10 bg-white/5 transition-all duration-300 group-hover:border-racing-red group-hover:bg-racing-red/20">
                                                         <CalendarIcon className="h-5 w-5 text-racing-red" />
                                                     </div>
                                                     <div>
-                                                        <span className="block text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-white">Reprogrammer</span>
-                                                        <span className="text-[8px] text-muted-foreground uppercase tracking-widest mt-1">Modifier l'horaire</span>
+                                                        <span className="block font-heading text-xs font-bold tracking-wider text-white uppercase transition-colors group-hover:text-chrome">
+                                                            Reprogrammer
+                                                        </span>
+                                                        <span className="mt-1 text-[9px] tracking-wide text-white/60 uppercase transition-colors group-hover:text-white/80">
+                                                            Modifier l'horaire
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <ChevronRightIcon className="h-4 w-4 text-muted-foreground group-hover:text-racing-red" />
+                                                <ChevronRightIcon className="h-5 w-5 text-white/40 transition-all group-hover:translate-x-1 group-hover:text-racing-red" />
                                             </div>
                                         </motion.a>
 
-                                        <motion.button 
+                                        <motion.button
                                             whileHover={{ scale: 1.02 }}
                                             onClick={handleCancel}
-                                            className="w-full text-left group"
+                                            className="group w-full text-left"
                                         >
-                                            <div className="flex items-center justify-between p-6 bg-red-900/10 border border-red-900/20 hover:border-red-600 transition-all shadow-md">
+                                            <div className="flex items-center justify-between border-2 border-red-900/30 bg-red-900/10 p-5 transition-all duration-300 hover:border-red-600 hover:bg-red-900/20 hover:shadow-[0_0_20px_rgba(220,38,38,0.3)]">
                                                 <div className="flex items-center gap-5">
-                                                    <div className="w-12 h-12 bg-red-600/10 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all">
+                                                    <div className="flex h-12 w-12 items-center justify-center border border-red-900/30 bg-red-600/10 transition-all duration-300 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white">
                                                         <XIcon className="h-5 w-5" />
                                                     </div>
                                                     <div>
-                                                        <span className="block text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-red-600">Interrompre</span>
-                                                        <span className="text-[8px] text-red-600/60 uppercase tracking-widest mt-1">Annulation Irréversible</span>
+                                                        <span className="block font-heading text-xs font-bold tracking-wider text-red-600 uppercase transition-colors group-hover:text-red-500">
+                                                            Interrompre
+                                                        </span>
+                                                        <span className="mt-1 text-[9px] tracking-wide text-red-600/70 uppercase transition-colors group-hover:text-red-500/80">
+                                                            Annulation
+                                                            Irréversible
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -431,39 +741,53 @@ export default function AppointmentShow({ appointment }: Props) {
                                 )}
 
                                 {appointment.status === 'completed' && (
-                                    <div className="p-10 bg-green-900/5 border border-green-900/20 text-center space-y-6">
+                                    <div className="space-y-4 border border-green-900/20 bg-green-900/5 p-6 text-center">
                                         <div className="relative inline-block">
-                                            <ShieldCheckIcon className="h-16 w-16 text-green-500 mx-auto" />
+                                            <ShieldCheckIcon className="mx-auto h-16 w-16 text-green-500" />
                                         </div>
                                         <div className="space-y-2">
-                                            <p className="text-[12px] font-heading font-bold uppercase tracking-[0.3em] text-white">Opération Terminée</p>
-                                            <p className="text-[9px] text-muted-foreground uppercase tracking-widest leading-relaxed">Le protocole technique a été exécuté avec succès.</p>
+                                            <p className="font-heading text-[12px] font-bold tracking-[0.3em] text-white uppercase">
+                                                Opération Terminée
+                                            </p>
+                                            <p className="text-[9px] leading-relaxed tracking-widest text-muted-foreground uppercase">
+                                                Le protocole technique a été
+                                                exécuté avec succès.
+                                            </p>
                                         </div>
-                                        <Link href="/dashboard/invoices" className="block w-full">
-                                            <Button className="w-full bg-green-600 hover:bg-green-500 rounded-none h-14 text-[10px] font-bold uppercase tracking-[0.4em] transition-all">
+                                        <Link
+                                            href="/dashboard/invoices"
+                                            className="block w-full"
+                                        >
+                                            <Button className="h-14 w-full rounded-none bg-green-600 text-[10px] font-bold tracking-[0.4em] uppercase transition-all hover:bg-green-500">
                                                 Consulter les Factures
                                             </Button>
                                         </Link>
                                     </div>
                                 )}
 
-                                {(appointment.status === 'cancelled' || appointment.status === 'pending') && (
-                                    <div className="p-10 bg-luxury-charcoal/50 border border-white/5 text-center space-y-8 glass-panel">
+                                {(appointment.status === 'cancelled' ||
+                                    appointment.status === 'pending') && (
+                                    <div className="glass-panel space-y-8 border border-white/5 bg-luxury-charcoal/50 p-10 text-center">
                                         <div className="space-y-3">
-                                            <p className="text-[11px] font-heading font-bold uppercase tracking-[0.3em] text-white">
-                                                {appointment.status === 'cancelled' ? 'Dossier Archive' : 'Analyse en cours'}
+                                            <p className="font-heading text-[11px] font-bold tracking-[0.3em] text-white uppercase">
+                                                {appointment.status ===
+                                                'cancelled'
+                                                    ? 'Dossier Archive'
+                                                    : 'Analyse en cours'}
                                             </p>
-                                            <p className="text-[9px] text-muted-foreground uppercase tracking-widest leading-relaxed">
-                                                {appointment.status === 'cancelled' 
-                                                    ? 'Cette mission a été classée suite à son interruption.' 
+                                            <p className="text-[9px] leading-relaxed tracking-widest text-muted-foreground uppercase">
+                                                {appointment.status ===
+                                                'cancelled'
+                                                    ? 'Cette mission a été classée suite à son interruption.'
                                                     : 'Nos ingénieurs valident actuellement les spécifications techniques.'}
                                             </p>
                                         </div>
-                                        <Link 
-                                            href="/services" 
-                                            className="w-full flex items-center justify-center bg-racing-red py-4 text-[10px] font-bold text-white uppercase tracking-[0.4em] hover:bg-white hover:text-luxury-black transition-all"
+                                        <Link
+                                            href="/services"
+                                            className="flex w-full items-center justify-center bg-racing-red py-4 text-[10px] font-bold tracking-[0.4em] text-white uppercase transition-all hover:bg-white hover:text-luxury-black"
                                         >
-                                            Nouvelle Mission <ExternalLinkIcon className="h-3 w-3 ml-3" />
+                                            Nouvelle Mission{' '}
+                                            <ExternalLinkIcon className="ml-3 h-3 w-3" />
                                         </Link>
                                     </div>
                                 )}
@@ -471,9 +795,13 @@ export default function AppointmentShow({ appointment }: Props) {
                         </motion.div>
 
                         {/* Support Note */}
-                        <motion.div variants={itemVariants} className="p-8 border border-white/5 bg-luxury-black/30">
-                            <p className="text-[9px] text-muted-foreground uppercase tracking-[0.3em] leading-relaxed text-center">
-                                Pour toute assistance technique prioritaire, contactez notre centre opérationnel 24/7.
+                        <motion.div
+                            variants={itemVariants}
+                            className="border border-white/5 bg-luxury-black/30 p-8"
+                        >
+                            <p className="text-center text-[9px] leading-relaxed tracking-[0.3em] text-muted-foreground uppercase">
+                                Pour toute assistance technique prioritaire,
+                                contactez notre centre opérationnel 24/7.
                             </p>
                         </motion.div>
                     </div>

@@ -1,6 +1,6 @@
-import { DayPicker } from 'react-day-picker';
-import { format, startOfMonth, endOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 
 interface AvailabilityData {
@@ -26,11 +26,14 @@ export default function AvailabilityCalendar({
     const today = new Date();
 
     // Get dates that have availability
-    const availableDates = Object.keys(availability).map(dateStr => new Date(dateStr));
+    const availableDates = Object.keys(availability).map(
+        (dateStr) => new Date(dateStr),
+    );
 
     // Disable dates that are in the past or have no availability
     const disabledDates = (date: Date) => {
         const dateStr = format(date, 'yyyy-MM-dd');
+
         return date < today || !availability[dateStr];
     };
 
@@ -40,17 +43,19 @@ export default function AvailabilityCalendar({
         const dayAvailability = availability[dateStr];
 
         return (
-            <div className="relative w-full h-full flex items-center justify-center">
+            <div className="relative flex h-full w-full items-center justify-center">
                 <span>{format(date, 'd')}</span>
                 {dayAvailability && dayAvailability.slots > 0 && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-racing-red rounded-full" />
+                    <span className="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-racing-red" />
                 )}
             </div>
         );
     };
 
     return (
-        <div className={`availability-calendar ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
+        <div
+            className={`availability-calendar ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
+        >
             <style>{`
                 .availability-calendar .rdp {
                     --rdp-accent-color: #DC2626;
@@ -179,7 +184,7 @@ export default function AvailabilityCalendar({
 
             {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-luxury-black/50">
-                    <div className="text-white text-sm uppercase tracking-widest">
+                    <div className="text-sm tracking-widest text-white uppercase">
                         Chargement...
                     </div>
                 </div>

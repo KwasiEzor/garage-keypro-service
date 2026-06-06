@@ -1,40 +1,44 @@
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
 import { FileTextIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface DetailsStepProps {
     notes: string;
     onNotesChange: (notes: string) => void;
 }
 
-export default function DetailsStep({ notes, onNotesChange }: DetailsStepProps) {
+export default function DetailsStep({
+    notes,
+    onNotesChange,
+}: DetailsStepProps) {
     const maxLength = 500;
     const remainingChars = maxLength - notes.length;
 
     return (
         <div className="space-y-6">
-            <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-heading font-bold uppercase tracking-tighter text-white mb-3">
-                    Informations <span className="text-racing-red">Complémentaires</span>
+            <div className="mb-8 text-center">
+                <h2 className="mb-3 font-heading text-2xl font-bold tracking-tighter text-white uppercase md:text-3xl">
+                    Informations{' '}
+                    <span className="text-racing-red">Complémentaires</span>
                 </h2>
-                <p className="text-sm text-muted-foreground uppercase tracking-[0.15em]">
+                <p className="text-sm tracking-[0.15em] text-muted-foreground uppercase">
                     Partagez des détails sur votre véhicule (optionnel)
                 </p>
             </div>
 
-            <Card className="bg-luxury-charcoal border-white/5 max-w-2xl mx-auto">
-                <CardContent className="p-6 md:p-8 space-y-4">
+            <Card className="mx-auto max-w-2xl border-white/5 bg-luxury-charcoal">
+                <CardContent className="space-y-4 p-6 md:p-8">
                     <div className="space-y-3">
                         <Label
                             htmlFor="notes"
-                            className="text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground pl-1"
+                            className="pl-1 font-heading text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase"
                         >
                             Spécifications Véhicule
                         </Label>
 
                         <div className="relative">
-                            <div className="absolute top-3 left-3 pointer-events-none">
+                            <div className="pointer-events-none absolute top-3 left-3">
                                 <FileTextIcon className="h-5 w-5 text-racing-red/50" />
                             </div>
 
@@ -45,39 +49,54 @@ export default function DetailsStep({ notes, onNotesChange }: DetailsStepProps) 
                                 onChange={(e) => onNotesChange(e.target.value)}
                                 maxLength={maxLength}
                                 rows={6}
-                                className="bg-luxury-black border-white/10 text-white rounded-none focus:ring-racing-red focus:border-racing-red placeholder:text-muted-foreground/30 pl-10 resize-none"
+                                className="resize-none rounded-none border-white/10 bg-luxury-black pl-10 text-white placeholder:text-muted-foreground/30 focus:border-racing-red focus:ring-racing-red"
                             />
                         </div>
 
-                        <div className="flex justify-between items-center px-1">
+                        <div className="flex items-center justify-between px-1">
                             <p className="text-xs text-muted-foreground">
-                                Ces informations nous aideront à mieux préparer votre intervention
+                                Ces informations nous aideront à mieux préparer
+                                votre intervention
                             </p>
-                            <p className={`text-xs font-mono ${remainingChars < 50 ? 'text-racing-red' : 'text-muted-foreground'}`}>
+                            <p
+                                className={`font-mono text-xs ${remainingChars < 50 ? 'text-racing-red' : 'text-muted-foreground'}`}
+                            >
                                 {remainingChars} / {maxLength}
                             </p>
                         </div>
                     </div>
 
-                    <div className="pt-4 border-t border-white/5 space-y-3">
-                        <h4 className="text-xs font-heading font-bold uppercase tracking-[0.2em] text-white">
+                    <div className="space-y-3 border-t border-white/5 pt-4">
+                        <h4 className="font-heading text-xs font-bold tracking-[0.2em] text-white uppercase">
                             Informations utiles à partager:
                         </h4>
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li className="flex items-start gap-2">
-                                <span className="text-racing-red mt-0.5">•</span>
+                                <span className="mt-0.5 text-racing-red">
+                                    •
+                                </span>
                                 <span>Marque et modèle du véhicule</span>
                             </li>
                             <li className="flex items-start gap-2">
-                                <span className="text-racing-red mt-0.5">•</span>
-                                <span>Type de clé (télécommande, carte, etc.)</span>
+                                <span className="mt-0.5 text-racing-red">
+                                    •
+                                </span>
+                                <span>
+                                    Type de clé (télécommande, carte, etc.)
+                                </span>
                             </li>
                             <li className="flex items-start gap-2">
-                                <span className="text-racing-red mt-0.5">•</span>
-                                <span>Problème rencontré ou service souhaité</span>
+                                <span className="mt-0.5 text-racing-red">
+                                    •
+                                </span>
+                                <span>
+                                    Problème rencontré ou service souhaité
+                                </span>
                             </li>
                             <li className="flex items-start gap-2">
-                                <span className="text-racing-red mt-0.5">•</span>
+                                <span className="mt-0.5 text-racing-red">
+                                    •
+                                </span>
                                 <span>Urgence ou délai particulier</span>
                             </li>
                         </ul>

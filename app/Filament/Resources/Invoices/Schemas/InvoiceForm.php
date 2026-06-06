@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Invoices\Schemas;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Service;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -52,14 +53,9 @@ class InvoiceForm
                                     ->default(now()->addDays(14))
                                     ->native(false),
                                 Select::make('status')
-                                    ->options([
-                                        'draft' => 'Draft',
-                                        'sent' => 'Sent',
-                                        'paid' => 'Paid',
-                                        'cancelled' => 'Cancelled',
-                                    ])
+                                    ->options(InvoiceStatus::class)
                                     ->required()
-                                    ->default('draft')
+                                    ->default(InvoiceStatus::Draft)
                                     ->selectablePlaceholder(false),
                             ]),
                     ]),

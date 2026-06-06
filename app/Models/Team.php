@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Zap\Models\Concerns\HasSchedules;
 
 /**
  * @property int $id
@@ -53,6 +55,7 @@ class Team extends Model
 {
     use GeneratesUniqueTeamSlugs;
     use HasFactory;
+    use HasSchedules;
     use SoftDeletes;
 
     /**
@@ -129,6 +132,26 @@ class Team extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    /**
+     * Get all appointments for this team.
+     *
+     * @return HasMany<Appointment, Team>
+     */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    /**
+     * Get the settings for this team.
+     *
+     * @return HasOne<TeamSettings, Team>
+     */
+    public function settings(): HasOne
+    {
+        return $this->hasOne(TeamSettings::class);
     }
 
     /**

@@ -31,6 +31,10 @@ class AppointmentFactory extends Factory
         $service = Service::factory()->create();
         $endAt = (clone $startAt)->modify("+{$service->estimated_duration} minutes");
 
+        $makes = ['Mercedes-Benz', 'BMW', 'Audi', 'Porsche', 'Volkswagen', 'Toyota', 'Honda', 'Lexus', 'Tesla', 'Peugeot', 'Renault'];
+        $models = ['S-Class', 'E-Class', 'C-Class', '3 Series', '5 Series', 'X5', 'A4', 'A6', 'Q5', '911', 'Cayenne', 'Golf', 'Passat', 'Camry', 'Accord', 'Model S', '508', 'Megane'];
+        $colors = ['Black', 'White', 'Silver', 'Gray', 'Blue', 'Red', 'Green'];
+
         return [
             'team_id' => Team::factory(),
             'user_id' => User::factory(),
@@ -43,6 +47,13 @@ class AppointmentFactory extends Factory
                 AppointmentStatus::Completed->value,
             ]),
             'notes' => fake()->optional()->sentence(),
+            'vehicle_make' => fake()->randomElement($makes),
+            'vehicle_model' => fake()->randomElement($models),
+            'vehicle_year' => (string) fake()->numberBetween(2015, 2024),
+            'vehicle_vin' => strtoupper(fake()->bothify('??#############')),
+            'vehicle_license_plate' => strtoupper(fake()->bothify('??-###-??')),
+            'vehicle_color' => fake()->randomElement($colors),
+            'vehicle_notes' => fake()->optional(0.3)->sentence(),
         ];
     }
 

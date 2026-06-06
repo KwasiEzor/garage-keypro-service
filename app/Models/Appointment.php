@@ -18,6 +18,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property CarbonImmutable $end_at
  * @property AppointmentStatus $status
  * @property string|null $notes
+ * @property string|null $vehicle_make
+ * @property string|null $vehicle_model
+ * @property string|null $vehicle_year
+ * @property string|null $vehicle_vin
+ * @property string|null $vehicle_license_plate
+ * @property string|null $vehicle_color
+ * @property string|null $vehicle_notes
  * @property string|null $cancellation_reason
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
@@ -49,6 +56,13 @@ class Appointment extends Model
         'end_at',
         'status',
         'notes',
+        'vehicle_make',
+        'vehicle_model',
+        'vehicle_year',
+        'vehicle_vin',
+        'vehicle_license_plate',
+        'vehicle_color',
+        'vehicle_notes',
         'cancellation_reason',
     ];
 

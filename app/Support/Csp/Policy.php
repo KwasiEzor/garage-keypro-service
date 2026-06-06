@@ -10,31 +10,31 @@ use Spatie\Csp\Presets\Basic;
 
 class Policy extends Basic
 {
-    public function configure(): void
+    public function configure(\Spatie\Csp\Policy $policy): void
     {
-        parent::configure();
+        parent::configure($policy);
 
-        $this
-            ->addDirective(Directive::SCRIPT, [
+        $policy
+            ->add(Directive::SCRIPT, [
                 Keyword::UNSAFE_EVAL,
                 Keyword::UNSAFE_INLINE,
                 'https://cdn.jsdelivr.net',
             ])
-            ->addDirective(Directive::STYLE, [
+            ->add(Directive::STYLE, [
                 Keyword::UNSAFE_INLINE,
                 'https://fonts.googleapis.com',
             ])
-            ->addDirective(Directive::FONT, [
+            ->add(Directive::FONT, [
                 'https://fonts.gstatic.com',
                 Keyword::SELF,
                 'data:',
             ])
-            ->addDirective(Directive::IMG, [
+            ->add(Directive::IMG, [
                 Keyword::SELF,
                 'data:',
                 'https:',
             ])
-            ->addDirective(Directive::CONNECT, [
+            ->add(Directive::CONNECT, [
                 Keyword::SELF,
                 'https:',
                 'wss:',

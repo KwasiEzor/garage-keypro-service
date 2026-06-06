@@ -32,17 +32,26 @@ const initialState: BookingState = {
 export function useBookingWizard(initialTeamId?: string) {
     // Try to restore from localStorage on mount
     const [state, setState] = useState<BookingState>(() => {
-        if (typeof window === 'undefined') return initialState;
+        if (typeof window === 'undefined') {
+            return initialState;
+        }
 
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
+
             if (stored) {
                 const parsed = JSON.parse(stored);
+
                 // Convert date string back to Date object
                 if (parsed.date) {
                     parsed.date = new Date(parsed.date);
                 }
-                return { ...initialState, ...parsed, teamId: initialTeamId || parsed.teamId };
+
+                return {
+                    ...initialState,
+                    ...parsed,
+                    teamId: initialTeamId || parsed.teamId,
+                };
             }
         } catch (e) {
             console.error('Failed to restore booking state:', e);
@@ -55,7 +64,9 @@ export function useBookingWizard(initialTeamId?: string) {
 
     // Persist state to localStorage whenever it changes
     useEffect(() => {
-        if (typeof window === 'undefined') return;
+        if (typeof window === 'undefined') {
+            return;
+        }
 
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -65,49 +76,59 @@ export function useBookingWizard(initialTeamId?: string) {
     }, [state]);
 
     // Update a specific field
-    const updateField = useCallback(<K extends keyof BookingState>(
-        field: K,
-        value: BookingState[K]
-    ) => {
-        setState(prev => ({ ...prev, [field]: value }));
-        // Clear error for this field when user updates it
-        if (errors[field as keyof ValidationErrors]) {
-            setErrors(prev => ({ ...prev, [field]: undefined }));
-        }
-    }, [errors]);
+    const updateField = useCallback(
+        <K extends keyof BookingState>(field: K, value: BookingState[K]) => {
+            setState((prev) => ({ ...prev, [field]: value }));
+
+            // Clear error for this field when user updates it
+            if (errors[field as keyof ValidationErrors]) {
+                setErrors((prev) => ({ ...prev, [field]: undefined }));
+            }
+        },
+        [errors],
+    );
 
     // Validate current step before moving forward
-    const validateStep = useCallback((step: WizardStep): boolean => {
-        const newErrors: ValidationErrors = {};
+    const validateStep = useCallback(
+        (step: WizardStep): boolean => {
+            const newErrors: ValidationErrors = {};
 
-        switch (step) {
-            case 1: // Service selection
-                if (!state.serviceId) {
-                    newErrors.serviceId = 'Veuillez sélectionner un service';
-                }
-                break;
-            case 2: // Date & time selection
-                if (!state.date) {
-                    newErrors.date = 'Veuillez sélectionner une date';
-                }
-                if (!state.slot) {
-                    newErrors.slot = 'Veuillez sélectionner un créneau horaire';
-                }
-                break;
-            case 3: // Notes (optional, always valid)
-                break;
-            case 4: // Review (validation already done)
-                break;
-        }
+            switch (step) {
+                case 1: // Service selection
+                    if (!state.serviceId) {
+                        newErrors.serviceId =
+                            'Veuillez sélectionner un service';
+                    }
 
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    }, [state]);
+                    break;
+                case 2: // Date & time selection
+                    if (!state.date) {
+                        newErrors.date = 'Veuillez sélectionner une date';
+                    }
+
+                    if (!state.slot) {
+                        newErrors.slot =
+                            'Veuillez sélectionner un créneau horaire';
+                    }
+
+                    break;
+                case 3: // Notes (optional, always valid)
+                    break;
+                case 4: // Review (validation already done)
+                    break;
+            }
+
+            setErrors(newErrors);
+
+            return Object.keys(newErrors).length === 0;
+        },
+        [state],
+    );
 
     // Navigate to next step
     const nextStep = useCallback(() => {
         if (validateStep(state.step)) {
-            setState(prev => ({
+            setState((prev) => ({
                 ...prev,
                 step: Math.min(4, prev.step + 1) as WizardStep,
             }));
@@ -116,7 +137,7 @@ export function useBookingWizard(initialTeamId?: string) {
 
     // Navigate to previous step
     const prevStep = useCallback(() => {
-        setState(prev => ({
+        setState((prev) => ({
             ...prev,
             step: Math.max(1, prev.step - 1) as WizardStep,
         }));
@@ -124,13 +145,14 @@ export function useBookingWizard(initialTeamId?: string) {
 
     // Jump to a specific step
     const goToStep = useCallback((step: WizardStep) => {
-        setState(prev => ({ ...prev, step }));
+        setState((prev) => ({ ...prev, step }));
     }, []);
 
     // Reset wizard state
     const reset = useCallback(() => {
         setState({ ...initialState, teamId: initialTeamId || '' });
         setErrors({});
+
         if (typeof window !== 'undefined') {
             localStorage.removeItem(STORAGE_KEY);
         }

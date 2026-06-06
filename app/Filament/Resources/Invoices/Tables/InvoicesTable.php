@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Invoices\Tables;
 
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -40,13 +41,6 @@ class InvoicesTable
                     ->sortable(),
                 TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'sent' => 'info',
-                        'paid' => 'success',
-                        'cancelled' => 'danger',
-                        default => 'gray',
-                    })
                     ->searchable(),
                 TextColumn::make('total_amount')
                     ->money(fn (Invoice $record) => $record->currency)
@@ -58,26 +52,21 @@ class InvoicesTable
             ])
             ->filters([
                 SelectFilter::make('status')
-                    ->options([
-                        'draft' => 'Draft',
-                        'sent' => 'Sent',
-                        'paid' => 'Paid',
-                        'cancelled' => 'Cancelled',
-                    ]),
+                    ->options(InvoiceStatus::class),
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('markAsPaid')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->hidden(fn (Invoice $record): bool => $record->status === 'paid')
-                    ->action(fn (Invoice $record) => $record->update(['status' => 'paid'])),
+                    ->hidden(fn (Invoice $record): bool => $record->status === InvoiceStatus::Paid)
+                    ->action(fn (Invoice $record) => $record->update(['status' => InvoiceStatus::Paid])),
                 ViewAction::make()
                     ->url(fn (Invoice $record): string => route('invoices.show', $record->uuid))
                     ->openUrlInNewTab(),
                 EditAction::make(),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),

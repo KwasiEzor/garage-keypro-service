@@ -3,7 +3,10 @@
     "name": "garage/keypro-service",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.3",
@@ -22,6 +25,7 @@
         "laravel/wayfinder": "^0.1.14",
         "laraveljutsu/zap": "^1.15",
         "sentry/sentry-laravel": "^4.25",
+        "spatie/calendar-links": "^2.0",
         "spatie/image-optimizer": "^1.8",
         "spatie/laravel-csp": "^3.25",
         "spatie/laravel-health": "^1.40",
