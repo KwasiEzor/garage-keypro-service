@@ -1,6 +1,6 @@
+import { Loader2, ArrowRightIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ArrowRightIcon } from 'lucide-react';
 
 interface Slot {
     start_time: string;
@@ -84,14 +84,20 @@ export default function TimeSlotGrid({
     const { morning, afternoon, evening } = groupSlotsByTimeOfDay(slots);
 
     const renderSlotGroup = (title: string, slots: Slot[]) => {
-        if (slots.length === 0) return null;
+        if (slots.length === 0) {
+return null;
+}
 
         return (
             <div className="space-y-3">
                 <h4 className="text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground pl-1">
                     {title}
                 </h4>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+                <div
+                    className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2"
+                    role="group"
+                    aria-label={`Time slots for ${title}`}
+                >
                     {slots.map((slot) => {
                         const isSelected = selectedSlot === slot.start_time;
 
@@ -100,6 +106,8 @@ export default function TimeSlotGrid({
                                 key={slot.start_time}
                                 variant={isSelected ? 'default' : 'outline'}
                                 onClick={() => onSelectSlot(slot.start_time)}
+                                aria-label={`Book appointment at ${slot.start_time}`}
+                                aria-pressed={isSelected}
                                 className={`
                                     h-12 rounded-none font-bold text-sm transition-all duration-200
                                     ${isSelected
