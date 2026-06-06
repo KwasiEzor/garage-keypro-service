@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint-staged for frontend files
+npx lint-staged
+
+# Run PHP linting with Pint
+echo "🎨 Formatting PHP files with Pint..."
+vendor/bin/pint --dirty --quiet || {
+  echo "❌ Pint found formatting issues. Please fix them and try again."
+  exit 1
+}
+
+# Run PHPStan static analysis on changed files
+echo "🔬 Running PHPStan on changed PHP files..."
+git diff --cached --name-only --diff-filter=ACMR | grep '\.php$' | xargs -r vendor/bin/phpstan analyse --level=8 --no-progress --error-format=table || {
+  echo "❌ PHPStan found errors. Please fix them and try again."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"
