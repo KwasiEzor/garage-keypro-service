@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\CalendarLinks\Link;
@@ -186,7 +187,7 @@ class AppointmentController extends Controller
      */
     public function show(Appointment $appointment): Response
     {
-        $this->authorize('view', $appointment);
+        Gate::authorize('view', $appointment);
 
         return Inertia::render('appointments/show', [
             'appointment' => $appointment->load(['team', 'service', 'user']),
@@ -198,7 +199,7 @@ class AppointmentController extends Controller
      */
     public function cancel(Appointment $appointment)
     {
-        $this->authorize('cancel', $appointment);
+        Gate::authorize('cancel', $appointment);
 
         $this->appointmentService->cancelAppointment(
             $appointment,
@@ -214,7 +215,7 @@ class AppointmentController extends Controller
      */
     public function reschedule(Appointment $appointment): Response
     {
-        $this->authorize('reschedule', $appointment);
+        Gate::authorize('reschedule', $appointment);
 
         return Inertia::render('appointments/index', [
             'services' => Service::where('is_active', true)->get(),
@@ -228,7 +229,7 @@ class AppointmentController extends Controller
      */
     public function processReschedule(Appointment $appointment, StoreAppointmentRequest $request)
     {
-        $this->authorize('reschedule', $appointment);
+        Gate::authorize('reschedule', $appointment);
 
         $validated = $request->validated();
 
@@ -238,9 +239,14 @@ class AppointmentController extends Controller
 
         try {
             DB::transaction(function () use ($appointment, $team, $service, $startAt, $validated) {
+                // Lock appointment to prevent concurrent reschedule race condition
+                $lockedAppointment = Appointment::where('id', $appointment->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
                 // Cancel old appointment
                 $this->appointmentService->cancelAppointment(
-                    $appointment,
+                    $lockedAppointment,
                     'Rescheduled to new time'
                 );
 
@@ -273,7 +279,7 @@ class AppointmentController extends Controller
      */
     public function downloadCalendar(Appointment $appointment)
     {
-        $this->authorize('view', $appointment);
+        Gate::authorize('view', $appointment);
 
         $link = Link::create(
             $appointment->service->name,

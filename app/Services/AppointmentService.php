@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\AppointmentStatus;
 use App\Exceptions\SlotUnavailableException;
+use App\Jobs\SyncAppointmentToCalendar;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
@@ -24,11 +25,13 @@ class AppointmentService
      */
     public function getAvailableSlots(Team $team, CarbonInterface $date, Service $service, int $bufferMinutes = 15): Collection
     {
-        return collect($team->getBookableSlots(
+        $slots = $team->getBookableSlots(
             $date->format('Y-m-d'),
             $service->estimated_duration,
             $bufferMinutes
-        ));
+        );
+
+        return is_array($slots) ? collect($slots) : $slots;
     }
 
     /**
@@ -39,7 +42,15 @@ class AppointmentService
     public function createAppointment(Team $team, User $client, Service $service, CarbonInterface $startAt, ?string $notes = null): Appointment
     {
         return DB::transaction(function () use ($team, $client, $service, $startAt, $notes) {
-            $teamTz = new \DateTimeZone($team->timezone ?? 'Europe/Paris');
+            // Validate timezone to prevent DoS via invalid timezone strings
+            $timezone = $team->timezone ?? 'Europe/Paris';
+            if (! in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+                throw ValidationException::withMessages([
+                    'timezone' => 'Invalid timezone specified for team',
+                ]);
+            }
+
+            $teamTz = new \DateTimeZone($timezone);
             $startAt = Carbon::parse($startAt, $teamTz)->utc();
             $endAt = $startAt->copy()->addMinutes($service->estimated_duration);
 
@@ -80,19 +91,10 @@ class AppointmentService
                 'status' => AppointmentStatus::Confirmed,
             ]);
 
-            // Sync with Zap (for UI calendar integration)
-            Zap::for($team)
-                ->named($service->name.' - '.$client->name)
-                ->appointment()
-                ->on($startAt->format('Y-m-d'))
-                ->addPeriod($startAt->format('H:i'), $endAt->format('H:i'))
-                ->withMetadata([
-                    'appointment_id' => $appointment->id,
-                    'client_id' => $client->id,
-                    'service_id' => $service->id,
-                    'notes' => $notes,
-                ])
-                ->save();
+            // Queue calendar sync after transaction commits
+            DB::afterCommit(function () use ($appointment) {
+                dispatch(new SyncAppointmentToCalendar($appointment));
+            });
 
             return $appointment;
         });

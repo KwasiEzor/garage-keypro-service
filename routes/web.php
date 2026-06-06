@@ -26,14 +26,15 @@ Route::post('/leads', [LeadController::class, 'store'])
     ->middleware(['throttle:3,1'])
     ->name('leads.store');
 
-Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])->name('invoices.show');
-
-Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
-Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
-Route::get('/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
-Route::post('/appointments', [AppointmentController::class, 'store'])->middleware('auth')->name('appointments.store');
+Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])
+    ->middleware('throttle:30,1')
+    ->name('invoices.show');
 
 Route::middleware('auth')->group(function (): void {
+    Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
+    Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
+    Route::get('/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
+    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/my-appointments', [AppointmentController::class, 'myAppointments'])->name('appointments.my');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');
