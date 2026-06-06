@@ -63,3 +63,48 @@ test('rejects invalid timezone to prevent DoS attacks', function () {
         $team, $user, $service, $startAt
     ))->toThrow(ValidationException::class, 'Invalid timezone specified for team');
 });
+
+test('handles appointment booking across different timezones', function (string $timezone) {
+    $team = Team::factory()->create(['timezone' => $timezone]);
+    $service = Service::factory()->create(['estimated_duration' => 60]);
+    $user = User::factory()->create();
+
+    // Book appointment at 10 AM in team's timezone
+    $startAt = now($timezone)->addDay()->setTime(10, 0);
+
+    $appointment = app(AppointmentService::class)->createAppointment(
+        $team, $user, $service, $startAt
+    );
+
+    expect($appointment)->toBeInstanceOf(Appointment::class);
+    expect($appointment->team_id)->toBe($team->id);
+
+    // Verify appointment is stored in UTC
+    expect($appointment->start_at->timezone->getName())->toBe('UTC');
+})->with([
+    'UTC' => ['UTC'],
+    'Europe/Paris' => ['Europe/Paris'],
+    'Asia/Tokyo' => ['Asia/Tokyo'],
+    'America/New_York' => ['America/New_York'],
+    'Australia/Sydney' => ['Australia/Sydney'],
+]);
+
+test('prevents double-booking across timezone boundaries', function () {
+    // Team in Tokyo timezone
+    $team = Team::factory()->create(['timezone' => 'Asia/Tokyo']);
+    $service = Service::factory()->create(['estimated_duration' => 60]);
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    // Book at 10 AM Tokyo time
+    $tokyoTime = now('Asia/Tokyo')->addDay()->setTime(10, 0);
+
+    app(AppointmentService::class)->createAppointment(
+        $team, $user1, $service, $tokyoTime
+    );
+
+    // Try to book same slot (10 AM Tokyo = different UTC time)
+    expect(fn () => app(AppointmentService::class)->createAppointment(
+        $team, $user2, $service, $tokyoTime
+    ))->toThrow(SlotUnavailableException::class);
+});

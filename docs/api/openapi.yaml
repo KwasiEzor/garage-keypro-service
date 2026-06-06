@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: GarageKeyPro Service API
+  description: |
+    API documentation for GarageKeyPro Service - Automotive appointment booking and invoicing platform.
+
+    ## Authentication
+    Most endpoints require authentication via Laravel Sanctum session cookies.
+
+    ## Rate Limiting
+    - Invoice endpoints: 30 requests per minute per IP
+    - Appointment endpoints: 60 requests per minute per authenticated user
+  version: 1.0.0
+  contact:
+    name: GarageKeyPro Support
+    email: support@garagekeypro.com
+
+servers:
+  - url: https://garage-keypro-service.test
+    description: Local development server
+  - url: https://api.garagekeypro.com
+    description: Production server
+
+tags:
+  - name: Appointments
+    description: Appointment booking and management
+  - name: Invoices
+    description: Invoice viewing and management
+
+paths:
+  /appointments/availability:
+    get:
+      tags:
+        - Appointments
+      summary: Get availability calendar for a month
+      description: Returns available/unavailable days for booking appointments with a specific team and service
+      operationId: getAppointmentAvailability
+      security:
+        - sanctum: []
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+          example: 1
+        - name: service_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Service ID
+          example: 1
+        - name: month
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: '^\d{4}-\d{2}$'
+          description: Month in YYYY-MM format
+          example: "2026-06"
+      responses:
+        '200':
+          description: Availability calendar returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  availability:
+                    type: object
+                    additionalProperties:
+                      type: boolean
+                    description: Map of dates to availability (true = available, false = unavailable)
+                    example:
+                      "2026-06-10": true
+                      "2026-06-11": true
+                      "2026-06-12": false
+                      "2026-06-13": true
+  /appointments/slots:
+    get:
+      tags:
+        - Appointments
+      summary: Get available time slots for a specific date
+      description: Returns available booking time slots for a given date, team, and service
+      operationId: getAppointmentSlots
+      security:
+        - sanctum: []
+      parameters:
+        - name: team_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Team ID
+        - name: service_id
+          in: query
+          required: true
+          schema:
+            type: integer
+          description: Service ID
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+          description: Date in YYYY-MM-DD format
+      responses:
+        '200':
+          description: Time slots returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  slots:
+                    type: array
+                    items:
+                      type: string
+                      format: time
+  /invoices/{uuid}:
+    get:
+      tags:
+        - Invoices
+      summary: View invoice by UUID
+      description: |
+        View invoice details by UUID. Public endpoint (no auth required).
+        **Rate Limited:** 30 requests per minute per IP address
+      operationId: getInvoice
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Invoice found and returned
+        '429':
+          description: Rate limit exceeded
