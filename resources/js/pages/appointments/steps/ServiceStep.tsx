@@ -1,5 +1,7 @@
 import { ClockIcon, CheckIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -28,6 +30,10 @@ export default function ServiceStep({
     selectedServiceId,
     onSelect,
 }: ServiceStepProps) {
+    const [visibleCount, setVisibleCount] = useState(6);
+    const visibleServices = services.slice(0, visibleCount);
+    const hasMore = visibleCount < services.length;
+
     return (
         <div className="space-y-6">
             <div className="mb-8 text-center">
@@ -40,8 +46,8 @@ export default function ServiceStep({
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {services.map((service) => {
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {visibleServices.map((service) => {
                     const isSelected =
                         selectedServiceId === service.id.toString();
 
@@ -96,6 +102,18 @@ export default function ServiceStep({
                     );
                 })}
             </div>
+
+            {hasMore && (
+                <div className="mt-8 flex justify-center">
+                    <Button
+                        onClick={() => setVisibleCount(services.length)}
+                        variant="outline"
+                        className="rounded-none border-racing-red/30 bg-transparent px-8 py-3 text-xs font-bold tracking-widest text-racing-red uppercase hover:border-racing-red hover:bg-racing-red/10"
+                    >
+                        Charger Plus de Services
+                    </Button>
+                </div>
+            )}
 
             {services.length === 0 && (
                 <Card className="border-white/5 bg-luxury-charcoal py-12">
