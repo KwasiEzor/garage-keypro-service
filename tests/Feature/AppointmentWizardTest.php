@@ -4,6 +4,7 @@ use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\AppointmentService;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
@@ -13,6 +14,9 @@ beforeEach(function () {
         'is_active' => true,
         'estimated_duration' => 60,
     ]);
+
+    // Setup default availability for the team so slots are bookable
+    app(AppointmentService::class)->setupDefaultAvailability($this->team);
 });
 
 test('user can view appointment booking wizard', function () {
@@ -38,17 +42,19 @@ test('wizard returns available services and teams', function () {
 test('authenticated user can book appointment through wizard', function () {
     Notification::fake();
 
-    $tomorrow = now()->addDay()->setTime(10, 0);
+    $date = now()->next('Monday')->setTime(9, 0);
 
-    $this->actingAs($this->user)
+    $response = $this->actingAs($this->user)
         ->post(route('appointments.store'), [
             'team_id' => $this->team->id,
             'service_id' => $this->service->id,
-            'date' => $tomorrow->format('Y-m-d'),
-            'slot' => '10:00',
+            'date' => $date->format('Y-m-d'),
+            'slot' => '09:00',
             'notes' => 'Test appointment notes',
-        ])
-        ->assertRedirect();
+        ]);
+
+    $response->assertSessionHasNoErrors();
+    $response->assertRedirect();
 
     $this->assertDatabaseHas('appointments', [
         'user_id' => $this->user->id,
@@ -60,13 +66,13 @@ test('authenticated user can book appointment through wizard', function () {
 });
 
 test('booking requires authentication', function () {
-    $tomorrow = now()->addDay()->setTime(10, 0);
+    $date = now()->next('Monday')->setTime(9, 0);
 
     $this->post(route('appointments.store'), [
         'team_id' => $this->team->id,
         'service_id' => $this->service->id,
-        'date' => $tomorrow->format('Y-m-d'),
-        'slot' => '10:00',
+        'date' => $date->format('Y-m-d'),
+        'slot' => '09:00',
     ])->assertRedirect(route('login'));
 });
 
@@ -88,12 +94,12 @@ test('user can fetch availability for a month', function () {
 });
 
 test('user can fetch time slots for a specific date', function () {
-    $tomorrow = now()->addDay();
+    $date = now()->next('Monday');
 
     $response = $this->actingAs($this->user)->get(route('appointments.slots', [
         'team_id' => $this->team->id,
         'service_id' => $this->service->id,
-        'date' => $tomorrow->format('Y-m-d'),
+        'date' => $date->format('Y-m-d'),
     ]));
 
     $response->assertStatus(200);
@@ -136,18 +142,18 @@ test('user can reschedule appointment', function () {
         'user_id' => $this->user->id,
         'team_id' => $this->team->id,
         'service_id' => $this->service->id,
-        'start_at' => now()->addWeek(),
+        'start_at' => now()->addWeek()->next('Monday')->setTime(9, 0),
         'status' => 'confirmed',
     ]);
 
-    $newDate = now()->addWeek()->addDay()->setTime(14, 0);
+    $newDate = now()->addWeek()->next('Tuesday')->setTime(9, 0);
 
     $this->actingAs($this->user)
         ->post(route('appointments.reschedule.process', $appointment), [
             'team_id' => $this->team->id,
             'service_id' => $this->service->id,
             'date' => $newDate->format('Y-m-d'),
-            'slot' => '14:00',
+            'slot' => '09:00',
         ])
         ->assertRedirect(route('appointments.my'));
 

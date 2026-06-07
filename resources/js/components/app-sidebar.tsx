@@ -25,9 +25,19 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = [
         {
-            title: 'Dashboard',
+            title: 'Tableau de bord',
             href: dashboardUrl,
             icon: LayoutGrid,
+        },
+        {
+            title: 'Mes Rendez-vous',
+            href: '/my-appointments',
+            icon: BookOpen,
+        },
+        {
+            title: 'Mes Factures',
+            href: '/dashboard/invoices',
+            icon: FolderGit2,
         },
     ];
 

@@ -1,201 +1,224 @@
-import { Head, usePage } from '@inertiajs/react';
-import { LeadForm } from '@/components/brand/lead-form';
+import { Head, Link } from '@inertiajs/react';
+import {
+    ArrowLeftIcon,
+    ShieldCheckIcon,
+    ClockIcon,
+    BadgeCheckIcon,
+} from 'lucide-react';
 import { ServiceCard } from '@/components/brand/service-card';
-import { Icon } from '@/components/ui/icon';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import PublicLayout from '@/layouts/public-layout';
 
-import type { Service } from '@/types';
-
-interface ServiceShowProps {
-  service: Service;
-  relatedServices: Service[];
+interface Service {
+    id: number;
+    name: string;
+    slug: string;
+    description: string;
+    content?: string;
+    starting_price: number;
+    duration_minutes: number;
+    image_url?: string;
+    is_featured: boolean;
 }
 
-export default function ServiceShow({ service, relatedServices }: ServiceShowProps) {
-  const { settings } = usePage().props as any;
-  const siteName = settings?.site_name || 'KeyPro';
+interface Props {
+    service: Service;
+    relatedServices: Service[];
+}
 
-  const getServiceImage = (slug: string) => {
-    const images: Record<string, string> = {
-      'diagnostic-technique': 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?q=80&w=2500&auto=format&fit=crop',
-      'reproduction-de-cles': 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=2500&auto=format&fit=crop',
-      'ouverture-de-porte': 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2500&auto=format&fit=crop',
-      'reprogrammation-moteur': 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2500&auto=format&fit=crop',
-      'installation-alarme': 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=2500&auto=format&fit=crop',
-    };
+export default function Show({ service, relatedServices }: Props) {
+    return (
+        <PublicLayout>
+            <Head title={`${service.name} - Protocoles KEYPRO`} />
 
-    return images[slug] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2500&auto=format&fit=crop';
-  };
-
-  const serviceImage = getServiceImage(service.slug);
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Service',
-    'name': service.name,
-    'description': service.description,
-    'provider': {
-      '@type': 'LocalBusiness',
-      'name': siteName,
-      'image': serviceImage,
-      'telephone': settings?.contact_phone || '+228 72 11 44 44',
-      'address': {
-        '@type': 'PostalAddress',
-        'addressLocality': 'Lomé',
-        'addressCountry': 'TG'
-      }
-    },
-    'areaServed': 'Lomé, Togo',
-    'offers': {
-      '@type': 'Offer',
-      'price': service.starting_price || '0',
-      'priceCurrency': 'EUR'
-    }
-  };
-
-  return (
-    <PublicLayout>
-      <Head>
-        <title>{`${service.name} | ${siteName}`}</title>
-        <meta name="description" content={service.description} />
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLd)}
-        </script>
-      </Head>
-      {/* Service Header Section */}
-      <section className="relative py-32 overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src={serviceImage} 
-            alt={`Protocole technique pour ${service.name} - KeyPro`}
-            className="w-full h-full object-cover opacity-30"
-            fetchPriority="high"
-            decoding="async"
-            width="2500"
-            height="1000"
-          />
-          <div className="absolute inset-0 bg-background/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
-        </div>
-        <div className="absolute inset-0 bg-grid-pattern opacity-10 z-1" />
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24">
-          <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-6 block animate-in fade-in slide-in-from-top duration-700">Spécification du Protocole</span>
-          <h1 className="text-5xl md:text-8xl font-heading font-bold uppercase tracking-tighter text-white mb-8 animate-in fade-in slide-in-from-bottom duration-1000">
-            {service.name.split(' ').map((word: string, i: number) => (
-              <span key={i} className="inline-block mr-[0.2em] last:mr-0">
-                {i === 1 ? <span className="text-racing-red">{word}</span> : word}
-              </span>
-            ))}
-          </h1>
-          <div className="h-[2px] w-32 bg-racing-red mx-auto mb-12" />
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-24">
-          {/* Main Content */}
-          <div className="lg:col-span-7 space-y-16 animate-in fade-in slide-in-from-left duration-1000">
-            <div className="space-y-8">
-              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Spécification du Service</span>
-              <h1 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tighter text-white mb-8 leading-[1.1]">
-                {service.name}
-              </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed tracking-wide font-medium border-l-4 border-racing-red pl-10 italic">
-                {service.description}
-              </p>
-            </div>
-
-            {service.starting_price && (
-              <div className="grid grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-none overflow-hidden">
-                <div className="bg-luxury-charcoal p-10">
-                  <div className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground mb-3">Investissement de Base</div>
-                  <div className="text-4xl font-heading font-bold text-white group-hover:text-racing-red transition-colors">
-                    {service.starting_price}€
-                  </div>
+            <div className="relative mx-auto max-w-7xl px-4 pt-32 pb-24 sm:px-6 lg:px-8">
+                {/* Navigation / Breadcrumbs */}
+                <div className="mb-12">
+                    <Link
+                        href="/services"
+                        className="group flex items-center gap-2 font-heading text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase transition-all hover:text-racing-red"
+                    >
+                        <ArrowLeftIcon className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
+                        Retour aux Services
+                    </Link>
                 </div>
-                {service.estimated_duration && (
-                  <div className="bg-luxury-charcoal p-10">
-                    <div className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-muted-foreground mb-3">Durée Estimée du Protocole</div>
-                    <div className="text-2xl font-heading font-bold text-white flex items-center gap-3">
-                      <Icon name="Clock" className="h-6 w-6 text-racing-red" />
-                      <span>{service.estimated_duration} MIN</span>
+
+                <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
+                    {/* Left Column: Media & Specs */}
+                    <div className="space-y-8 lg:col-span-5">
+                        <div className="group relative aspect-[4/5] overflow-hidden border border-white/5 bg-luxury-charcoal">
+                            {service.image_url ? (
+                                <img
+                                    src={service.image_url}
+                                    alt={service.name}
+                                    className="h-full w-full object-cover grayscale transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center bg-luxury-black/50">
+                                    <ShieldCheckIcon className="h-24 w-24 text-racing-red/10" />
+                                </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-luxury-black via-transparent to-transparent opacity-60" />
+
+                            <div className="absolute bottom-0 left-0 w-full p-8">
+                                <Badge className="mb-4 rounded-none border-none bg-racing-red px-4 py-1.5 font-heading text-[10px] font-bold tracking-widest text-white uppercase">
+                                    Protocole Certifié
+                                </Badge>
+                            </div>
+                        </div>
+
+                        {/* Technical Specifications Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2 border border-white/5 bg-luxury-charcoal/30 p-6">
+                                <ClockIcon className="h-4 w-4 text-racing-red" />
+                                <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                                    Durée Standard
+                                </p>
+                                <p className="font-heading text-xl font-bold text-white uppercase">
+                                    {service.duration_minutes} MIN
+                                </p>
+                            </div>
+                            <div className="space-y-2 border border-white/5 bg-luxury-charcoal/30 p-6">
+                                <BadgeCheckIcon className="h-4 w-4 text-racing-red" />
+                                <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                                    Garantie
+                                </p>
+                                <p className="font-heading text-xl font-bold text-white uppercase">
+                                    12 MOIS
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                  </div>
+
+                    {/* Right Column: Information & Booking */}
+                    <div className="space-y-12 lg:col-span-7">
+                        <div>
+                            <div className="mb-6 flex items-center gap-3">
+                                <div className="h-8 w-[4px] bg-racing-red" />
+                                <span className="font-heading text-[11px] font-bold tracking-[0.5em] text-muted-foreground uppercase">
+                                    Spécification Technique
+                                </span>
+                            </div>
+                            <h1 className="font-heading text-5xl leading-none font-bold tracking-tighter text-white uppercase md:text-6xl">
+                                {service.name.split(' ').map((word, i) => (
+                                    <span
+                                        key={i}
+                                        className={
+                                            i === 0
+                                                ? 'text-chrome'
+                                                : 'text-white'
+                                        }
+                                    >
+                                        {word}{' '}
+                                    </span>
+                                ))}
+                            </h1>
+                            <div className="mt-8 flex items-baseline gap-4">
+                                <span className="text-[10px] font-bold tracking-[0.3em] text-muted-foreground uppercase">
+                                    À partir de
+                                </span>
+                                <span className="font-heading text-4xl font-bold tracking-tighter text-racing-red">
+                                    {service.starting_price}€
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="prose prose-invert max-w-none">
+                                <p className="text-lg leading-relaxed font-light text-white/80">
+                                    {service.description}
+                                </p>
+                                {service.content && (
+                                    <div
+                                        className="mt-8 border-t border-white/5 pt-8 leading-relaxed text-muted-foreground"
+                                        dangerouslySetInnerHTML={{
+                                            __html: service.content,
+                                        }}
+                                    />
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-8 border-t border-white/5 pt-8 md:grid-cols-2">
+                                <div className="space-y-4">
+                                    <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] text-white uppercase">
+                                        Inclusions du Protocole
+                                    </h3>
+                                    <ul className="space-y-3">
+                                        {[
+                                            'Diagnostic Précis',
+                                            'Pièces Certifiées',
+                                            'Rapport Technique',
+                                            'Nettoyage Final',
+                                        ].map((item, i) => (
+                                            <li
+                                                key={i}
+                                                className="flex items-center gap-3 text-[10px] font-bold tracking-widest text-muted-foreground uppercase"
+                                            >
+                                                <div className="h-1 w-1 bg-racing-red" />
+                                                {item}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div className="space-y-4">
+                                    <h3 className="font-heading text-[10px] font-bold tracking-[0.2em] text-white uppercase">
+                                        Sécurité & Normes
+                                    </h3>
+                                    <div className="flex items-start gap-3 border border-racing-red/10 bg-racing-red/5 p-4">
+                                        <ShieldCheckIcon className="h-5 w-5 shrink-0 text-racing-red" />
+                                        <p className="text-[10px] leading-relaxed tracking-wider text-muted-foreground uppercase">
+                                            Tous nos protocoles respectent les
+                                            standards de sécurité les plus
+                                            stricts de l'industrie automobile.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-6 pt-8 sm:flex-row">
+                                <Link href="/appointments" className="flex-1">
+                                    <Button className="skewed-btn h-16 w-full bg-racing-red font-heading font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-white hover:text-luxury-black">
+                                        Initialiser le Protocole
+                                    </Button>
+                                </Link>
+                                <Button
+                                    variant="outline"
+                                    className="h-16 rounded-none border-white/10 px-8 font-heading font-bold tracking-[0.2em] text-white uppercase hover:bg-white/5"
+                                >
+                                    Fiche Technique (PDF)
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Related Services */}
+                {relatedServices.length > 0 && (
+                    <div className="mt-32 border-t border-white/5 pt-24">
+                        <div className="mb-20 flex flex-col items-center text-center">
+                            <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
+                                Expansion
+                            </span>
+                            <h2 className="font-heading text-4xl font-bold tracking-tighter text-white uppercase">
+                                Protocoles{' '}
+                                <span className="text-racing-red">
+                                    Associés
+                                </span>
+                            </h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+                            {relatedServices.map((relatedService) => (
+                                <ServiceCard
+                                    key={relatedService.id}
+                                    service={relatedService}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 )}
-              </div>
-            )}
-
-            {service.long_description && (
-              <div className="space-y-8">
-                <h2 className="text-[11px] font-heading font-bold uppercase tracking-[0.3em] text-white flex items-center gap-6">
-                  <span className="w-12 h-[2px] bg-racing-red" />
-                  Détails Techniques
-                </h2>
-                <div className="bg-luxury-charcoal/50 border border-white/5 p-10 rounded-none text-sm leading-relaxed text-muted-foreground tracking-wide space-y-6 font-medium">
-                  {service.long_description.split('\n').map((para: string, i: number) => (
-                    <p key={i}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {service.brands && service.brands.length > 0 && (
-              <div className="space-y-8">
-                <h2 className="text-[11px] font-heading font-bold uppercase tracking-[0.3em] text-white flex items-center gap-6">
-                  <span className="w-12 h-[2px] bg-racing-red" />
-                  Compatibilité Marques Vérifiée
-                </h2>
-                <div className="flex flex-wrap gap-4">
-                  {service.brands.map((brand: any) => (
-                    <span key={brand.id} className="text-[10px] font-heading font-bold uppercase tracking-[0.2em] px-5 py-3 bg-white/5 border border-white/10 text-white hover:bg-racing-red hover:border-racing-red transition-all cursor-default transform -skew-x-12 inline-block">
-                      <span className="inline-block skew-x-12">{brand.name}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar - Lead Form */}
-          <div id="contact" className="lg:col-span-5 animate-in fade-in slide-in-from-right duration-1000">
-            <div className="sticky top-32">
-              <LeadForm
-                serviceId={service.id}
-                title="Initialiser le Protocole"
-                description="Sécurisez un statut technique prioritaire pour votre véhicule."
-              />
-              
-              <div className="mt-8 bg-luxury-charcoal p-8 border border-white/5 flex items-center gap-6 transform -skew-x-2">
-                <div className="w-14 h-14 border border-racing-red/20 flex items-center justify-center text-racing-red bg-racing-red/5">
-                  <Icon name="ShieldCheck" className="h-7 w-7" />
-                </div>
-                <div>
-                  <p className="text-[11px] font-heading font-bold uppercase tracking-[0.2em] text-white">Précision Garantie</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] mt-1 font-bold">Protection Responsabilité Civile Complète.</p>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Related Services */}
-        {relatedServices.length > 0 && (
-          <div className="mt-32 pt-24 border-t border-white/5">
-            <div className="flex flex-col items-center text-center mb-20">
-              <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red mb-4 block">Expansion</span>
-              <h2 className="text-4xl font-heading font-bold uppercase tracking-tighter text-white">Protocoles <span className="text-racing-red">Associés</span></h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {relatedServices.map((relatedService) => (
-                <ServiceCard key={relatedService.id} service={relatedService} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </PublicLayout>
-  );
+        </PublicLayout>
+    );
 }
-

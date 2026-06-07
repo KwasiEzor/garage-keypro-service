@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HealthController;
 use App\Http\Controllers\InvoiceController;
@@ -9,6 +10,9 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
+use App\Models\Team;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class)->name('health');
@@ -47,6 +51,30 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
+    Route::get('/dashboard', function (Request $request) {
+        $user = $request->user();
+
+        if (! $user instanceof User) {
+            return redirect()->route('login');
+        }
+
+        $team = $user->currentTeam;
+
+        if (! $team) {
+            $team = $user->personalTeam() ?: $user->teams()->first();
+
+            if ($team) {
+                $user->switchTeam($team);
+            }
+        }
+
+        if ($team instanceof Team) {
+            return redirect()->route('dashboard', ['current_team' => $team->slug]);
+        }
+
+        return redirect()->route('home');
+    })->name('dashboard.root');
+
     Route::get('/dashboard/invoices', [InvoiceController::class, 'index'])->name('dashboard.invoices.index');
     Route::get('/dashboard/invoices/{invoice}', [InvoiceController::class, 'show'])->name('dashboard.invoices.show');
 });
@@ -54,7 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function (): void {
-        Route::inertia('dashboard', 'dashboard')->name('dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 
 Route::middleware(['auth'])->group(function (): void {

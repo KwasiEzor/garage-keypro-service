@@ -1,9 +1,11 @@
 import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
+import { LayoutGrid, Calendar, Receipt, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import BackgroundSpotlight from '@/components/background-spotlight';
 import { CookieConsent } from '@/components/cookie-consent';
 import { FlashMessages } from '@/components/flash-messages';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
 import {
     Sheet,
@@ -14,6 +16,8 @@ import {
     SheetTrigger,
 } from '@/components/ui/sheet';
 import { WhatsAppButton } from '@/components/ui/whatsapp-button';
+import { UserMenu } from '@/components/user-menu';
+import { dashboard } from '@/routes';
 
 interface PublicLayoutProps {
     children: React.ReactNode;
@@ -21,7 +25,7 @@ interface PublicLayoutProps {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const { settings } = Inertia.usePage().props as any;
+    const { settings, auth } = Inertia.usePage().props as any;
 
     const siteName = settings?.site_name || 'KEYPRO';
     const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
@@ -176,12 +180,25 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                                 </Link>
                             ))}
 
-                            <Link
-                                href="#contact"
-                                className="skewed-btn bg-racing-red text-white transition-colors hover:bg-white hover:text-luxury-black"
-                            >
-                                <span>Réserver</span>
-                            </Link>
+                            {auth?.user ? (
+                                <UserMenu
+                                    user={auth.user}
+                                    currentTeam={auth.user.current_team}
+                                />
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className="skewed-btn group bg-racing-red text-white transition-colors hover:bg-white hover:text-luxury-black"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <Icon
+                                            name="LogIn"
+                                            className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                                        />
+                                        Connexion
+                                    </span>
+                                </Link>
+                            )}
                         </div>
 
                         <div className="md:hidden">
@@ -242,14 +259,132 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                                                 {item.name}
                                             </Link>
                                         ))}
+                                        {auth?.user ? (
+                                            <div className="flex flex-col gap-6">
+                                                {/* Mobile User Identity */}
+                                                <div className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/50 p-4">
+                                                    <Avatar className="h-12 w-12 rounded-none border border-racing-red/20">
+                                                        <AvatarImage
+                                                            src={
+                                                                auth.user.avatar
+                                                            }
+                                                            alt={auth.user.name}
+                                                        />
+                                                        <AvatarFallback className="rounded-none bg-luxury-black font-heading text-xs text-racing-red uppercase">
+                                                            {auth.user.name
+                                                                .split(' ')
+                                                                .map(
+                                                                    (
+                                                                        n: string,
+                                                                    ) => n[0],
+                                                                )
+                                                                .join('')
+                                                                .toUpperCase()
+                                                                .substring(
+                                                                    0,
+                                                                    2,
+                                                                )}
+                                                        </AvatarFallback>
+                                                    </Avatar>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-heading text-sm font-bold tracking-wider text-white uppercase">
+                                                            {auth.user.name}
+                                                        </span>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-racing-red" />
+                                                            <span className="text-[9px] font-bold tracking-widest text-muted-foreground uppercase">
+                                                                Client Elite
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                        <Link
-                                            href="#contact"
-                                            onClick={() => setIsMenuOpen(false)}
-                                            className="skewed-btn mt-4 bg-racing-red py-4 text-center font-bold tracking-[0.2em] text-white uppercase"
-                                        >
-                                            <span>Réserver</span>
-                                        </Link>
+                                                {/* Technical Console Links */}
+                                                <div className="grid grid-cols-1 gap-2">
+                                                    <Link
+                                                        href={
+                                                            auth.user
+                                                                .current_team
+                                                                ? dashboard(
+                                                                      auth.user
+                                                                          .current_team
+                                                                          .slug,
+                                                                  )
+                                                                : '/'
+                                                        }
+                                                        onClick={() =>
+                                                            setIsMenuOpen(false)
+                                                        }
+                                                        className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/30 p-4 font-heading text-[10px] font-bold tracking-widest text-white uppercase transition-colors hover:bg-racing-red"
+                                                    >
+                                                        <LayoutGrid className="h-4 w-4 text-racing-red" />
+                                                        Tableau de bord
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/my-appointments"
+                                                        onClick={() =>
+                                                            setIsMenuOpen(false)
+                                                        }
+                                                        className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/30 p-4 font-heading text-[10px] font-bold tracking-widest text-white uppercase transition-colors hover:bg-racing-red"
+                                                    >
+                                                        <Calendar className="h-4 w-4 text-racing-red" />
+                                                        Mes Rendez-vous
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/dashboard/invoices"
+                                                        onClick={() =>
+                                                            setIsMenuOpen(false)
+                                                        }
+                                                        className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/30 p-4 font-heading text-[10px] font-bold tracking-widest text-white uppercase transition-colors hover:bg-racing-red"
+                                                    >
+                                                        <Receipt className="h-4 w-4 text-racing-red" />
+                                                        Mes Factures
+                                                    </Link>
+
+                                                    <Link
+                                                        href="/settings/profile"
+                                                        onClick={() =>
+                                                            setIsMenuOpen(false)
+                                                        }
+                                                        className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/30 p-4 font-heading text-[10px] font-bold tracking-widest text-white uppercase transition-colors hover:bg-racing-red"
+                                                    >
+                                                        <User className="h-4 w-4 text-racing-red" />
+                                                        Mon Profil
+                                                    </Link>
+                                                </div>
+
+                                                <Link
+                                                    href="/logout"
+                                                    method="post"
+                                                    as="button"
+                                                    onClick={() =>
+                                                        setIsMenuOpen(false)
+                                                    }
+                                                    className="flex items-center justify-center gap-2 border border-racing-red/20 p-4 font-heading text-[10px] font-bold tracking-[0.2em] text-racing-red uppercase transition-all hover:bg-racing-red hover:text-white"
+                                                >
+                                                    <LogOut className="h-4 w-4" />
+                                                    Déconnexion
+                                                </Link>
+                                            </div>
+                                        ) : (
+                                            <Link
+                                                href="/login"
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                                className="skewed-btn group mt-12 bg-racing-red py-4 text-center font-bold tracking-[0.2em] text-white uppercase"
+                                            >
+                                                <span className="flex items-center justify-center gap-2">
+                                                    <Icon
+                                                        name="LogIn"
+                                                        className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                                                    />
+                                                    Connexion
+                                                </span>
+                                            </Link>
+                                        )}
 
                                         <div className="mt-12 flex gap-6 border-t border-white/5 pt-12">
                                             {[
