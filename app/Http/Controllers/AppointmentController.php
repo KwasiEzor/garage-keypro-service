@@ -33,7 +33,7 @@ class AppointmentController extends Controller
     {
         return Inertia::render('appointments/index', [
             'services' => Service::where('is_active', true)->get(),
-            'teams' => Team::all(),
+            'teams' => Team::where('is_personal', false)->get(),
             'availableSlots' => Inertia::optional(function () {
                 if (request('date') && request('team_id') && request('service_id')) {
                     $team = Team::find(request('team_id'));
@@ -219,7 +219,7 @@ class AppointmentController extends Controller
 
         return Inertia::render('appointments/index', [
             'services' => Service::where('is_active', true)->get(),
-            'teams' => Team::all(),
+            'teams' => Team::where('is_personal', false)->get(),
             'rescheduleAppointment' => $appointment->load(['team', 'service']),
         ]);
     }
