@@ -1,9 +1,9 @@
 <?php
 
+use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
 use App\Models\User;
-use Carbon\Carbon;
 
 use function Pest\Laravel\actingAs;
 
@@ -45,7 +45,7 @@ test('complete appointment booking flow - from service selection to confirmation
     $availResponse->assertJsonStructure(['availability']);
     $availability = $availResponse->json('availability');
 
-    dump("Available dates count: ".count($availability));
+    dump('Available dates count: '.count($availability));
     dump('First 5 dates: '.implode(', ', array_slice(array_keys($availability), 0, 5)));
 
     if (empty($availability)) {
@@ -121,7 +121,7 @@ test('complete appointment booking flow - from service selection to confirmation
     dump('✓ Appointment exists in database');
 
     // Get created appointment
-    $appointment = \App\Models\Appointment::where('user_id', $user->id)
+    $appointment = Appointment::where('user_id', $user->id)
         ->where('service_id', $service->id)
         ->latest()
         ->first();

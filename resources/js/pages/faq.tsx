@@ -27,7 +27,7 @@ export default function Faq({ faqs }: FaqProps) {
         </div>
 
         <div className="space-y-24">
-          {Object.entries(faqsData).map(([category, questions], i) => (
+          {Object.entries(faqsData).map(([category, questions]) => (
             <div key={category} className="animate-in fade-in slide-in-from-bottom duration-1000">
               <h2 className="text-[11px] font-heading font-bold uppercase tracking-[0.3em] text-white mb-10 flex items-center gap-6">
                 <span className="w-12 h-[2px] bg-racing-red" />

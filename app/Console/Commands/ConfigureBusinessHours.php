@@ -59,7 +59,7 @@ class ConfigureBusinessHours extends Command
 
         $this->info("✓ Created recurring schedule (ID: {$schedule->id})");
         $this->info("  Name: {$schedule->name}");
-        $this->info("  Frequency: Weekly (Mon-Fri)");
+        $this->info('  Frequency: Weekly (Mon-Fri)');
         $this->info("  Start: {$schedule->start_date->format('Y-m-d')}");
         $this->newLine();
 

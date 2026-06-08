@@ -3,7 +3,6 @@
 use Carbon\CarbonInterface;
 use Zap\Enums\ScheduleTypes;
 use Zap\Models\Schedule;
-use Zap\Models\SchedulePeriod;
 
 return [
     /*
@@ -102,7 +101,7 @@ return [
     |
     */
     'models' => [
-        'schedule' => \App\Models\Schedule::class,
-        'schedule_period' => \App\Models\SchedulePeriod::class,
+        'schedule' => App\Models\Schedule::class,
+        'schedule_period' => App\Models\SchedulePeriod::class,
     ],
 ];

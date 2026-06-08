@@ -33,6 +33,18 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
   const [search, setSearch] = useState(initialSearch || '');
   const [isSearching, setIsSearching] = useState(false);
 
+  // Sync search state with prop changes (e.g., browser navigation)
+  // Using a state-based sync pattern instead of useEffect to avoid extra renders
+  const [prevInitialSearch, setPrevInitialSearch] = useState(initialSearch);
+  if (initialSearch !== prevInitialSearch) {
+    setSearch(initialSearch || '');
+    setPrevInitialSearch(initialSearch);
+  }
+
+  // Derived state to show spinner when local search doesn't match URL state
+  const searchIsStale = search !== (initialSearch || '');
+  const showSpinner = isSearching || searchIsStale;
+
   useEffect(() => {
     const tl = gsap.timeline();
     tl.fromTo(
@@ -42,21 +54,10 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
     );
   }, []);
 
-  useEffect(() => {
-    setLightboxImageError(false);
-  }, [selectedItem]);
-
-  // Sync search state with prop changes (e.g., browser navigation)
-  useEffect(() => {
-    setSearch(initialSearch || '');
-  }, [initialSearch]);
-
   // Debounced Search
   useEffect(() => {
     // Skip if search matches what's already in the URL/props
-    if (search === (initialSearch || '')) {
-      setIsSearching(false);
-
+    if (!searchIsStale) {
       return;
     }
 
@@ -76,7 +77,7 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
     }, 400);
 
     return () => clearTimeout(timeout);
-  }, [search, currentCategory]);
+  }, [search, currentCategory, searchIsStale]);
 
   const handleFilter = (category: string) => {
     router.visit(galleryIndex.url(), {
@@ -88,6 +89,11 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
       reset: ['items'],
       replace: true,
     });
+  };
+
+  const handleSelectItem = (item: any) => {
+    setSelectedItem(item);
+    setLightboxImageError(false);
   };
 
   return (
@@ -171,7 +177,7 @@ export default function GalleryIndex({ items, categories, currentCategory, searc
               <InfiniteScroll data="items">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
                   {items.data.map((item) => (
-                    <div key={item.id} onClick={() => setSelectedItem(item)} className="cursor-pointer">
+                    <div key={item.id} onClick={() => handleSelectItem(item)} className="cursor-pointer">
                       <GalleryCard item={item} />
                     </div>
                   ))}
