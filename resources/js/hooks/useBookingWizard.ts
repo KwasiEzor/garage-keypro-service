@@ -170,10 +170,21 @@ export function useBookingWizard(initialTeamId?: string) {
         }
     }, [initialTeamId]);
 
-    // Check if wizard can proceed to next step
+    // Check if wizard can proceed to next step (without side effects)
     const canProceed = useCallback((): boolean => {
-        return validateStep(state.step);
-    }, [state.step, validateStep]);
+        switch (state.step) {
+            case 1:
+                return !!state.serviceId;
+            case 2:
+                return !!state.date && !!state.slot;
+            case 3:
+                return true; // Notes are optional
+            case 4:
+                return !!state.serviceId && !!state.date && !!state.slot;
+            default:
+                return false;
+        }
+    }, [state.step, state.serviceId, state.date, state.slot]);
 
     return {
         state,

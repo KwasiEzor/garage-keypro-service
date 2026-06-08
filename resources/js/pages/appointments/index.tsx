@@ -67,19 +67,6 @@ export default function AppointmentWizard({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isRescheduling = !!rescheduleAppointment;
 
-    // Pre-fill wizard if rescheduling
-    useState(() => {
-        if (rescheduleAppointment && state.step === 1 && !state.serviceId) {
-            updateField('teamId', rescheduleAppointment.team_id.toString());
-            updateField(
-                'serviceId',
-                rescheduleAppointment.service_id.toString(),
-            );
-            updateField('notes', rescheduleAppointment.notes || '');
-            // Date will be selected by user in step 2
-        }
-    });
-
     const selectedService = services.find(
         (s) => s.id.toString() === state.serviceId,
     );
