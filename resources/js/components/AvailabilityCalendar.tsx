@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
@@ -23,33 +23,23 @@ export default function AvailabilityCalendar({
     availability,
     isLoading = false,
 }: AvailabilityCalendarProps) {
-    const today = new Date();
+    const today = startOfDay(new Date());
 
     // Get dates that have availability
     const availableDates = Object.keys(availability).map(
-        (dateStr) => new Date(dateStr),
+        (dateStr) => new Date(dateStr + 'T00:00:00'),
     );
 
     // Disable dates that are in the past or have no availability
     const disabledDates = (date: Date) => {
-        const dateStr = format(date, 'yyyy-MM-dd');
+        if (!date || isNaN(date.getTime())) {
+            return true;
+        }
 
-        return date < today || !availability[dateStr];
-    };
+        const normalizedDate = startOfDay(date);
+        const dateStr = format(normalizedDate, 'yyyy-MM-dd');
 
-    // Custom day content to show slot count
-    const renderDayContent = (date: Date) => {
-        const dateStr = format(date, 'yyyy-MM-dd');
-        const dayAvailability = availability[dateStr];
-
-        return (
-            <div className="relative flex h-full w-full items-center justify-center">
-                <span>{format(date, 'd')}</span>
-                {dayAvailability && dayAvailability.slots > 0 && (
-                    <span className="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-racing-red" />
-                )}
-            </div>
-        );
+        return normalizedDate < today || !availability[dateStr];
     };
 
     return (
@@ -125,6 +115,7 @@ export default function AvailabilityCalendar({
                 }
 
                 .availability-calendar .rdp-day {
+                    position: relative;
                     width: 2.5rem;
                     height: 2.5rem;
                     border-radius: 0;
@@ -157,6 +148,18 @@ export default function AvailabilityCalendar({
                     border-color: rgba(220, 38, 38, 0.5);
                 }
 
+                .availability-calendar .rdp-day_available::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 0.25rem;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0.25rem;
+                    height: 0.25rem;
+                    border-radius: 9999px;
+                    background-color: #DC2626;
+                }
+
                 @media (max-width: 640px) {
                     .availability-calendar .rdp-day {
                         width: 2rem;
@@ -172,13 +175,12 @@ export default function AvailabilityCalendar({
                 onSelect={(date) => date && onSelectDate(date)}
                 disabled={disabledDates}
                 locale={fr}
-                fromDate={today}
-                toDate={new Date(today.getFullYear(), today.getMonth() + 3, 0)}
+                startMonth={today}
+                endMonth={
+                    new Date(today.getFullYear(), today.getMonth() + 3, 0)
+                }
                 modifiers={{
                     available: availableDates,
-                }}
-                components={{
-                    Day: ({ date }) => renderDayContent(date),
                 }}
             />
 

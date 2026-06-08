@@ -1,9 +1,10 @@
 import { Head, router } from '@inertiajs/react';
 import {
-    ArrowLeftIcon,
-    ArrowRightIcon,
-    CheckIcon,
+    ArrowLeft,
+    ArrowRight,
+    Check,
     Loader2,
+    ShieldCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -204,7 +205,7 @@ export default function AppointmentWizard({
                                         } `}
                                     >
                                         {isCompleted ? (
-                                            <CheckIcon className="h-5 w-5" />
+                                            <Check className="h-5 w-5" />
                                         ) : (
                                             stepNum
                                         )}
@@ -288,7 +289,7 @@ export default function AppointmentWizard({
                                         disabled={isFirstStep || isSubmitting}
                                         className="rounded-none border-white/10 text-[10px] font-bold tracking-widest text-white uppercase hover:bg-white/5 disabled:opacity-50"
                                     >
-                                        <ArrowLeftIcon className="mr-2 h-4 w-4" />
+                                        <ArrowLeft className="mr-2 h-4 w-4" />
                                         Précédent
                                     </Button>
 
@@ -317,7 +318,7 @@ export default function AppointmentWizard({
                                             className="rounded-none bg-racing-red font-heading font-bold tracking-[0.25em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-luxury-black"
                                         >
                                             Suivant
-                                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                                            <ArrowRight className="ml-2 h-4 w-4" />
                                         </Button>
                                     ) : (
                                         <Button
@@ -334,7 +335,7 @@ export default function AppointmentWizard({
                                                 </>
                                             ) : (
                                                 <>
-                                                    <CheckIcon className="mr-2 h-4 w-4" />
+                                                    <Check className="mr-2 h-4 w-4" />
                                                     Confirmer le Rendez-vous
                                                 </>
                                             )}
@@ -437,7 +438,7 @@ export default function AppointmentWizard({
                         </Card>
 
                         <div className="mt-6 flex items-start gap-4 border border-white/5 bg-luxury-charcoal/30 p-6">
-                            <ShieldCheckIcon className="h-5 w-5 shrink-0 text-racing-red" />
+                            <ShieldCheck className="h-5 w-5 shrink-0 text-racing-red" />
                             <p className="text-[10px] leading-relaxed tracking-wider text-muted-foreground uppercase">
                                 Tous nos protocoles respectent les standards de
                                 sécurité les plus stricts de l'industrie

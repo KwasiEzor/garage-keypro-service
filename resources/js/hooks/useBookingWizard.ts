@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 export type WizardStep = 1 | 2 | 3 | 4;
 
@@ -30,11 +30,23 @@ const initialState: BookingState = {
 };
 
 export function useBookingWizard(initialTeamId?: string) {
-    // Try to restore from localStorage on mount
-    const [state, setState] = useState<BookingState>(() => {
-        if (typeof window === 'undefined') {
-            return initialState;
+    const hasRestoredRef = useRef(false);
+
+    // Always start with initial state for both SSR and client to avoid hydration mismatch
+    const [state, setState] = useState<BookingState>({
+        ...initialState,
+        teamId: initialTeamId || '',
+    });
+
+    const [errors, setErrors] = useState<ValidationErrors>({});
+
+    // Restore from localStorage after mount (client-only, after hydration)
+    useEffect(() => {
+        if (typeof window === 'undefined' || hasRestoredRef.current) {
+            return;
         }
+
+        hasRestoredRef.current = true;
 
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -47,20 +59,20 @@ export function useBookingWizard(initialTeamId?: string) {
                     parsed.date = new Date(parsed.date);
                 }
 
-                return {
+                // Intentionally calling setState in useEffect to restore from localStorage
+                // after hydration is complete. This prevents SSR hydration mismatches while
+                // allowing state persistence. The ref ensures this only runs once.
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                setState({
                     ...initialState,
                     ...parsed,
                     teamId: initialTeamId || parsed.teamId,
-                };
+                });
             }
         } catch (e) {
             console.error('Failed to restore booking state:', e);
         }
-
-        return { ...initialState, teamId: initialTeamId || '' };
-    });
-
-    const [errors, setErrors] = useState<ValidationErrors>({});
+    }, [initialTeamId]);
 
     // Persist state to localStorage whenever it changes
     useEffect(() => {
