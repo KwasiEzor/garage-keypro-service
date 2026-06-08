@@ -6,7 +6,7 @@ import {
     Loader2,
     ShieldCheck,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,6 +66,23 @@ export default function AppointmentWizard({
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const isRescheduling = !!rescheduleAppointment;
+    const hasPrefilledRef = useRef(false);
+
+    // Pre-fill wizard when rescheduling (runs once)
+    useEffect(() => {
+        if (rescheduleAppointment && !hasPrefilledRef.current) {
+            hasPrefilledRef.current = true;
+            updateField('teamId', rescheduleAppointment.team_id.toString());
+            updateField(
+                'serviceId',
+                rescheduleAppointment.service_id.toString(),
+            );
+
+            if (rescheduleAppointment.notes) {
+                updateField('notes', rescheduleAppointment.notes);
+            }
+        }
+    }, [rescheduleAppointment, updateField]);
 
     const selectedService = services.find(
         (s) => s.id.toString() === state.serviceId,
