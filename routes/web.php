@@ -34,7 +34,7 @@ Route::get('/invoices/{uuid}', [InvoiceController::class, 'show'])
     ->middleware('throttle:30,1')
     ->name('invoices.show');
 
-Route::middleware('auth')->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
     Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
     Route::get('/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
@@ -85,7 +85,7 @@ Route::prefix('{current_team}')
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 
-Route::middleware(['auth'])->group(function (): void {
+Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('invitations/{invitation}/accept', [TeamInvitationController::class, 'accept'])->name('invitations.accept');
 });
 
