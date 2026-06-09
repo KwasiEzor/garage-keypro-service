@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SchedulePeriod;
 use Carbon\CarbonInterface;
 use Zap\Enums\ScheduleTypes;
 use Zap\Models\Schedule;
@@ -102,6 +103,6 @@ return [
     */
     'models' => [
         'schedule' => App\Models\Schedule::class,
-        'schedule_period' => App\Models\SchedulePeriod::class,
+        'schedule_period' => SchedulePeriod::class,
     ],
 ];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\SlotUnavailableException;
+use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
 use App\Models\User;
@@ -30,11 +31,11 @@ test('concurrent bookings for same slot are prevented', function () {
             $startAt
         );
 
-        expect($appointment1)->toBeInstanceOf(\App\Models\Appointment::class);
+        expect($appointment1)->toBeInstanceOf(Appointment::class);
         expect($appointment1->status->value)->toBe('confirmed');
 
         DB::commit();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         DB::rollBack();
         throw $e;
     }
@@ -60,7 +61,7 @@ test('concurrent bookings for same slot are prevented', function () {
     }
 
     // Verify only one appointment was created
-    expect(\App\Models\Appointment::count())->toBe(1);
+    expect(Appointment::count())->toBe(1);
 });
 
 test('overlapping appointments are prevented', function () {
@@ -74,7 +75,7 @@ test('overlapping appointments are prevented', function () {
         $startAt
     );
 
-    expect($appointment1)->toBeInstanceOf(\App\Models\Appointment::class);
+    expect($appointment1)->toBeInstanceOf(Appointment::class);
 
     // Try to book 10:30 - 11:30 (overlaps with first)
     $overlappingStart = now()->addDay()->setTime(10, 30);
@@ -93,7 +94,7 @@ test('overlapping appointments are prevented', function () {
     }
 
     // Verify only one appointment exists
-    expect(\App\Models\Appointment::count())->toBe(1);
+    expect(Appointment::count())->toBe(1);
 });
 
 test('database lock prevents race conditions', function () {
@@ -142,7 +143,7 @@ test('database lock prevents race conditions', function () {
     expect($results)->toContain('blocked');
 
     // Only one appointment should exist
-    expect(\App\Models\Appointment::count())->toBe(1);
+    expect(Appointment::count())->toBe(1);
 });
 
 test('cancelled appointments do not block slots', function () {
@@ -169,9 +170,9 @@ test('cancelled appointments do not block slots', function () {
         $startAt
     );
 
-    expect($newAppointment)->toBeInstanceOf(\App\Models\Appointment::class);
+    expect($newAppointment)->toBeInstanceOf(Appointment::class);
     expect($newAppointment->status->value)->toBe('confirmed');
 
     // Both appointments should exist (one cancelled, one confirmed)
-    expect(\App\Models\Appointment::count())->toBe(2);
+    expect(Appointment::count())->toBe(2);
 });

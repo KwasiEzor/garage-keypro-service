@@ -7,6 +7,7 @@ namespace App\Actions;
 use App\Enums\Role;
 use App\Models\Lead;
 use App\Models\User;
+use App\Notifications\LeadSubmissionConfirmation;
 use App\Notifications\NewLeadNotification;
 
 class CreateLead
@@ -23,6 +24,9 @@ class CreateLead
             'status' => $data['status'] ?? 'new',
             'source' => $data['source'] ?? 'website',
         ]);
+
+        // Notify client
+        $lead->notify(new LeadSubmissionConfirmation($lead));
 
         // Notify first admin or all admins
         User::where('role', Role::Admin)->first()?->notify(new NewLeadNotification($lead));

@@ -24,7 +24,7 @@ class LeadForm
                     ->description('Details about the customer who submitted the lead.')
                     ->icon('heroicon-o-user')
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(1)
                             ->schema([
                                 TextInput::make('name')
                                     ->required()
@@ -44,7 +44,7 @@ class LeadForm
                     ->description('Information about the vehicle related to the service request.')
                     ->icon('heroicon-o-truck')
                     ->schema([
-                        Grid::make(3)
+                        Grid::make(1)
                             ->schema([
                                 Select::make('vehicle_make')
                                     ->label('Brand')
@@ -75,7 +75,7 @@ class LeadForm
                     ->description('Operational details for this lead.')
                     ->icon('heroicon-o-cog')
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(1)
                             ->schema([
                                 Select::make('service_id')
                                     ->relationship('service', 'name')
@@ -117,7 +117,7 @@ class LeadForm
                     ->icon('heroicon-o-megaphone')
                     ->collapsed()
                     ->schema([
-                        Grid::make(2)
+                        Grid::make(1)
                             ->schema([
                                 TextInput::make('source')
                                     ->required()
