@@ -13,7 +13,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentReminder extends Mailable implements ShouldQueue
+class AppointmentCancellation extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,7 +21,8 @@ class AppointmentReminder extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        public Appointment $appointment
+        public Appointment $appointment,
+        public ?string $cancellationReason = null
     ) {}
 
     /**
@@ -30,16 +31,13 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $subject = Setting::get(
-            'email_appointment_reminder_subject',
-            'Reminder: Your Appointment Tomorrow at {time}'
+            'email_appointment_cancellation_subject',
+            'Appointment Cancelled - {service}'
         );
 
         $subject = str_replace(
-            ['{time}', '{date}'],
-            [
-                $this->appointment->appointment_date->format('g:i A'),
-                $this->appointment->appointment_date->format('M j, Y'),
-            ],
+            '{service}',
+            $this->appointment->service->name ?? 'Service',
             $subject
         );
 
@@ -54,7 +52,10 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.appointments.reminder',
+            view: 'emails.appointments.cancellation',
+            with: [
+                'cancellationReason' => $this->cancellationReason,
+            ],
         );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Models\Invoice;
+use App\Models\Setting;
 use App\Services\InvoicePdfGenerator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -33,15 +34,29 @@ class InvoiceMail extends Mailable
      */
     public function envelope(): Envelope
     {
-        $subjects = [
-            'created' => "New Invoice #{$this->invoice->number}",
-            'sent' => "Invoice #{$this->invoice->number} from {$this->invoice->team->name}",
-            'paid' => "Receipt for Invoice #{$this->invoice->number}",
-            'overdue' => "URGENT: Invoice #{$this->invoice->number} is overdue",
+        $subjectKeys = [
+            'created' => 'email_invoice_sent_subject',
+            'sent' => 'email_invoice_sent_subject',
+            'paid' => 'email_invoice_paid_subject',
+            'overdue' => 'email_invoice_overdue_subject',
         ];
 
+        $defaultSubjects = [
+            'created' => 'Invoice #{number} from GarageKeyPro',
+            'sent' => 'Invoice #{number} from GarageKeyPro',
+            'paid' => 'Payment Receipt - Invoice #{number}',
+            'overdue' => 'Payment Reminder - Invoice #{number} Overdue',
+        ];
+
+        $subject = Setting::get(
+            $subjectKeys[$this->type] ?? 'email_invoice_sent_subject',
+            $defaultSubjects[$this->type] ?? 'Invoice #{number}'
+        );
+
+        $subject = str_replace('{number}', $this->invoice->number, $subject);
+
         return new Envelope(
-            subject: $subjects[$this->type] ?? "Invoice #{$this->invoice->number}",
+            subject: $subject,
         );
     }
 
@@ -50,6 +65,19 @@ class InvoiceMail extends Mailable
      */
     public function content(): Content
     {
+        // Use new branded templates for sent and paid, keep markdown for others
+        $view = match ($this->type) {
+            'sent' => 'emails.invoices.sent',
+            'paid' => 'emails.invoices.paid',
+            default => null,
+        };
+
+        if ($view) {
+            return new Content(
+                view: $view,
+            );
+        }
+
         return new Content(
             markdown: 'emails.invoices.notification',
             with: [

@@ -13,7 +13,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentReminder extends Mailable implements ShouldQueue
+class AppointmentConfirmation extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -30,14 +30,14 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $subject = Setting::get(
-            'email_appointment_reminder_subject',
-            'Reminder: Your Appointment Tomorrow at {time}'
+            'email_appointment_confirmation_subject',
+            'Appointment Confirmed - {service} on {date}'
         );
 
         $subject = str_replace(
-            ['{time}', '{date}'],
+            ['{service}', '{date}'],
             [
-                $this->appointment->appointment_date->format('g:i A'),
+                $this->appointment->service->name ?? 'Service',
                 $this->appointment->appointment_date->format('M j, Y'),
             ],
             $subject
@@ -54,7 +54,7 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.appointments.reminder',
+            view: 'emails.appointments.confirmation',
         );
     }
 }

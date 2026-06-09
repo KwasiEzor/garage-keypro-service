@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
-use App\Models\Appointment;
 use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,7 +13,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentReminder extends Mailable implements ShouldQueue
+class WelcomeEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,7 +21,7 @@ class AppointmentReminder extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        public Appointment $appointment
+        public User $user
     ) {}
 
     /**
@@ -30,17 +30,8 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $subject = Setting::get(
-            'email_appointment_reminder_subject',
-            'Reminder: Your Appointment Tomorrow at {time}'
-        );
-
-        $subject = str_replace(
-            ['{time}', '{date}'],
-            [
-                $this->appointment->appointment_date->format('g:i A'),
-                $this->appointment->appointment_date->format('M j, Y'),
-            ],
-            $subject
+            'email_welcome_subject',
+            'Welcome to GarageKeyPro!'
         );
 
         return new Envelope(
@@ -54,7 +45,7 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.appointments.reminder',
+            view: 'emails.auth.welcome',
         );
     }
 }

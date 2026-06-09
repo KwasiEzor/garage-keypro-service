@@ -6,6 +6,7 @@ namespace App\Mail;
 
 use App\Models\Appointment;
 use App\Models\Setting;
+use Carbon\CarbonImmutable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,7 +14,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class AppointmentReminder extends Mailable implements ShouldQueue
+class AppointmentRescheduled extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -21,7 +22,8 @@ class AppointmentReminder extends Mailable implements ShouldQueue
      * Create a new message instance.
      */
     public function __construct(
-        public Appointment $appointment
+        public Appointment $appointment,
+        public ?CarbonImmutable $oldDate = null
     ) {}
 
     /**
@@ -30,16 +32,13 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         $subject = Setting::get(
-            'email_appointment_reminder_subject',
-            'Reminder: Your Appointment Tomorrow at {time}'
+            'email_appointment_rescheduled_subject',
+            'Appointment Rescheduled - New Time: {date}'
         );
 
         $subject = str_replace(
-            ['{time}', '{date}'],
-            [
-                $this->appointment->appointment_date->format('g:i A'),
-                $this->appointment->appointment_date->format('M j, Y'),
-            ],
+            '{date}',
+            $this->appointment->appointment_date->format('M j, Y'),
             $subject
         );
 
@@ -54,7 +53,10 @@ class AppointmentReminder extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.appointments.reminder',
+            view: 'emails.appointments.rescheduled',
+            with: [
+                'oldDate' => $this->oldDate,
+            ],
         );
     }
 }
