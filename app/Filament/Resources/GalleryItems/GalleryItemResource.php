@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\GalleryItems;
 
 use App\Filament\Resources\GalleryItems\Pages\ManageGalleryItems;
