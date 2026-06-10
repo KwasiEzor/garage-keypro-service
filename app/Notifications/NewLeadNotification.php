@@ -24,18 +24,11 @@ class NewLeadNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('/admin/leads/'.$this->lead->id);
-
         return (new MailMessage)
-            ->subject('Nouveau lead: '.$this->lead->name)
-            ->greeting('Nouveau lead reçu!')
-            ->line('Nom: '.$this->lead->name)
-            ->line('Email: '.$this->lead->email)
-            ->line('Téléphone: '.($this->lead->phone ?? 'Non fourni'))
-            ->lineIf($this->lead->vehicle_make, 'Véhicule: '.$this->lead->vehicle_make.' '.$this->lead->vehicle_model.' '.$this->lead->vehicle_year)
-            ->lineIf($this->lead->message, 'Message: '.$this->lead->message)
-            ->action('Voir le lead', $url)
-            ->line("Merci d'utiliser GarageKeyPro!");
+            ->subject('Nouveau Lead: '.$this->lead->name)
+            ->view('emails.leads.new-lead-admin', [
+                'lead' => $this->lead->load('service'),
+            ]);
     }
 
     public function toArray(object $notifiable): array

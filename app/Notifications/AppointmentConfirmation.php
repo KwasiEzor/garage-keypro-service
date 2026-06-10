@@ -54,15 +54,10 @@ class AppointmentConfirmation extends Notification implements ShouldQueue
 
         return (new MailMessage)
             ->subject('Appointment Confirmed - '.$appointment->service->name)
-            ->greeting('Hello '.$notifiable->name.'!')
-            ->line('Your appointment has been confirmed.')
-            ->line('**Service:** '.$appointment->service->name)
-            ->line('**Date:** '.$appointment->start_at->format('l, F j, Y'))
-            ->line('**Time:** '.$appointment->start_at->format('g:i A').' - '.$appointment->end_at->format('g:i A'))
-            ->line('**Location:** '.$appointment->team->name)
-            ->when($appointment->notes, fn ($mail) => $mail->line('**Notes:** '.$appointment->notes))
-            ->action('View Appointment', url('/my-appointments'))
-            ->line('A calendar event (.ics file) is attached to this email.')
+            ->view('emails.appointments.confirmation', [
+                'appointment' => $appointment,
+                'notifiable' => $notifiable,
+            ])
             ->attachData($icsContent, 'appointment.ics', [
                 'mime' => 'text/calendar',
             ]);

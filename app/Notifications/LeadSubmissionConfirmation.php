@@ -39,16 +39,9 @@ class LeadSubmissionConfirmation extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Confirmation de votre demande - GarageKeyPro')
-            ->greeting('Bonjour '.$this->lead->name.' !')
-            ->line('Nous avons bien reçu votre demande de consultation technique.')
-            ->line('Un de nos experts examinera vos informations et vous contactera dans les plus brefs délais.')
-            ->line('Voici un récapitulatif de votre demande :')
-            ->lineIf($this->lead->vehicle_make, '**Véhicule :** '.$this->lead->vehicle_make.' '.$this->lead->vehicle_model.' ('.$this->lead->vehicle_year.')')
-            ->lineIf($this->lead->service_id, '**Service :** '.$this->lead->service?->name)
-            ->lineIf($this->lead->message, '**Message :** '.$this->lead->message)
-            ->line('Merci de votre confiance.')
-            ->action('Découvrir nos services', url('/services'))
-            ->line("L'équipe GarageKeyPro");
+            ->view('emails.leads.confirmation', [
+                'lead' => $this->lead->load('service'),
+            ]);
     }
 
     /**

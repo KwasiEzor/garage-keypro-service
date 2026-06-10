@@ -6,6 +6,8 @@ namespace App\Models;
 
 use App\Concerns\HasTeams;
 use App\Enums\Role;
+use App\Notifications\ResetPasswordNotification;
+use App\Notifications\VerifyEmailNotification;
 use Carbon\CarbonImmutable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -82,6 +84,24 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Pas
     use PasskeyAuthenticatable;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
+
+    /**
+     * Send the email verification notification.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new VerifyEmailNotification);
+    }
+
+    /**
+     * Send the password reset notification.
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
 
     /**
      * Determine if the user can access the Filament admin panel.
