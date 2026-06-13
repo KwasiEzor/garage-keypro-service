@@ -17,6 +17,22 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class)->name('health');
 
+Route::get('/favicon.{ext}', function (string $ext) {
+    if (! in_array($ext, ['ico', 'svg'], true)) {
+        abort(404);
+    }
+
+    $path = public_path("favicon.{$ext}");
+
+    if (! file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Content-Type' => $ext === 'svg' ? 'image/svg+xml' : 'image/x-icon',
+    ]);
+})->where('ext', 'ico|svg');
+
 Route::get('/', [PublicController::class, 'home'])->name('home');
 Route::get('/services', [PublicController::class, 'services'])->name('services.index');
 Route::get('/services/{service:slug}', [PublicController::class, 'serviceShow'])->name('services.show');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\Csp;
 
+use Illuminate\Support\Facades\Vite;
 use Spatie\Csp\Directive;
 use Spatie\Csp\Keyword;
 use Spatie\Csp\Presets\Basic;
@@ -13,6 +14,16 @@ class Policy extends Basic
     public function configure(\Spatie\Csp\Policy $policy): void
     {
         parent::configure($policy);
+
+        $fontSources = [
+            'https://fonts.gstatic.com',
+            Keyword::SELF,
+            'data:',
+        ];
+
+        if (Vite::isRunningHot()) {
+            $fontSources[] = config('app.url').':5173';
+        }
 
         $policy
             ->add(Directive::SCRIPT, [
@@ -24,11 +35,7 @@ class Policy extends Basic
                 Keyword::UNSAFE_INLINE,
                 'https://fonts.googleapis.com',
             ])
-            ->add(Directive::FONT, [
-                'https://fonts.gstatic.com',
-                Keyword::SELF,
-                'data:',
-            ])
+            ->add(Directive::FONT, $fontSources)
             ->add(Directive::IMG, [
                 Keyword::SELF,
                 'data:',
