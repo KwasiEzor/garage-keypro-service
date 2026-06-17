@@ -1,70 +1,52 @@
 @component('emails.layouts.branded')
 
-<p class="email-greeting">Hello {{ $appointment->customer_name }},</p>
+<p class="email-greeting">Appointment Confirmed!</p>
 
 <div class="email-content">
-    <p>Your appointment has been successfully confirmed! We're looking forward to serving you.</p>
+    <p>Hello {{ $notifiable->name }},</p>
+    <p>Your appointment with <strong>{{ $appointment->team->name }}</strong> has been successfully confirmed. We look forward to seeing you!</p>
+    
+    <div class="info-box">
+        <div class="info-box-title">Important Note</div>
+        <div class="info-box-content">
+            Please arrive 5-10 minutes early. If you need to reschedule or cancel, please do so at least 24 hours in advance.
+        </div>
+    </div>
 </div>
 
-<div class="info-box">
-    <div class="info-box-title">Appointment Details</div>
-    <table class="detail-table">
-        <tr>
-            <td>Service</td>
-            <td><strong>{{ $appointment->service->name ?? 'N/A' }}</strong></td>
-        </tr>
-        <tr>
-            <td>Date & Time</td>
-            <td><strong>{{ $appointment->appointment_date->format('l, F j, Y') }} at {{ $appointment->appointment_date->format('g:i A') }}</strong></td>
-        </tr>
-        <tr>
-            <td>Duration</td>
-            <td>{{ $appointment->duration ?? '60' }} minutes</td>
-        </tr>
-        <tr>
-            <td>Location</td>
-            <td>{{ $appointment->location ?? 'Our Service Center' }}</td>
-        </tr>
-        @if($appointment->vehicle_info)
-        <tr>
-            <td>Vehicle</td>
-            <td>{{ $appointment->vehicle_info }}</td>
-        </tr>
-        @endif
-        @if($appointment->notes)
-        <tr>
-            <td>Notes</td>
-            <td>{{ $appointment->notes }}</td>
-        </tr>
-        @endif
-    </table>
-</div>
-
-@if($appointment->price)
-<div class="email-content">
-    <p><strong>Estimated Price:</strong> ${{ number_format($appointment->price, 2) }}</p>
-</div>
-@endif
+<table class="detail-table">
+    <tr>
+        <td>Service</td>
+        <td>{{ $appointment->service->name }}</td>
+    </tr>
+    <tr>
+        <td>Date</td>
+        <td>{{ $appointment->start_at->format('l, F j, Y') }}</td>
+    </tr>
+    <tr>
+        <td>Time</td>
+        <td>{{ $appointment->start_at->format('g:i A') }} - {{ $appointment->end_at->format('g:i A') }}</td>
+    </tr>
+    <tr>
+        <td>Location</td>
+        <td>{{ $appointment->team->name }}</td>
+    </tr>
+    @if($appointment->notes)
+    <tr>
+        <td>Your Notes</td>
+        <td>{{ $appointment->notes }}</td>
+    </tr>
+    @endif
+</table>
 
 <div class="text-center">
-    <a href="{{ config('app.url') }}/appointments/{{ $appointment->uuid }}" class="button-primary">
-        View Appointment Details
-    </a>
+    <a href="{{ url('/my-appointments') }}" class="button-primary">Manage Appointment</a>
 </div>
 
 <div class="email-divider"></div>
 
-<div class="email-content">
-    <p><strong>What to bring:</strong></p>
-    <ul>
-        <li>Vehicle registration documents</li>
-        <li>Photo ID</li>
-        <li>Any existing keys or key fobs</li>
-    </ul>
-
-    <p class="text-muted mt-20">
-        Need to reschedule? You can manage your appointment using the link above or contact us directly.
-    </p>
-</div>
+<p class="text-muted text-center">
+    A calendar invite (.ics) has been attached to this email for your convenience.
+</p>
 
 @endcomponent

@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Filament\Pages;
 
 use App\Models\Setting;
-use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Schema;
 
 class ManageEmailSettings extends Page implements HasForms
 {
@@ -39,18 +38,18 @@ class ManageEmailSettings extends Page implements HasForms
         $this->form->fill($this->getSettingsData());
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Tabs::make('Email Settings')
                     ->tabs([
                         Tabs\Tab::make('Brand Settings')
                             ->icon('heroicon-o-paint-brush')
-                            ->schema([
+                            ->components([
                                 Section::make('Email Branding')
                                     ->description('Customize the look and feel of your email templates')
-                                    ->schema([
+                                    ->components([
                                         TextInput::make('email_company_name')
                                             ->label('Company Name')
                                             ->default('GarageKeyPro')
@@ -92,9 +91,9 @@ class ManageEmailSettings extends Page implements HasForms
 
                         Tabs\Tab::make('Appointments')
                             ->icon('heroicon-o-calendar')
-                            ->schema([
+                            ->components([
                                 Section::make('Appointment Confirmation')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_appointment_confirmation_enabled')
                                             ->label('Enable Confirmation Emails')
                                             ->default(true)
@@ -108,7 +107,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Appointment Reminder')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_appointment_reminder_enabled')
                                             ->label('Enable Reminder Emails')
                                             ->default(true)
@@ -129,7 +128,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Appointment Cancellation')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_appointment_cancellation_enabled')
                                             ->label('Enable Cancellation Emails')
                                             ->default(true)
@@ -143,7 +142,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Appointment Rescheduled')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_appointment_rescheduled_enabled')
                                             ->label('Enable Rescheduled Emails')
                                             ->default(true)
@@ -159,9 +158,9 @@ class ManageEmailSettings extends Page implements HasForms
 
                         Tabs\Tab::make('Invoices')
                             ->icon('heroicon-o-document-text')
-                            ->schema([
+                            ->components([
                                 Section::make('Invoice Sent')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_invoice_sent_enabled')
                                             ->label('Enable Invoice Emails')
                                             ->default(true)
@@ -175,7 +174,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Invoice Paid')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_invoice_paid_enabled')
                                             ->label('Enable Payment Receipt Emails')
                                             ->default(true)
@@ -189,7 +188,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Invoice Overdue')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_invoice_overdue_enabled')
                                             ->label('Enable Overdue Reminder Emails')
                                             ->default(true)
@@ -205,9 +204,9 @@ class ManageEmailSettings extends Page implements HasForms
 
                         Tabs\Tab::make('Authentication')
                             ->icon('heroicon-o-shield-check')
-                            ->schema([
+                            ->components([
                                 Section::make('Welcome Email')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_welcome_enabled')
                                             ->label('Enable Welcome Emails')
                                             ->default(true)
@@ -226,7 +225,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Email Verification')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_verification_enabled')
                                             ->label('Enable Email Verification')
                                             ->default(true)
@@ -239,7 +238,7 @@ class ManageEmailSettings extends Page implements HasForms
                                     ])->columns(1),
 
                                 Section::make('Password Reset')
-                                    ->schema([
+                                    ->components([
                                         Toggle::make('email_password_reset_enabled')
                                             ->label('Enable Password Reset Emails')
                                             ->default(true)
@@ -254,15 +253,6 @@ class ManageEmailSettings extends Page implements HasForms
                     ])->columnSpanFull(),
             ])
             ->statePath('data');
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Save Settings')
-                ->submit('save'),
-        ];
     }
 
     public function save(): void

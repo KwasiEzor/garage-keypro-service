@@ -30,7 +30,7 @@
         }
 
         .email-header {
-            background: linear-gradient(135deg, {{ Setting::get('email_primary_color', '#4C8BF5') }} 0%, #3B7AE5 100%);
+            background: linear-gradient(135deg, {{ \App\Models\Setting::get('email_primary_color', '#4C8BF5') }} 0%, #3B7AE5 100%);
             padding: 40px 30px;
             text-align: center;
         }
@@ -83,7 +83,7 @@
         .button-primary {
             display: inline-block;
             padding: 14px 32px;
-            background-color: {{ Setting::get('email_accent_color', '#FF6700') }};
+            background-color: {{ \App\Models\Setting::get('email_accent_color', '#FF6700') }};
             color: #FFFFFF !important;
             text-decoration: none;
             border-radius: 8px;
@@ -102,7 +102,7 @@
 
         .info-box {
             background-color: #EBF8FF;
-            border-left: 4px solid {{ Setting::get('email_primary_color', '#4C8BF5') }};
+            border-left: 4px solid {{ \App\Models\Setting::get('email_primary_color', '#4C8BF5') }};
             padding: 20px;
             margin: 20px 0;
             border-radius: 6px;
@@ -168,7 +168,7 @@
         }
 
         .email-footer-contact a {
-            color: {{ Setting::get('email_primary_color', '#4C8BF5') }};
+            color: {{ \App\Models\Setting::get('email_primary_color', '#4C8BF5') }};
             text-decoration: none;
         }
 
@@ -228,10 +228,10 @@
     <div class="email-container">
         <!-- Header -->
         <div class="email-header">
-            @if(Setting::get('email_logo_url'))
-                <img src="{{ Setting::get('email_logo_url') }}" alt="{{ Setting::get('email_company_name', 'GarageKeyPro') }}" class="email-logo">
+            @if(\App\Models\Setting::get('email_logo_url'))
+                <img src="{{ \App\Models\Setting::get('email_logo_url') }}" alt="{{ \App\Models\Setting::get('email_company_name', 'GarageKeyPro') }}" class="email-logo">
             @else
-                <h1 class="email-header-title">{{ Setting::get('email_company_name', 'GarageKeyPro') }}</h1>
+                <h1 class="email-header-title">{{ \App\Models\Setting::get('email_company_name', 'GarageKeyPro') }}</h1>
             @endif
         </div>
 
@@ -243,18 +243,18 @@
         <!-- Footer -->
         <div class="email-footer">
             <p class="email-footer-text">
-                {{ Setting::get('email_footer_text', 'GarageKeyPro - Elite Automotive Engineering') }}
+                {{ \App\Models\Setting::get('email_footer_text', 'GarageKeyPro - Elite Automotive Engineering') }}
             </p>
             <div class="email-footer-contact">
-                @if(Setting::get('email_support_email'))
-                    <a href="mailto:{{ Setting::get('email_support_email') }}">{{ Setting::get('email_support_email') }}</a>
+                @if(\App\Models\Setting::get('email_support_email'))
+                    <a href="mailto:{{ \App\Models\Setting::get('email_support_email') }}">{{ \App\Models\Setting::get('email_support_email') }}</a>
                 @endif
-                @if(Setting::get('email_support_phone'))
-                    | {{ Setting::get('email_support_phone') }}
+                @if(\App\Models\Setting::get('email_support_phone'))
+                    | {{ \App\Models\Setting::get('email_support_phone') }}
                 @endif
             </div>
             <p class="text-muted mt-20">
-                &copy; {{ date('Y') }} {{ Setting::get('email_company_name', 'GarageKeyPro') }}. All rights reserved.
+                &copy; {{ date('Y') }} {{ \App\Models\Setting::get('email_company_name', 'GarageKeyPro') }}. All rights reserved.
             </p>
         </div>
     </div>

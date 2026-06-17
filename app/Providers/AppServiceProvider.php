@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Listeners\LogInvoiceActivity;
+use App\Listeners\SendInvoiceNotification;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\User;
@@ -62,6 +63,7 @@ class AppServiceProvider extends ServiceProvider
     protected function registerEventListeners(): void
     {
         Event::subscribe(LogInvoiceActivity::class);
+        Event::subscribe(SendInvoiceNotification::class);
     }
 
     /**

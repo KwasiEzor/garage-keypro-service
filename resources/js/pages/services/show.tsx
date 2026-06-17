@@ -8,6 +8,7 @@ import {
 import { ServiceCard } from '@/components/brand/service-card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { premiumCars } from '@/data/premium-cars';
 import PublicLayout from '@/layouts/public-layout';
 
 interface Service {
@@ -190,6 +191,50 @@ export default function Show({ service, relatedServices }: Props) {
                                 </Button>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Premium Vehicles We Service */}
+                <div className="mt-32 border-t border-white/5 pt-24">
+                    <div className="mb-20 text-center">
+                        <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
+                            Expertise Premium
+                        </span>
+                        <h2 className="mb-8 font-heading text-4xl font-bold tracking-tighter text-white uppercase">
+                            Véhicules{' '}
+                            <span className="text-racing-red">Haute Gamme</span>
+                        </h2>
+                        <p className="mx-auto max-w-2xl text-xs font-bold tracking-[0.25em] text-muted-foreground uppercase">
+                            Nous intervenons sur les modèles les plus
+                            sophistiqués
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-6">
+                        {premiumCars.map((car) => (
+                            <Link
+                                key={car.id}
+                                href="/gallery"
+                                className="group relative overflow-hidden border border-white/10 bg-luxury-charcoal transition-all hover:border-racing-red/50"
+                            >
+                                <div className="aspect-[3/4] overflow-hidden">
+                                    <img
+                                        src={car.image}
+                                        alt={`${car.brand} ${car.name}`}
+                                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-luxury-black via-transparent to-transparent opacity-80 group-hover:opacity-60" />
+                                </div>
+                                <div className="absolute right-0 bottom-0 left-0 p-4">
+                                    <div className="font-heading text-[10px] font-bold tracking-wider text-racing-red uppercase">
+                                        {car.brand}
+                                    </div>
+                                    <div className="text-[9px] font-medium text-white">
+                                        {car.name}
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
                     </div>
                 </div>
 

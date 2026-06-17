@@ -3,7 +3,7 @@
 <p class="email-greeting">Welcome to GarageKeyPro, {{ $user->name }}!</p>
 
 <div class="email-content">
-    <p>{{ Setting::get('email_welcome_message', 'Thank you for choosing GarageKeyPro for your automotive locksmith needs. We\'re committed to providing you with exceptional service.') }}</p>
+    <p>{{ \App\Models\Setting::get('email_welcome_message', 'Thank you for choosing GarageKeyPro for your automotive locksmith needs. We\'re committed to providing you with exceptional service.') }}</p>
 
     <p>With your new account, you can:</p>
     <ul>

@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\SlotUnavailableException;
 use App\Http\Requests\StoreAppointmentRequest;
+use App\Mail\AppointmentCancellation;
+use App\Mail\AppointmentRescheduled;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
@@ -16,6 +18,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\CalendarLinks\Link;
@@ -203,10 +206,15 @@ class AppointmentController extends Controller
     {
         Gate::authorize('cancel', $appointment);
 
+        $reason = request('reason') ?? 'Cancelled by user';
+
         $this->appointmentService->cancelAppointment(
             $appointment,
-            request('reason') ?? 'Cancelled by user'
+            $reason
         );
+
+        // Send cancellation email
+        Mail::to($appointment->user)->send(new AppointmentCancellation($appointment, $reason));
 
         return redirect()->route('appointments.my')
             ->with('success', 'Appointment cancelled successfully.');
@@ -261,8 +269,8 @@ class AppointmentController extends Controller
                     $validated['notes'] ?? null
                 );
 
-                // Send confirmation email
-                auth()->user()->notify(new AppointmentConfirmation($newAppointment));
+                // Send rescheduled email
+                Mail::to(auth()->user())->send(new AppointmentRescheduled($newAppointment, $appointment->start_at->toImmutable()));
 
                 return $newAppointment;
             });

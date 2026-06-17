@@ -3,6 +3,7 @@ import { BrandGrid } from '@/components/brand/brand-grid';
 import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
 import { ServiceCard } from '@/components/brand/service-card';
+import { PremiumCarShowcase } from '@/components/premium/premium-car-showcase';
 import { CircularTestimonials } from '@/components/ui/circular-testimonials';
 import { Icon } from '@/components/ui/icon';
 import PublicLayout from '@/layouts/public-layout';
@@ -205,11 +206,11 @@ export default function Home({
 
                         <div className="group relative">
                             <div className="absolute -inset-4 -skew-x-6 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
-                            <div className="relative -skew-x-6 transform overflow-hidden">
+                            <div className="relative -skew-x-6 transform overflow-hidden bg-luxury-charcoal">
                                 <img
-                                    src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=75&w=800&auto=format&fit=crop&fm=webp"
-                                    alt="Expertise technique en ingénierie automobile haute performance"
-                                    className="w-full grayscale transition-all duration-1000 group-hover:scale-105 group-hover:grayscale-0"
+                                    src="/images/premium-cars/BMW-X1-2026.avif"
+                                    alt="BMW X1 2026 - Expertise technique en programmation de clés et diagnostic automobile premium"
+                                    className="w-full transition-all duration-1000 group-hover:scale-105"
                                     loading="lazy"
                                     decoding="async"
                                     width="800"
@@ -221,6 +222,9 @@ export default function Home({
                     </div>
                 </div>
             </section>
+
+            {/* Premium Vehicles Showcase */}
+            <PremiumCarShowcase />
 
             {/* Brand Compatibility */}
             <section className="relative border-b border-white/5 bg-background py-32">

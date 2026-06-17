@@ -1,43 +1,46 @@
 @component('emails.layouts.branded')
 
-<p class="email-greeting">Hello {{ $invoice->customer_name ?? 'Valued Customer' }},</p>
+<p class="email-greeting">Payment Received!</p>
 
 <div class="email-content">
-    <p>Thank you for your payment! This email confirms that we have received your payment for invoice #{{ $invoice->number }}.</p>
+    <p>Hello,</p>
+    <p>Thank you for your payment. This email is your official receipt for <strong>Invoice #{{ $invoice->number }}</strong>.</p>
 </div>
 
-<div class="info-box">
-    <div class="info-box-title">✅ Payment Received</div>
-    <table class="detail-table">
-        <tr>
-            <td>Invoice Number</td>
-            <td><strong>{{ $invoice->number }}</strong></td>
-        </tr>
-        <tr>
-            <td>Payment Date</td>
-            <td>{{ now()->format('F j, Y') }}</td>
-        </tr>
-        <tr>
-            <td>Amount Paid</td>
-            <td><strong>${{ number_format($invoice->total_amount, 2) }} {{ $invoice->currency }}</strong></td>
-        </tr>
-        <tr>
-            <td>Payment Method</td>
-            <td>{{ $paymentMethod ?? 'Online Payment' }}</td>
-        </tr>
-    </table>
+<div class="info-box" style="text-align: center; background-color: #F0FFF4; border-left-color: #48BB78;">
+    <div class="info-box-title" style="color: #2F855A;">Amount Paid</div>
+    <div class="info-box-content" style="color: #2F855A; font-size: 28px; font-weight: 700;">
+        ${{ number_format($invoice->total_amount, 2) }} {{ $invoice->currency }}
+    </div>
 </div>
+
+<table class="detail-table">
+    <tr>
+        <td>Invoice Number</td>
+        <td>#{{ $invoice->number }}</td>
+    </tr>
+    <tr>
+        <td>Payment Date</td>
+        <td>{{ now()->format('M j, Y') }}</td>
+    </tr>
+    @if($paymentMethod)
+    <tr>
+        <td>Payment Method</td>
+        <td>{{ $paymentMethod }}</td>
+    </tr>
+    @endif
+    <tr>
+        <td>Status</td>
+        <td><span style="color: #48BB78; font-weight: 600;">PAID</span></td>
+    </tr>
+</table>
 
 <div class="text-center">
-    <a href="{{ config('app.url') }}/invoices/{{ $invoice->uuid }}" class="button-primary">
-        Download Receipt
-    </a>
+    <a href="{{ route('invoices.show', $invoice->uuid) }}" class="button-primary">View Full Receipt</a>
 </div>
 
-<div class="email-content mt-20">
-    <p class="text-muted">
-        A receipt has been attached to this email for your records. If you have any questions about this payment, please don't hesitate to contact us.
-    </p>
-</div>
+<p class="text-muted text-center mt-20">
+    A PDF version of your invoice is attached for your records.
+</p>
 
 @endcomponent

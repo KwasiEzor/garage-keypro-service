@@ -1,49 +1,42 @@
 @component('emails.layouts.branded')
 
-<p class="email-greeting">Hello {{ $appointment->customer_name }},</p>
+<p class="email-greeting">Appointment Rescheduled</p>
 
 <div class="email-content">
-    <p>Your appointment has been successfully rescheduled to a new date and time.</p>
+    <p>Hello,</p>
+    <p>Your appointment has been successfully moved to a new time. Please review the updated details below.</p>
 </div>
 
+<table class="detail-table">
+    <tr>
+        <td>Service</td>
+        <td><strong>{{ $appointment->service->name ?? 'N/A' }}</strong></td>
+    </tr>
+    <tr>
+        <td>New Date & Time</td>
+        <td><strong>{{ $appointment->start_at->format('l, F j, Y') }} at {{ $appointment->start_at->format('g:i A') }}</strong></td>
+    </tr>
+    @if($oldDate ?? null)
+    <tr>
+        <td>Previous Date</td>
+        <td style="text-decoration: line-through; color: #A0AEC0;">{{ $oldDate->format('l, F j, Y') }} at {{ $oldDate->format('g:i A') }}</td>
+    </tr>
+    @endif
+    <tr>
+        <td>Location</td>
+        <td>{{ $appointment->team->name }}</td>
+    </tr>
+</table>
+
 <div class="info-box">
-    <div class="info-box-title">Updated Appointment Details</div>
-    <table class="detail-table">
-        <tr>
-            <td>Service</td>
-            <td><strong>{{ $appointment->service->name ?? 'N/A' }}</strong></td>
-        </tr>
-        <tr>
-            <td>New Date & Time</td>
-            <td><strong>{{ $appointment->appointment_date->format('l, F j, Y') }} at {{ $appointment->appointment_date->format('g:i A') }}</strong></td>
-        </tr>
-        @if($oldDate ?? null)
-        <tr>
-            <td>Previous Date</td>
-            <td style="text-decoration: line-through; color: #A0AEC0;">{{ $oldDate->format('l, F j, Y') }} at {{ $oldDate->format('g:i A') }}</td>
-        </tr>
-        @endif
-        <tr>
-            <td>Duration</td>
-            <td>{{ $appointment->duration ?? '60' }} minutes</td>
-        </tr>
-        <tr>
-            <td>Location</td>
-            <td>{{ $appointment->location ?? 'Our Service Center' }}</td>
-        </tr>
-    </table>
+    <div class="info-box-title">Sync Your Calendar</div>
+    <div class="info-box-content">
+        Don't forget to update your calendar! A new calendar invite (.ics) is attached to this email.
+    </div>
 </div>
 
 <div class="text-center">
-    <a href="{{ config('app.url') }}/appointments/{{ $appointment->uuid }}" class="button-primary">
-        View Updated Appointment
-    </a>
-</div>
-
-<div class="email-content mt-20">
-    <p class="text-muted">
-        You will receive a reminder email 24 hours before your appointment.
-    </p>
+    <a href="{{ url('/my-appointments') }}" class="button-primary">View My Appointments</a>
 </div>
 
 @endcomponent

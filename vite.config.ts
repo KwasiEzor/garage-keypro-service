@@ -9,7 +9,11 @@ import { defineConfig } from 'vite';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.tsx', 'resources/css/filament/admin/theme.css'],
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.tsx',
+                'resources/css/filament/admin/theme.css',
+            ],
             refresh: true,
             fonts: [
                 bunny('Outfit', {
@@ -22,7 +26,11 @@ export default defineConfig({
                 }),
             ],
         }),
-        inertia(),
+        inertia({
+            ssr: {
+                enabled: false, // Disable SSR to prevent hydration mismatches
+            },
+        }),
         react({
             babel: {
                 plugins: ['babel-plugin-react-compiler'],
@@ -38,22 +46,47 @@ export default defineConfig({
             output: {
                 manualChunks(id) {
                     if (id.includes('node_modules')) {
+                        // Core React libs
                         if (id.includes('react') || id.includes('react-dom')) {
                             return 'react-vendor';
                         }
+                        // Inertia
                         if (id.includes('@inertiajs')) {
                             return 'inertia';
                         }
+                        // Heavy animation libs - only loaded when needed
                         if (id.includes('gsap')) {
                             return 'gsap';
                         }
-                        if (id.includes('date-fns')) {
-                            return 'date-fns';
+                        // Radix UI primitives - split into separate chunk
+                        if (id.includes('@radix-ui')) {
+                            return 'radix-ui';
+                        }
+                        // Date utilities
+                        if (
+                            id.includes('date-fns') ||
+                            id.includes('react-day-picker')
+                        ) {
+                            return 'date-utils';
+                        }
+                        // Icon libraries
+                        if (id.includes('lucide-react')) {
+                            return 'icons';
+                        }
+                        // UI utilities
+                        if (
+                            id.includes('clsx') ||
+                            id.includes('tailwind-merge') ||
+                            id.includes('class-variance-authority')
+                        ) {
+                            return 'ui-utils';
                         }
                     }
                 },
             },
         },
+        cssCodeSplit: true,
         chunkSizeWarningLimit: 600,
+        sourcemap: false,
     },
 });

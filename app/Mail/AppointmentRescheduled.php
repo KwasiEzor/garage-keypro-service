@@ -38,7 +38,7 @@ class AppointmentRescheduled extends Mailable implements ShouldQueue
 
         $subject = str_replace(
             '{date}',
-            $this->appointment->appointment_date->format('M j, Y'),
+            $this->appointment->start_at->format('M j, Y'),
             $subject
         );
 

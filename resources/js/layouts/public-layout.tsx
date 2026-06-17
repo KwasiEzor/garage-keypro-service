@@ -1,9 +1,13 @@
 import { Link, Head } from '@inertiajs/react';
 import * as Inertia from '@inertiajs/react';
 import { LayoutGrid, Calendar, Receipt, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
-import BackgroundSpotlight from '@/components/background-spotlight';
+import { lazy, Suspense, useState } from 'react';
 import { CookieConsent } from '@/components/cookie-consent';
+
+// Lazy load GSAP-dependent components for better performance
+const BackgroundSpotlight = lazy(
+    () => import('@/components/background-spotlight'),
+);
 import { FlashMessages } from '@/components/flash-messages';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
@@ -54,7 +58,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
     return (
         <div className="bg-grid-pattern relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
             <FlashMessages />
-            <BackgroundSpotlight />
+            <Suspense fallback={null}>
+                <BackgroundSpotlight />
+            </Suspense>
             <Head>
                 <title>{seoTitle}</title>
                 <meta name="description" content={seoDescription} />

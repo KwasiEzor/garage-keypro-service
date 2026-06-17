@@ -6,6 +6,7 @@ namespace App\Filament\Resources\Invoices\Tables;
 
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
+use App\Support\InvoiceService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -56,11 +57,22 @@ class InvoicesTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('sendEmail')
+                    ->label('Send by Email')
+                    ->icon('heroicon-o-envelope')
+                    ->color('info')
+                    ->requiresConfirmation()
+                    ->hidden(fn (Invoice $record): bool => $record->status === InvoiceStatus::Paid || $record->status === InvoiceStatus::Cancelled)
+                    ->action(function (Invoice $record, InvoiceService $service) {
+                        $service->markAsSent($record);
+                    }),
                 Action::make('markAsPaid')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->hidden(fn (Invoice $record): bool => $record->status === InvoiceStatus::Paid)
-                    ->action(fn (Invoice $record) => $record->update(['status' => InvoiceStatus::Paid])),
+                    ->hidden(fn (Invoice $record): bool => $record->status === InvoiceStatus::Paid || $record->status === InvoiceStatus::Cancelled)
+                    ->action(function (Invoice $record, InvoiceService $service) {
+                        $service->markAsPaid($record, 'Manual');
+                    }),
                 ViewAction::make()
                     ->url(fn (Invoice $record): string => route('invoices.show', $record->uuid))
                     ->openUrlInNewTab(),
