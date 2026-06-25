@@ -1,0 +1,24 @@
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{js,jsx,ts,tsx}"
+      root: "resources/js/"
+      run: npx eslint --fix {staged_files} && git add {staged_files}
+
+    prettier:
+      glob: "*.{js,jsx,ts,tsx,json,css,md}"
+      root: "resources/"
+      run: npx prettier --write {staged_files} && git add {staged_files}
+
+    pint:
+      glob: "*.php"
+      run: |
+        PHP_BIN="${HOME}/Library/Application Support/Herd/bin/php84"
+        "${PHP_BIN}" vendor/bin/pint --dirty --quiet
+
+    phpstan:
+      glob: "*.php"
+      run: |
+        PHP_BIN="${HOME}/Library/Application Support/Herd/bin/php84"
+        "${PHP_BIN}" vendor/bin/phpstan analyse --level=8 --no-progress {staged_files}
