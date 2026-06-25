@@ -30,14 +30,17 @@ class SendInvoiceNotification implements ShouldQueue
 
     /**
      * Register the listeners for the subscriber.
-     *
-     * @param  Dispatcher  $events
      */
-    public function subscribe($events): array
+    public function subscribe(Dispatcher $events): void
     {
-        return [
-            InvoicePaid::class => 'handlePaid',
-            InvoiceSent::class => 'handleSent',
-        ];
+        $events->listen(
+            InvoicePaid::class,
+            [SendInvoiceNotification::class, 'handlePaid']
+        );
+
+        $events->listen(
+            InvoiceSent::class,
+            [SendInvoiceNotification::class, 'handleSent']
+        );
     }
 }

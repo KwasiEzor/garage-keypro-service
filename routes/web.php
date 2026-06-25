@@ -38,7 +38,6 @@ Route::get('/services', [PublicController::class, 'services'])->name('services.i
 Route::get('/services/{service:slug}', [PublicController::class, 'serviceShow'])->name('services.show');
 Route::get('/brands', [PublicController::class, 'brands'])->name('brands.index');
 Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
-Route::inertia('/testimonials-demo', 'testimonials-demo')->name('testimonials-demo');
 Route::get('/faq', [PublicController::class, 'faq'])->name('faq');
 Route::get('/privacy-policy', [PublicController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms-of-service', [PublicController::class, 'termsOfService'])->name('terms-of-service');
