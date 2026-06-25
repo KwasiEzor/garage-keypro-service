@@ -3,9 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
-        "build:ssr": "vite build && vite build --ssr",
-        "dev": "vite",
+        "build": "PATH=\"$HOME/Library/Application Support/Herd/bin:$PATH\" vite build",
+        "build:ssr": "PATH=\"$HOME/Library/Application Support/Herd/bin:$PATH\" vite build && vite build --ssr",
+        "dev": "PATH=\"$HOME/Library/Application Support/Herd/bin:$PATH\" vite",
         "format": "prettier --write resources/",
         "format:check": "prettier --check resources/",
         "lint": "eslint . --fix",

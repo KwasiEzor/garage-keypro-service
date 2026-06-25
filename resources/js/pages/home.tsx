@@ -208,8 +208,8 @@ export default function Home({
                             <div className="absolute -inset-4 -skew-x-6 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
                             <div className="relative -skew-x-6 transform overflow-hidden bg-luxury-charcoal">
                                 <img
-                                    src="/images/premium-cars/BMW-X1-2026.avif"
-                                    alt="BMW X1 2026 - Expertise technique en programmation de clés et diagnostic automobile premium"
+                                    src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop"
+                                    alt="Véhicule premium - Expertise technique en programmation de clés et diagnostic automobile"
                                     className="w-full transition-all duration-1000 group-hover:scale-105"
                                     loading="lazy"
                                     decoding="async"

@@ -1,8 +1,3 @@
-/**
- * Premium vehicle showcase data
- * High-end vehicles serviced by KeyPro
- */
-
 export interface PremiumCar {
     id: string;
     name: string;
@@ -12,72 +7,75 @@ export interface PremiumCar {
     category: 'sports' | 'luxury-suv' | 'luxury-sedan' | 'supercar';
     description: string;
     color: string;
+    tagline: string;
 }
 
 export const premiumCars: PremiumCar[] = [
     {
-        id: 'corvette-2026',
-        name: 'Corvette Arctic White',
-        brand: 'Chevrolet',
-        year: 2026,
-        image: '/images/premium-cars/2026-Corvette-Arctic-White.avif',
+        id: 'porsche-911',
+        name: '911 GT3',
+        brand: 'Porsche',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=90&auto=format&fit=crop',
         category: 'sports',
-        description:
-            'Voiture de sport américaine iconique avec programmation de clé avancée',
-        color: '#FFFFFF',
+        description: 'Programmation de clé électronique pour la référence absolue du sport automobile.',
+        tagline: 'Icône de performance',
+        color: '#E8D5A3',
     },
     {
-        id: 'bmw-x1-2026',
-        name: 'X1',
-        brand: 'BMW',
-        year: 2026,
-        image: '/images/premium-cars/BMW-X1-2026.avif',
-        category: 'luxury-suv',
-        description: 'SUV premium allemand avec système de clé intelligent',
-        color: '#1C1C1C',
-    },
-    {
-        id: 'audi-2026',
-        name: 'Audi Premium',
-        brand: 'Audi',
-        year: 2026,
-        image: '/images/premium-cars/audi-2026.png',
-        category: 'luxury-sedan',
-        description:
-            'Berline de luxe avec technologie de clé électronique sophistiquée',
-        color: '#2C2C2C',
-    },
-    {
-        id: 'audi-q5-2026',
-        name: 'Q5 Premium',
-        brand: 'Audi',
-        year: 2026,
-        image: '/images/premium-cars/audi-premium-Q5-2026.png',
-        category: 'luxury-suv',
-        description: "SUV premium avec système d'accès sans clé avancé",
-        color: '#3A3A3A',
-    },
-    {
-        id: 'lamborghini-aventador',
-        name: 'Aventador',
+        id: 'lamborghini-huracan',
+        name: 'Huracán EVO',
         brand: 'Lamborghini',
-        year: 2026,
-        image: '/images/premium-cars/pngtree-3d-red-lamborghini-aventado-png-image_15503537.png',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=1600&q=90&auto=format&fit=crop',
         category: 'supercar',
-        description:
-            'Supercar italienne avec programmation de clé ultra-sophistiquée',
-        color: '#DC2626',
+        description: "Expertise certifiée sur les systèmes d'accès sans clé les plus sophistiqués au monde.",
+        tagline: 'Supercars italiennes',
+        color: '#F59E0B',
     },
     {
-        id: 'range-rover-2026',
-        name: 'Range Rover',
+        id: 'bmw-m4',
+        name: 'M4 Competition',
+        brand: 'BMW',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1600&q=90&auto=format&fit=crop',
+        category: 'sports',
+        description: 'Diagnostic embarqué et duplication de clé pour le summum de la performance bavaroise.',
+        tagline: 'Performance bavaroise',
+        color: '#93C5FD',
+    },
+    {
+        id: 'mercedes-amg',
+        name: 'AMG GT',
+        brand: 'Mercedes',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=1600&q=90&auto=format&fit=crop',
+        category: 'luxury-sedan',
+        description: "Remplacement et codage de clé sur l'élégance sportive à l'état pur.",
+        tagline: 'Élégance allemande',
+        color: '#D1D5DB',
+    },
+    {
+        id: 'audi-rs7',
+        name: 'RS 7 Sportback',
+        brand: 'Audi',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=1600&q=90&auto=format&fit=crop',
+        category: 'luxury-sedan',
+        description: "Service mobile prioritaire pour la berline sportive la plus polyvalente d'Ingolstadt.",
+        tagline: 'Sportback de prestige',
+        color: '#A78BFA',
+    },
+    {
+        id: 'range-rover',
+        name: 'Range Rover SV',
         brand: 'Land Rover',
-        year: 2026,
-        image: '/images/premium-cars/ranger-rover-2026.png',
+        year: 2025,
+        image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1600&q=90&auto=format&fit=crop',
         category: 'luxury-suv',
-        description:
-            'SUV de luxe britannique avec système de clé intelligente premium',
-        color: '#1E293B',
+        description: 'Programmation et diagnostic du SUV de luxe britannique par excellence.',
+        tagline: 'SUV de luxe britannique',
+        color: '#6EE7B7',
     },
 ];
 
@@ -85,12 +83,6 @@ export const getPremiumCarsByCategory = (category: PremiumCar['category']) => {
     return premiumCars.filter((car) => car.category === category);
 };
 
-export const getRandomPremiumCar = () => {
-    return premiumCars[Math.floor(Math.random() * premiumCars.length)];
-};
-
 export const getPremiumCarByBrand = (brand: string) => {
-    return premiumCars.filter(
-        (car) => car.brand.toLowerCase() === brand.toLowerCase(),
-    );
+    return premiumCars.filter((car) => car.brand.toLowerCase() === brand.toLowerCase());
 };

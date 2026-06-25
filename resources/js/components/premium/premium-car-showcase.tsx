@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
-import { useState } from 'react';
-import { Icon } from '@/components/ui/icon';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
 import { premiumCars } from '@/data/premium-cars';
 import { cn } from '@/lib/utils';
 
@@ -12,173 +12,217 @@ interface PremiumCarShowcaseProps {
 }
 
 export function PremiumCarShowcase({
-    title = 'Véhicules Premium',
-    subtitle = 'Expertise certifiée sur véhicules haut de gamme',
+    title = 'Véhicules d\'Exception',
+    subtitle = 'Expertise certifiée sur les véhicules les plus sophistiqués du monde.',
     limit,
     showCTA = true,
 }: PremiumCarShowcaseProps) {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+    const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const displayCars = limit ? premiumCars.slice(0, limit) : premiumCars;
+    const active = displayCars[activeIndex];
+
+    const startAutoPlay = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = setInterval(() => {
+            setActiveIndex((i) => (i + 1) % displayCars.length);
+        }, 5000);
+    };
+
+    useEffect(() => {
+        if (isAutoPlaying) startAutoPlay();
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+        };
+    }, [isAutoPlaying, displayCars.length]);
+
+    const handleSelect = (index: number) => {
+        setActiveIndex(index);
+        setIsAutoPlaying(false);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+    };
 
     return (
-        <section className="relative overflow-hidden border-b border-white/5 bg-luxury-black py-32">
-            {/* Background decorative elements */}
-            <div className="absolute top-0 left-1/4 h-[400px] w-[400px] rounded-full bg-racing-red/5 blur-[120px]" />
-            <div className="absolute right-1/4 bottom-0 h-[400px] w-[400px] rounded-full bg-white/5 blur-[120px]" />
+        <section className="relative overflow-hidden bg-black">
+            {/* Hero area */}
+            <div className="relative min-h-[90vh] w-full">
+                {/* Full-bleed background image */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={active.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.9, ease: 'easeInOut' }}
+                        className="absolute inset-0"
+                    >
+                        <img
+                            src={active.image}
+                            alt={`${active.brand} ${active.name}`}
+                            className="h-full w-full object-cover"
+                        />
+                        {/* Multi-stop gradient: strong left for text, fade to transparent right */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-black/10" />
+                        {/* Bottom fade */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    </motion.div>
+                </AnimatePresence>
 
-            <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                {/* Section Header */}
-                <div className="mb-24 text-center">
-                    <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                        Excellence Automobile
-                    </span>
-                    <h2 className="mb-8 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                        {title.split(' ').map((word, i) => (
-                            <span key={i}>
-                                {i === title.split(' ').length - 1 ? (
-                                    <span className="text-racing-red">
-                                        {word}
-                                    </span>
-                                ) : (
-                                    `${word} `
-                                )}
-                            </span>
-                        ))}
-                    </h2>
-                    <p className="mx-auto max-w-2xl text-xs font-bold tracking-[0.25em] text-muted-foreground uppercase">
-                        {subtitle}
-                    </p>
-                    <div className="mx-auto mt-8 h-[2px] w-24 bg-racing-red" />
-                </div>
-
-                {/* Main Featured Car */}
-                <div className="mb-16 grid grid-cols-1 gap-16 lg:grid-cols-2">
-                    <div className="group relative">
-                        <div className="absolute -inset-6 -skew-y-3 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
-                        <div className="relative -skew-y-3 transform overflow-hidden bg-luxury-charcoal">
-                            <img
-                                src={displayCars[activeIndex].image}
-                                alt={`${displayCars[activeIndex].brand} ${displayCars[activeIndex].name}`}
-                                className="w-full object-cover transition-all duration-1000 group-hover:scale-110"
-                                style={{ minHeight: '400px' }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-luxury-black/80 via-transparent to-transparent" />
-
-                            {/* Car badge */}
-                            <div className="absolute bottom-6 left-6 skew-y-3">
-                                <div className="border border-white/20 bg-luxury-black/90 p-6 backdrop-blur-sm">
-                                    <div className="mb-2 font-heading text-sm font-bold tracking-widest text-racing-red uppercase">
-                                        {displayCars[activeIndex].brand}
-                                    </div>
-                                    <div className="font-heading text-2xl font-bold text-white">
-                                        {displayCars[activeIndex].name}
-                                    </div>
-                                    <div className="mt-2 text-xs font-medium tracking-wide text-muted-foreground">
-                                        {displayCars[activeIndex].year}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col justify-center space-y-8">
-                        <div className="flex items-center gap-4">
-                            <Icon
-                                name="Key"
-                                className="h-6 w-6 text-racing-red"
-                            />
-                            <span className="font-heading text-[10px] font-bold tracking-[0.2em] text-white uppercase">
-                                Programmation Avancée
-                            </span>
-                        </div>
-
-                        {/* Features list */}
-                        <div className="space-y-4">
-                            {[
-                                'Programmation clé électronique',
-                                'Diagnostic système embarqué',
-                                'Remplacement clé de luxe',
-                                'Service mobile prioritaire',
-                            ].map((feature, i) => (
-                                <div
-                                    key={i}
-                                    className="flex items-center gap-4 border-b border-white/5 pb-4"
+                {/* Content overlay */}
+                <div className="relative flex h-full min-h-[90vh] items-center">
+                    <div className="mx-auto w-full max-w-7xl px-6 py-24 sm:px-8 lg:px-12">
+                        <div className="max-w-xl">
+                            {/* Eyebrow */}
+                            <AnimatePresence mode="wait">
+                                <motion.p
+                                    key={`eyebrow-${active.id}`}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.5, delay: 0.1 }}
+                                    className="mb-5 text-xs font-medium tracking-[0.3em] text-white/50 uppercase"
                                 >
-                                    <div className="flex h-8 w-8 -skew-x-12 items-center justify-center border border-racing-red/30 bg-racing-red/10">
-                                        <Icon
-                                            name="Check"
-                                            className="h-4 w-4 skew-x-12 text-racing-red"
-                                        />
-                                    </div>
-                                    <span className="text-sm font-medium tracking-wide text-white">
-                                        {feature}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                                    {active.tagline}
+                                </motion.p>
+                            </AnimatePresence>
 
-                        {showCTA && (
-                            <div className="pt-6">
-                                <Link
-                                    href="/appointments"
-                                    className="group inline-flex items-center gap-4 border border-racing-red bg-racing-red px-10 py-4 font-heading text-sm font-bold tracking-widest text-white uppercase transition-all hover:bg-racing-red/90"
+                            {/* Brand + Model headline */}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={`title-${active.id}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -12 }}
+                                    transition={{ duration: 0.6, delay: 0.15 }}
                                 >
-                                    Réserver Intervention
-                                    <Icon
-                                        name="ArrowRight"
-                                        className="h-4 w-4 transition-transform group-hover:translate-x-2"
-                                    />
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                </div>
+                                    <h2 className="font-sans text-[56px] font-thin leading-none tracking-tight text-white md:text-[80px] lg:text-[96px]">
+                                        {active.brand}
+                                    </h2>
+                                    <p className="mt-1 font-sans text-[28px] font-light tracking-wide text-white/60 md:text-[36px]">
+                                        {active.name}
+                                    </p>
+                                </motion.div>
+                            </AnimatePresence>
 
-                {/* Car Grid Selector */}
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-6">
-                    {displayCars.map((car, index) => (
-                        <button
-                            key={car.id}
-                            onClick={() => setActiveIndex(index)}
-                            className={cn(
-                                'group relative overflow-hidden border bg-luxury-charcoal transition-all',
-                                activeIndex === index
-                                    ? 'border-racing-red'
-                                    : 'border-white/10 hover:border-white/30',
+                            {/* Description */}
+                            <AnimatePresence mode="wait">
+                                <motion.p
+                                    key={`desc-${active.id}`}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -8 }}
+                                    transition={{ duration: 0.5, delay: 0.25 }}
+                                    className="mt-8 max-w-sm text-sm font-light leading-relaxed text-white/50"
+                                >
+                                    {active.description}
+                                </motion.p>
+                            </AnimatePresence>
+
+                            {/* CTA */}
+                            {showCTA && (
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                    className="mt-12 flex items-center gap-8"
+                                >
+                                    <Link
+                                        href="/appointments"
+                                        className="group inline-flex items-center gap-3 text-sm font-medium text-white transition-opacity hover:opacity-70"
+                                    >
+                                        Réserver une intervention
+                                        <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+                                    </Link>
+                                    <Link
+                                        href="/services"
+                                        className="text-sm font-light text-white/40 transition-colors hover:text-white/70"
+                                    >
+                                        Voir nos services
+                                    </Link>
+                                </motion.div>
                             )}
-                        >
-                            <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-luxury-charcoal to-luxury-black">
-                                <img
-                                    src={car.image}
-                                    alt={`${car.brand} ${car.name}`}
-                                    className="h-full w-full object-contain p-2 transition-transform duration-500 group-hover:scale-110"
-                                />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Progress bar */}
+                {isAutoPlaying && (
+                    <div className="absolute right-0 bottom-0 left-0 h-[2px] bg-white/10">
+                        <motion.div
+                            key={`progress-${active.id}`}
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
+                            transition={{ duration: 5, ease: 'linear' }}
+                            className="h-full origin-left bg-white/40"
+                        />
+                    </div>
+                )}
+            </div>
+
+            {/* Car selector strip */}
+            <div className="border-t border-white/5 bg-black">
+                <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+                    <div className="grid grid-cols-3 divide-x divide-white/5 sm:grid-cols-6">
+                        {displayCars.map((car, index) => (
+                            <button
+                                key={car.id}
+                                onClick={() => handleSelect(index)}
+                                className={cn(
+                                    'group relative flex flex-col items-center gap-3 px-4 py-6 transition-all duration-300',
+                                    activeIndex === index
+                                        ? 'bg-white/5'
+                                        : 'hover:bg-white/[0.03]',
+                                )}
+                            >
+                                {/* Thumbnail */}
+                                <div className="relative h-14 w-full overflow-hidden">
+                                    <img
+                                        src={`${car.image}&w=240&h=140&fit=crop`}
+                                        alt={`${car.brand} ${car.name}`}
+                                        className={cn(
+                                            'h-full w-full object-cover transition-all duration-500',
+                                            activeIndex === index
+                                                ? 'opacity-100'
+                                                : 'opacity-30 group-hover:opacity-50',
+                                        )}
+                                    />
+                                </div>
+
+                                {/* Label */}
+                                <div className="text-center">
+                                    <p
+                                        className={cn(
+                                            'text-[11px] font-medium tracking-wider transition-colors uppercase',
+                                            activeIndex === index
+                                                ? 'text-white'
+                                                : 'text-white/30 group-hover:text-white/50',
+                                        )}
+                                    >
+                                        {car.brand}
+                                    </p>
+                                    <p
+                                        className={cn(
+                                            'mt-0.5 text-[10px] font-light transition-colors',
+                                            activeIndex === index
+                                                ? 'text-white/50'
+                                                : 'text-white/20',
+                                        )}
+                                    >
+                                        {car.name}
+                                    </p>
+                                </div>
+
+                                {/* Active indicator */}
                                 <div
                                     className={cn(
-                                        'absolute inset-0 bg-gradient-to-t from-luxury-black via-transparent transition-opacity',
-                                        activeIndex === index
-                                            ? 'opacity-40'
-                                            : 'opacity-80 group-hover:opacity-60',
+                                        'absolute bottom-0 left-1/2 h-[2px] -translate-x-1/2 bg-white transition-all duration-300',
+                                        activeIndex === index ? 'w-8' : 'w-0',
                                     )}
                                 />
-                            </div>
-                            <div className="absolute right-0 bottom-0 left-0 p-3">
-                                <div
-                                    className={cn(
-                                        'font-heading text-[10px] font-bold tracking-wider uppercase transition-colors',
-                                        activeIndex === index
-                                            ? 'text-racing-red'
-                                            : 'text-white',
-                                    )}
-                                >
-                                    {car.brand}
-                                </div>
-                                <div className="text-[9px] font-medium text-muted-foreground">
-                                    {car.name}
-                                </div>
-                            </div>
-                        </button>
-                    ))}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
