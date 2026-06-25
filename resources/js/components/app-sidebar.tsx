@@ -11,7 +11,6 @@ import {
     SidebarFooter,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
@@ -46,15 +45,13 @@ export function AppSidebar() {
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboardUrl} prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
+                <Link
+                    href={dashboardUrl}
+                    prefetch
+                    className="flex h-12 items-center gap-2 px-2 outline-none group-data-[collapsible=icon]:justify-center"
+                >
+                    <AppLogo />
+                </Link>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <TeamSwitcher />
