@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Notifications\VerifyEmailNotification as VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 
 test('sends verification notification', function (): void {

@@ -133,6 +133,7 @@ class Appointment extends Model
             'status' => AppointmentStatus::class,
             'start_at' => 'datetime',
             'end_at' => 'datetime',
+            'reminded_at' => 'datetime',
         ];
     }
 }

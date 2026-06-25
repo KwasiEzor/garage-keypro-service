@@ -18,6 +18,12 @@ class GalleryController extends Controller
     public function index(Request $request): Response
     {
         $categories = ['All', 'Diagnostics', 'Key Programming', 'Unit Mobility', 'Performance'];
+
+        $request->validate([
+            'category' => ['nullable', 'string', 'in:'.implode(',', $categories)],
+            'search' => ['nullable', 'string', 'max:100'],
+        ]);
+
         $currentCategory = $request->query('category', 'All');
         $search = $request->query('search');
 

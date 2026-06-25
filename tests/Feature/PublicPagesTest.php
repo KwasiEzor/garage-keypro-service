@@ -48,7 +48,6 @@ test('service show page displays service details', function (): void {
         ->assertInertia(fn (Assert $page): AssertableInertia => $page
             ->component('services/show')
             ->where('service.id', $service->id)
-            ->has('relatedServices')
         );
 });
 

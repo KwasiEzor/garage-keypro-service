@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/appointments', [AppointmentController::class, 'index'])->middleware('throttle:60,1')->name('appointments.index');
     Route::get('/appointments/slots', [AppointmentController::class, 'slots'])->name('appointments.slots');
     Route::get('/appointments/availability', [AppointmentController::class, 'availability'])->name('appointments.availability');
-    Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::post('/appointments', [AppointmentController::class, 'store'])->middleware('throttle:5,1')->name('appointments.store');
     Route::get('/my-appointments', [AppointmentController::class, 'myAppointments'])->name('appointments.my');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])->name('appointments.show');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'cancel'])->name('appointments.cancel');

@@ -9,7 +9,6 @@ use App\Models\Appointment;
 use App\Notifications\AppointmentReminder;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\DB;
 
 class SendAppointmentReminder implements ShouldQueue
 {
@@ -17,23 +16,17 @@ class SendAppointmentReminder implements ShouldQueue
 
     public function handle(): void
     {
-        $appointments = Appointment::where('status', AppointmentStatus::Confirmed)
+        Appointment::where('status', AppointmentStatus::Confirmed)
             ->where('start_at', '>', now())
             ->where('start_at', '<=', now()->addHours(24))
+            ->whereNull('reminded_at')
             ->with('user')
-            ->get();
-
-        foreach ($appointments as $appointment) {
-            $alreadySent = DB::table('notifications')
-                ->where('notifiable_id', $appointment->user_id)
-                ->where('notifiable_type', get_class($appointment->user))
-                ->where('type', AppointmentReminder::class)
-                ->whereJsonContains('data->appointment_id', $appointment->id)
-                ->exists();
-
-            if (! $alreadySent) {
-                $appointment->user->notify(new AppointmentReminder($appointment));
-            }
-        }
+            ->chunkById(50, function ($appointments): void {
+                foreach ($appointments as $appointment) {
+                    $appointment->user->notify(new AppointmentReminder($appointment));
+                    $appointment->reminded_at = now();
+                    $appointment->saveQuietly();
+                }
+            });
     }
 }

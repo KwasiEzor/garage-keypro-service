@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use App\Notifications\VerifyEmailNotification as VerifyEmail;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 

@@ -8,6 +8,7 @@ use App\Models\Appointment;
 use App\Models\Team;
 use Carbon\Carbon;
 use Zap\Facades\Zap;
+use Zap\Models\Schedule;
 
 /**
  * Service for managing calendar synchronization with Zap.
@@ -49,14 +50,7 @@ class CalendarSyncService
      */
     public function removeAppointment(Appointment $appointment): void
     {
-        if (! $appointment->relationLoaded('team')) {
-            $appointment->load('team');
-        }
-
-        // Find and delete the calendar entry
-        // Note: Zap deletion logic would go here
-        // Currently, Zap doesn't expose a direct delete method,
-        // so we rely on the schedule expiring or manual cleanup
+        Schedule::where('metadata->appointment_id', $appointment->id)->delete();
     }
 
     /**

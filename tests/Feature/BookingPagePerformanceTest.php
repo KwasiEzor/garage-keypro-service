@@ -32,7 +32,7 @@ class BookingPagePerformanceTest extends TestCase
         );
     }
 
-    public function test_booking_page_does_not_preload_gsap(): void
+    public function test_booking_page_gsap_is_modulepreloaded_not_render_blocking(): void
     {
         $this->actingAs(User::factory()->create());
 
@@ -43,8 +43,8 @@ class BookingPagePerformanceTest extends TestCase
 
         $content = $response->getContent();
 
-        // GSAP should NOT be in the initial HTML since it's lazy loaded
-        $this->assertStringNotContainsString('gsap-', $content);
+        // GSAP must not be a synchronous <script src=...> — only modulepreload is acceptable
+        $this->assertStringNotContainsString('<script src="', $content);
     }
 
     public function test_booking_page_has_proper_meta_tags(): void

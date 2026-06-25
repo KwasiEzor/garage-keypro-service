@@ -39,7 +39,7 @@ class InvoiceController extends Controller
     {
         // Try to find by UUID first (public or auth)
         $invoice = Invoice::where('uuid', $identifier)
-            ->with(['team', 'client', 'items.service'])
+            ->with(['team', 'items.service', 'client:id,name,email'])
             ->first();
 
         // If not found by UUID, try by ID (if numeric and authenticated)

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\Setting;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
 {
@@ -15,35 +16,41 @@ class SitemapController extends Controller
      */
     public function index(): Response
     {
-        $urls = [
-            ['url' => route('home'), 'lastmod' => now()->toAtomString(), 'priority' => '1.0'],
-            ['url' => route('services.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.8'],
-            ['url' => route('brands.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.8'],
-            ['url' => route('gallery.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.7'],
-            ['url' => route('faq'), 'lastmod' => now()->toAtomString(), 'priority' => '0.6'],
-        ];
-
-        foreach (Service::active()->get() as $service) {
-            $urls[] = [
-                'url' => route('services.show', $service),
-                'lastmod' => $service->updated_at->toAtomString(),
-                'priority' => '0.9',
+        $xml = Cache::remember('sitemap.xml', 3600, function () {
+            $urls = [
+                ['url' => route('home'), 'lastmod' => now()->toAtomString(), 'priority' => '1.0'],
+                ['url' => route('services.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.8'],
+                ['url' => route('brands.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.8'],
+                ['url' => route('gallery.index'), 'lastmod' => now()->toAtomString(), 'priority' => '0.7'],
+                ['url' => route('faq'), 'lastmod' => now()->toAtomString(), 'priority' => '0.6'],
+                ['url' => route('privacy-policy'), 'lastmod' => now()->toAtomString(), 'priority' => '0.3'],
+                ['url' => route('terms-of-service'), 'lastmod' => now()->toAtomString(), 'priority' => '0.3'],
             ];
-        }
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
+            foreach (Service::active()->get() as $service) {
+                $urls[] = [
+                    'url' => route('services.show', $service),
+                    'lastmod' => $service->updated_at->toAtomString(),
+                    'priority' => '0.9',
+                ];
+            }
 
-        foreach ($urls as $url) {
-            $xml .= '    <url>'.PHP_EOL;
-            $xml .= '        <loc>'.htmlspecialchars($url['url']).'</loc>'.PHP_EOL;
-            $xml .= '        <lastmod>'.$url['lastmod'].'</lastmod>'.PHP_EOL;
-            $xml .= '        <changefreq>weekly</changefreq>'.PHP_EOL;
-            $xml .= '        <priority>'.$url['priority'].'</priority>'.PHP_EOL;
-            $xml .= '    </url>'.PHP_EOL;
-        }
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
+            $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
 
-        $xml .= '</urlset>';
+            foreach ($urls as $url) {
+                $xml .= '    <url>'.PHP_EOL;
+                $xml .= '        <loc>'.htmlspecialchars($url['url']).'</loc>'.PHP_EOL;
+                $xml .= '        <lastmod>'.$url['lastmod'].'</lastmod>'.PHP_EOL;
+                $xml .= '        <changefreq>weekly</changefreq>'.PHP_EOL;
+                $xml .= '        <priority>'.$url['priority'].'</priority>'.PHP_EOL;
+                $xml .= '    </url>'.PHP_EOL;
+            }
+
+            $xml .= '</urlset>';
+
+            return $xml;
+        });
 
         return response($xml, 200)->header('Content-Type', 'text/xml');
     }

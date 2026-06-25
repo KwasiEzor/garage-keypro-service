@@ -43,8 +43,8 @@ class PublicController extends Controller
     public function serviceShow(Service $service): Response
     {
         return Inertia::render('services/show', [
-            'service' => $service->load('brands'),
-            'relatedServices' => Service::active()->where('id', '!=', $service->id)->take(3)->get()->values()->toArray(),
+            'service' => Cache::remember("service.{$service->slug}", 3600, fn () => $service->load('brands')->toArray()),
+            'relatedServices' => Inertia::defer(fn () => Cache::remember("service.{$service->slug}.related", 3600, fn () => Service::active()->where('id', '!=', $service->id)->take(3)->get()->values()->toArray())),
         ]);
     }
 
@@ -64,7 +64,7 @@ class PublicController extends Controller
     public function faq(): Response
     {
         return Inertia::render('faq', [
-            'faqs' => Faq::active()->get()->groupBy('category'),
+            'faqs' => Cache::remember('faqs.grouped', 3600, fn () => Faq::active()->get()->groupBy('category')),
         ]);
     }
 
