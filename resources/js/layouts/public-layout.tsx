@@ -116,6 +116,30 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
                         }}
                     />
                 )}
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{
+                        __html: JSON.stringify({
+                            '@context': 'https://schema.org',
+                            '@type': 'LocalBusiness',
+                            name: siteName,
+                            description: seoDescription,
+                            telephone: contactPhone,
+                            address: {
+                                '@type': 'PostalAddress',
+                                addressLocality: 'Lomé',
+                                addressCountry: 'TG',
+                            },
+                            openingHours: openingHours,
+                            priceRange: '$$',
+                            serviceType: [
+                                'Reproduction de clés automobile',
+                                'Programmation électronique',
+                                'Diagnostic automobile',
+                            ],
+                        }),
+                    }}
+                />
             </Head>
             {/* Top Info Bar */}
             <div className="hidden w-full border-b border-white/5 bg-luxury-black py-3 lg:block">

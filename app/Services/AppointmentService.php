@@ -7,15 +7,20 @@ namespace App\Services;
 use App\Enums\AppointmentStatus;
 use App\Exceptions\SlotUnavailableException;
 use App\Jobs\SyncAppointmentToCalendar;
+use App\Mail\AppointmentCancellation;
+use App\Mail\AppointmentRescheduled;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
 use App\Models\TeamSettings;
 use App\Models\User;
+use App\Notifications\AppointmentConfirmation;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Zap\Facades\Zap;
 use Zap\Models\Schedule;
@@ -38,13 +43,13 @@ class AppointmentService
 
     /**
      * Create an appointment with race condition protection.
+     * Queues confirmation email and calendar sync after the transaction commits.
      *
      * @throws SlotUnavailableException
      */
     public function createAppointment(Team $team, User $client, Service $service, CarbonInterface $startAt, ?string $notes = null): Appointment
     {
         return DB::transaction(function () use ($team, $client, $service, $startAt, $notes) {
-            // Validate timezone to prevent DoS via invalid timezone strings
             $timezone = $team->timezone ?? 'Europe/Paris';
             if (! in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
                 throw ValidationException::withMessages([
@@ -64,7 +69,7 @@ class AppointmentService
                 ]);
             }
 
-            // CRITICAL: Lock check - prevent double-booking
+            // CRITICAL: Lock check — prevent double-booking under concurrent requests
             $conflict = Appointment::where('team_id', $team->id)
                 ->where(function ($query) use ($startAt, $endAt) {
                     $query->whereBetween('start_at', [$startAt, $endAt->subSecond()])
@@ -82,7 +87,6 @@ class AppointmentService
                 throw SlotUnavailableException::forTime($startAt);
             }
 
-            // Create appointment record
             $appointment = Appointment::create([
                 'team_id' => $team->id,
                 'user_id' => $client->id,
@@ -93,8 +97,8 @@ class AppointmentService
                 'status' => AppointmentStatus::Confirmed,
             ]);
 
-            // Queue calendar sync after transaction commits
-            DB::afterCommit(function () use ($appointment) {
+            DB::afterCommit(function () use ($appointment, $client) {
+                $client->notify(new AppointmentConfirmation($appointment));
                 dispatch(new SyncAppointmentToCalendar($appointment));
             });
 
@@ -103,10 +107,12 @@ class AppointmentService
     }
 
     /**
-     * Cancel an appointment and clean up Zap schedules.
+     * Cancel an appointment, clean up Zap schedules, and queue a cancellation email.
      */
     public function cancelAppointment(Appointment $appointment, string $reason): void
     {
+        $user = $appointment->user;
+
         DB::transaction(function () use ($appointment, $reason) {
             $appointment->update([
                 'status' => AppointmentStatus::Cancelled,
@@ -115,6 +121,36 @@ class AppointmentService
 
             Schedule::where('metadata->appointment_id', $appointment->id)->delete();
         });
+
+        DB::afterCommit(function () use ($appointment, $user, $reason) {
+            Mail::to($user)->queue(new AppointmentCancellation($appointment, $reason));
+        });
+    }
+
+    /**
+     * Reschedule an appointment: cancel the old slot and book a new one atomically.
+     * Queues a rescheduled email after both operations commit.
+     *
+     * @throws SlotUnavailableException
+     */
+    public function rescheduleAppointment(Appointment $appointment, Team $team, User $client, Service $service, CarbonInterface $newStartAt, ?string $notes = null): Appointment
+    {
+        $oldStartAt = CarbonImmutable::parse($appointment->start_at);
+
+        $newAppointment = DB::transaction(function () use ($appointment, $team, $client, $service, $newStartAt, $notes) {
+            // Lock to prevent concurrent reschedule on the same appointment
+            Appointment::where('id', $appointment->id)->lockForUpdate()->firstOrFail();
+
+            $this->cancelAppointment($appointment, 'Rescheduled to new time');
+
+            return $this->createAppointment($team, $client, $service, $newStartAt, $notes);
+        });
+
+        DB::afterCommit(function () use ($newAppointment, $client, $oldStartAt) {
+            Mail::to($client)->queue(new AppointmentRescheduled($newAppointment, $oldStartAt));
+        });
+
+        return $newAppointment;
     }
 
     /**

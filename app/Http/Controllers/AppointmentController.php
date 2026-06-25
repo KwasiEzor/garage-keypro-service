@@ -6,19 +6,14 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\SlotUnavailableException;
 use App\Http\Requests\StoreAppointmentRequest;
-use App\Mail\AppointmentCancellation;
-use App\Mail\AppointmentRescheduled;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Team;
-use App\Notifications\AppointmentConfirmation;
 use App\Services\AppointmentService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\CalendarLinks\Link;
@@ -146,9 +141,6 @@ class AppointmentController extends Controller
                 $validated['notes'] ?? null
             );
 
-            // Send confirmation email with calendar attachment
-            auth()->user()->notify(new AppointmentConfirmation($appointment));
-
             $link = Link::create(
                 $service->name.' - '.$team->name,
                 $appointment->start_at,
@@ -208,13 +200,7 @@ class AppointmentController extends Controller
 
         $reason = request('reason') ?? 'Cancelled by user';
 
-        $this->appointmentService->cancelAppointment(
-            $appointment,
-            $reason
-        );
-
-        // Send cancellation email
-        Mail::to($appointment->user)->send(new AppointmentCancellation($appointment, $reason));
+        $this->appointmentService->cancelAppointment($appointment, $reason);
 
         return redirect()->route('appointments.my')
             ->with('success', 'Appointment cancelled successfully.');
@@ -248,32 +234,14 @@ class AppointmentController extends Controller
         $startAt = Carbon::parse($validated['date'].' '.$validated['slot']);
 
         try {
-            DB::transaction(function () use ($appointment, $team, $service, $startAt, $validated) {
-                // Lock appointment to prevent concurrent reschedule race condition
-                $lockedAppointment = Appointment::where('id', $appointment->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                // Cancel old appointment
-                $this->appointmentService->cancelAppointment(
-                    $lockedAppointment,
-                    'Rescheduled to new time'
-                );
-
-                // Create new appointment
-                $newAppointment = $this->appointmentService->createAppointment(
-                    $team,
-                    auth()->user(),
-                    $service,
-                    $startAt,
-                    $validated['notes'] ?? null
-                );
-
-                // Send rescheduled email
-                Mail::to(auth()->user())->send(new AppointmentRescheduled($newAppointment, $appointment->start_at->toImmutable()));
-
-                return $newAppointment;
-            });
+            $this->appointmentService->rescheduleAppointment(
+                $appointment,
+                $team,
+                auth()->user(),
+                $service,
+                $startAt,
+                $validated['notes'] ?? null
+            );
 
             return redirect()->route('appointments.my')
                 ->with('success', 'Appointment rescheduled successfully.');

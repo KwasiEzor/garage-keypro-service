@@ -19,16 +19,21 @@ class CreateLead
      */
     public function execute(array $data): Lead
     {
+        $existing = Lead::where('email', $data['email'])->first();
+
+        if ($existing) {
+            $existing->update(array_diff_key($data, array_flip(['status'])));
+
+            return $existing;
+        }
+
         $lead = Lead::create([
             ...$data,
             'status' => $data['status'] ?? 'new',
             'source' => $data['source'] ?? 'website',
         ]);
 
-        // Notify client
         $lead->notify(new LeadSubmissionConfirmation($lead));
-
-        // Notify first admin or all admins
         User::where('role', Role::Admin)->first()?->notify(new NewLeadNotification($lead));
 
         return $lead;

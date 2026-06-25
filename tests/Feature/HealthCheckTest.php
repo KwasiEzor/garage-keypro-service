@@ -15,6 +15,10 @@ test('health check endpoint returns healthy status', function (): void {
                 'cache',
                 'storage',
             ],
+            'warnings' => [
+                'queue',
+                'disk',
+            ],
             'timestamp',
         ]);
 });

@@ -75,6 +75,10 @@ class InvoiceMail extends Mailable
         if ($view) {
             return new Content(
                 view: $view,
+                with: [
+                    'invoice' => $this->invoice,
+                    'paymentMethod' => null,
+                ],
             );
         }
 

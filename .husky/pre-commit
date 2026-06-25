@@ -16,9 +16,16 @@ PHP_BIN="${HOME}/Library/Application Support/Herd/bin/php84"
 
 # Run PHPStan static analysis on changed files
 echo "🔬 Running PHPStan on changed PHP files..."
-git diff --cached --name-only --diff-filter=ACMR | grep '\.php$' | xargs -r "${PHP_BIN}" vendor/bin/phpstan analyse --level=8 --no-progress --error-format=table || {
-  echo "❌ PHPStan found errors. Please fix them and try again."
-  exit 1
-}
+PHPSTAN_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep '\.php$')
+if [ -n "$PHPSTAN_FILES" ]; then
+  echo "$PHPSTAN_FILES" | xargs "${PHP_BIN}" vendor/bin/phpstan analyse --level=8 --no-progress > /tmp/phpstan_hook_out.txt 2>&1
+  PHPSTAN_EXIT=$?
+  cat /tmp/phpstan_hook_out.txt
+  rm -f /tmp/phpstan_hook_out.txt
+  [ $PHPSTAN_EXIT -eq 0 ] || {
+    echo "❌ PHPStan found errors. Please fix them and try again."
+    exit 1
+  }
+fi
 
 echo "✅ All pre-commit checks passed!"
