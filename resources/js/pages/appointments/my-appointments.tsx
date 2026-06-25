@@ -2,20 +2,19 @@ import { Head, Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     CalendarIcon,
-    MapPinIcon,
     ClockIcon,
+    MapPinIcon,
     XIcon,
     RefreshCwIcon,
-    ActivityIcon,
-    KeyRoundIcon,
-    ShieldCheckIcon,
     PlusIcon,
+    ArrowUpRightIcon,
+    CheckCircle2Icon,
+    CalendarCheckIcon,
+    CalendarXIcon,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import PublicLayout from '@/layouts/public-layout';
 import appointments from '@/routes/appointments';
 
 interface Service {
@@ -45,305 +44,89 @@ interface Props {
 
 type TabType = 'upcoming' | 'past' | 'cancelled';
 
+const STATUS_MAP: Record<
+    string,
+    { label: string; color: string; bg: string; dot: string }
+> = {
+    confirmed: {
+        label: 'Confirmé',
+        color: 'text-emerald-400',
+        bg: 'bg-emerald-500/10 border-emerald-500/20',
+        dot: 'bg-emerald-400',
+    },
+    pending: {
+        label: 'En attente',
+        color: 'text-amber-400',
+        bg: 'bg-amber-500/10 border-amber-500/20',
+        dot: 'bg-amber-400',
+    },
+    completed: {
+        label: 'Terminé',
+        color: 'text-blue-400',
+        bg: 'bg-blue-500/10 border-blue-500/20',
+        dot: 'bg-blue-400',
+    },
+    cancelled: {
+        label: 'Annulé',
+        color: 'text-racing-red',
+        bg: 'bg-racing-red/10 border-racing-red/20',
+        dot: 'bg-racing-red',
+    },
+    no_show: {
+        label: 'Absent',
+        color: 'text-white/40',
+        bg: 'bg-white/5 border-white/10',
+        dot: 'bg-white/30',
+    },
+};
+
+const getStatus = (s: string) => STATUS_MAP[s] ?? STATUS_MAP['pending'];
+
+function formatDate(iso: string) {
+    return new Date(iso).toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    });
+}
+
+function formatTime(iso: string) {
+    return new Date(iso).toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
 export default function MyAppointments({ upcoming, past, cancelled }: Props) {
     const [activeTab, setActiveTab] = useState<TabType>('upcoming');
 
     const handleCancel = (id: number) => {
-        if (
-            confirm(
-                "Voulez-vous vraiment interrompre ce protocole d'intervention ?",
-            )
-        ) {
+        if (confirm('Voulez-vous vraiment annuler ce rendez-vous ?')) {
             router.delete(appointments.cancel(id).url, {
-                onSuccess: () =>
-                    toast.success('Protocole interrompu avec succès.'),
+                onSuccess: () => toast.success('Rendez-vous annulé.'),
                 preserveScroll: true,
             });
         }
     };
 
-    const handleBookAgain = () => {
-        router.visit(appointments.index().url);
-    };
+    const stats = useMemo(() => {
+        const all = [...upcoming, ...past, ...cancelled];
 
-    const getStatusStyles = (status: string) => {
-        switch (status) {
-            case 'confirmed':
-                return {
-                    label: 'Protocole Actif',
-                    color: 'bg-green-500',
-                    text: 'text-green-500',
-                };
-            case 'pending':
-                return {
-                    label: 'En Analyse',
-                    color: 'bg-yellow-500',
-                    text: 'text-yellow-500',
-                };
-            case 'completed':
-                return {
-                    label: 'Dossier Clos',
-                    color: 'bg-blue-500',
-                    text: 'text-blue-500',
-                };
-            case 'cancelled':
-                return {
-                    label: 'Interrompu',
-                    color: 'bg-racing-red',
-                    text: 'text-racing-red',
-                };
-            case 'no_show':
-                return {
-                    label: 'Absent',
-                    color: 'bg-gray-500',
-                    text: 'text-gray-500',
-                };
-            default:
-                return {
-                    label: status,
-                    color: 'bg-gray-500',
-                    text: 'text-gray-500',
-                };
-        }
-    };
+        return {
+            total: all.length,
+            upcoming: upcoming.length,
+            completed: past.filter((a) => a.status === 'completed').length,
+            cancelled: cancelled.length,
+        };
+    }, [upcoming, past, cancelled]);
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.5, ease: 'easeOut' },
-        },
-    };
-
-    const renderAppointment = (
-        appointment: Appointment,
-        showActions: 'upcoming' | 'past' | 'cancelled',
-    ) => {
-        const date = new Date(appointment.start_at);
-        const endDate = new Date(appointment.end_at);
-        const status = getStatusStyles(appointment.status);
-
-        return (
-            <motion.div key={appointment.id} variants={itemVariants}>
-                <Card className="glass-panel group relative overflow-hidden border-white/5 bg-luxury-charcoal/40 transition-all hover:bg-luxury-charcoal/60">
-                    <div className="absolute top-0 left-0 h-full w-[2px] -translate-y-full transform bg-racing-red transition-transform duration-500 group-hover:translate-y-0" />
-                    <CardContent className="p-0">
-                        <div className="flex flex-col lg:flex-row">
-                            {/* Status Side */}
-                            <div className="flex flex-col items-center justify-center border-b border-white/5 bg-luxury-black p-8 text-center lg:w-48 lg:border-r lg:border-b-0">
-                                <div
-                                    className={`mb-4 flex h-12 w-12 items-center justify-center transition-colors ${status.text}`}
-                                >
-                                    <ShieldCheckIcon className="h-6 w-6" />
-                                </div>
-                                <span
-                                    className={`font-heading text-[9px] font-bold tracking-widest uppercase ${status.text}`}
-                                >
-                                    {status.label}
-                                </span>
-                            </div>
-
-                            {/* Info Content */}
-                            <div className="flex-1 space-y-6 p-8 lg:p-10">
-                                <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-3">
-                                            <span className="font-mono text-[10px] tracking-widest text-muted-foreground/60">
-                                                #
-                                                {appointment.id
-                                                    .toString()
-                                                    .padStart(6, '0')}
-                                            </span>
-                                            <h3 className="font-heading text-xl font-bold tracking-wider text-white uppercase">
-                                                {appointment.service.name}
-                                            </h3>
-                                        </div>
-                                        <div className="grid grid-cols-1 gap-x-8 gap-y-3 text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase md:grid-cols-2">
-                                            <div className="flex items-center gap-2">
-                                                <CalendarIcon className="h-3.5 w-3.5 text-racing-red" />
-                                                <span>
-                                                    {date.toLocaleDateString(
-                                                        'fr-FR',
-                                                        {
-                                                            day: 'numeric',
-                                                            month: 'long',
-                                                            year: 'numeric',
-                                                        },
-                                                    )}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <ClockIcon className="h-3.5 w-3.5 text-racing-red" />
-                                                <span>
-                                                    {date.toLocaleTimeString(
-                                                        'fr-FR',
-                                                        {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        },
-                                                    )}
-                                                    {' - '}
-                                                    {endDate.toLocaleTimeString(
-                                                        'fr-FR',
-                                                        {
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        },
-                                                    )}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-2 md:col-span-2">
-                                                <MapPinIcon className="h-3.5 w-3.5 text-racing-red" />
-                                                <span>
-                                                    {appointment.team.name}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {appointment.cancellation_reason && (
-                                            <div className="border-t border-white/5 pt-3">
-                                                <p className="mb-1 text-[9px] font-bold tracking-[0.2em] text-racing-red uppercase">
-                                                    Motif d'interruption
-                                                </p>
-                                                <p className="text-xs leading-relaxed text-white/60 italic">
-                                                    "
-                                                    {
-                                                        appointment.cancellation_reason
-                                                    }
-                                                    "
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="flex min-w-[180px] flex-col gap-3">
-                                        <Link
-                                            href={
-                                                appointments.show(
-                                                    appointment.id,
-                                                ).url
-                                            }
-                                        >
-                                            <Button
-                                                variant="outline"
-                                                className="h-11 w-full rounded-none border-white/10 text-[9px] font-bold tracking-[0.2em] uppercase hover:bg-white/5"
-                                            >
-                                                Dossier Technique
-                                            </Button>
-                                        </Link>
-
-                                        {showActions === 'upcoming' && (
-                                            <>
-                                                <Link
-                                                    href={
-                                                        appointments.reschedule(
-                                                            appointment.id,
-                                                        ).url
-                                                    }
-                                                >
-                                                    <Button
-                                                        variant="secondary"
-                                                        className="h-11 w-full rounded-none bg-white/5 text-[9px] font-bold tracking-[0.2em] uppercase hover:bg-white/10"
-                                                    >
-                                                        <RefreshCwIcon className="mr-2 h-3 w-3" />{' '}
-                                                        Reprogrammer
-                                                    </Button>
-                                                </Link>
-                                                <Button
-                                                    variant="destructive"
-                                                    onClick={() =>
-                                                        handleCancel(
-                                                            appointment.id,
-                                                        )
-                                                    }
-                                                    className="h-11 w-full rounded-none bg-racing-red/20 text-[9px] font-bold tracking-[0.2em] text-racing-red uppercase hover:bg-racing-red hover:text-white"
-                                                >
-                                                    <XIcon className="mr-2 h-3 w-3" />{' '}
-                                                    Interrompre
-                                                </Button>
-                                            </>
-                                        )}
-
-                                        {showActions === 'past' && (
-                                            <Button
-                                                onClick={() =>
-                                                    handleBookAgain()
-                                                }
-                                                className="h-11 w-full rounded-none bg-racing-red text-[9px] font-bold tracking-[0.2em] uppercase hover:bg-white hover:text-luxury-black"
-                                            >
-                                                <RefreshCwIcon className="mr-2 h-3 w-3" />{' '}
-                                                Réserver
-                                            </Button>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </motion.div>
-        );
-    };
-
-    const renderEmptyState = (type: TabType) => {
-        return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <Card className="glass-panel group relative overflow-hidden border-white/5 bg-luxury-charcoal/50 py-24 text-center">
-                    <div className="bg-grid-pattern pointer-events-none absolute inset-0 opacity-5" />
-                    <CardContent className="relative z-10">
-                        <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center border border-white/10 bg-white/5">
-                            <KeyRoundIcon className="h-10 w-10 text-muted-foreground/40" />
-                        </div>
-                        <h3 className="mb-4 font-heading text-2xl font-bold tracking-wider text-white uppercase">
-                            {type === 'upcoming'
-                                ? 'Aucun Protocole Actif'
-                                : type === 'past'
-                                  ? 'Historique Vierge'
-                                  : 'Aucune Interruption'}
-                        </h3>
-                        <p className="mx-auto mb-10 max-w-md text-sm leading-loose tracking-widest text-muted-foreground uppercase">
-                            {type === 'upcoming'
-                                ? "Votre journal d'intervention est vide. Nos unités sont prêtes pour votre prochain protocole."
-                                : "Aucune mission n'a encore été enregistrée dans vos archives techniques."}
-                        </p>
-                        {type === 'upcoming' && (
-                            <Link href={appointments.index().url}>
-                                <Button className="skewed-btn h-16 bg-racing-red px-12 text-white transition-all hover:bg-white hover:text-luxury-black">
-                                    <span>Nouvelle Intervention</span>
-                                </Button>
-                            </Link>
-                        )}
-                    </CardContent>
-                </Card>
-            </motion.div>
-        );
-    };
-
-    const tabs = [
-        {
-            id: 'upcoming' as TabType,
-            label: 'Missions Actives',
-            count: upcoming.length,
-        },
-        { id: 'past' as TabType, label: 'Archives', count: past.length },
-        {
-            id: 'cancelled' as TabType,
-            label: 'Interrompues',
-            count: cancelled.length,
-        },
+    const TABS: { id: TabType; label: string; count: number }[] = [
+        { id: 'upcoming', label: 'À venir', count: upcoming.length },
+        { id: 'past', label: 'Historique', count: past.length },
+        { id: 'cancelled', label: 'Annulés', count: cancelled.length },
     ];
 
-    const currentAppointments =
+    const current =
         activeTab === 'upcoming'
             ? upcoming
             : activeTab === 'past'
@@ -351,91 +134,394 @@ export default function MyAppointments({ upcoming, past, cancelled }: Props) {
               : cancelled;
 
     return (
-        <PublicLayout>
-            <Head title="Console d'Intervention" />
+        <>
+            <Head title="Mes Rendez-vous" />
 
-            <div className="relative mx-auto min-h-screen max-w-5xl px-4 pt-32 pb-24 sm:px-6 lg:px-8">
-                {/* Background Decor */}
-                <div className="pointer-events-none absolute top-0 left-1/2 -mt-48 h-[500px] w-full -translate-x-1/2 rounded-full bg-racing-red/5 blur-[120px]" />
-
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-16 space-y-4 text-center"
-                >
-                    <div className="mb-4 inline-flex items-center gap-2 border border-white/5 bg-luxury-charcoal px-4 py-1.5 font-heading text-[9px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                        <ActivityIcon className="h-3 w-3 animate-pulse" />
-                        Statut des Opérations
+            <div className="flex flex-col gap-6 p-6 lg:p-8">
+                {/* ── Header ── */}
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 className="flex items-center gap-3 font-heading text-xl font-bold tracking-[0.15em] text-white uppercase">
+                            <span className="h-5 w-[3px] bg-racing-red" />
+                            Mes Rendez-vous
+                        </h1>
+                        <p className="mt-1 text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+                            Suivi et gestion de vos interventions
+                        </p>
                     </div>
-                    <h1 className="font-heading text-5xl font-bold tracking-tighter text-chrome uppercase md:text-7xl">
-                        Console <span className="text-racing-red">Client</span>
-                    </h1>
-                    <div className="mx-auto h-1 w-24 bg-racing-red" />
-                </motion.div>
 
-                {/* Tabs */}
-                <div className="mb-12 flex flex-wrap justify-center gap-4">
-                    {tabs.map((tab) => (
+                    <Link href={appointments.index().url}>
+                        <Button
+                            size="sm"
+                            className="h-9 rounded-none bg-racing-red text-[9px] font-bold tracking-widest text-white uppercase hover:bg-white hover:text-luxury-black"
+                        >
+                            <PlusIcon className="mr-2 h-3 w-3" />
+                            Nouveau rendez-vous
+                        </Button>
+                    </Link>
+                </div>
+
+                {/* ── Stats strip ── */}
+                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                    {[
+                        {
+                            icon: CalendarIcon,
+                            label: 'Total',
+                            value: stats.total.toString(),
+                            sub: 'interventions',
+                            accent: 'text-white',
+                            iconColor: 'text-white/40',
+                        },
+                        {
+                            icon: CalendarCheckIcon,
+                            label: 'À venir',
+                            value: stats.upcoming.toString(),
+                            sub:
+                                stats.upcoming === 0
+                                    ? 'aucun planifié'
+                                    : 'planifiés',
+                            accent:
+                                stats.upcoming > 0
+                                    ? 'text-emerald-400'
+                                    : 'text-white/40',
+                            iconColor:
+                                stats.upcoming > 0
+                                    ? 'text-emerald-500/50'
+                                    : 'text-white/20',
+                        },
+                        {
+                            icon: CheckCircle2Icon,
+                            label: 'Terminés',
+                            value: stats.completed.toString(),
+                            sub: 'complétés',
+                            accent: 'text-blue-400',
+                            iconColor: 'text-blue-500/50',
+                        },
+                        {
+                            icon: CalendarXIcon,
+                            label: 'Annulés',
+                            value: stats.cancelled.toString(),
+                            sub:
+                                stats.cancelled === 0
+                                    ? 'aucune annulation'
+                                    : 'annulations',
+                            accent:
+                                stats.cancelled > 0
+                                    ? 'text-racing-red'
+                                    : 'text-white/40',
+                            iconColor:
+                                stats.cancelled > 0
+                                    ? 'text-racing-red/50'
+                                    : 'text-white/20',
+                        },
+                    ].map((s, i) => (
+                        <motion.div
+                            key={s.label}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.06 }}
+                            className="flex items-center gap-4 border border-white/5 bg-luxury-charcoal/30 p-4"
+                        >
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-white/5">
+                                <s.icon className={`h-4 w-4 ${s.iconColor}`} />
+                            </div>
+                            <div className="min-w-0">
+                                <p className="truncate text-[9px] font-bold tracking-widest text-muted-foreground uppercase">
+                                    {s.label}
+                                </p>
+                                <p
+                                    className={`font-heading text-lg leading-tight font-bold ${s.accent}`}
+                                >
+                                    {s.value}
+                                </p>
+                                <p className="truncate text-[9px] tracking-wider text-muted-foreground/60 uppercase">
+                                    {s.sub}
+                                </p>
+                            </div>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* ── Tabs ── */}
+                <div className="flex border border-white/5">
+                    {TABS.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`relative h-14 -skew-x-12 transform px-8 font-heading text-[10px] font-bold tracking-[0.3em] uppercase transition-all duration-300 ${
+                            className={`flex items-center gap-2 px-5 py-2.5 text-[9px] font-bold tracking-widest uppercase transition-all ${
                                 activeTab === tab.id
-                                    ? 'bg-racing-red text-white shadow-[0_0_20px_rgba(239,68,68,0.3)]'
-                                    : 'border border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white'
+                                    ? 'bg-racing-red text-white'
+                                    : 'text-muted-foreground hover:bg-white/5 hover:text-white'
                             }`}
                         >
-                            <span className="inline-block skew-x-12">
-                                {tab.label}
-                                {tab.count > 0 && (
-                                    <span
-                                        className={`ml-3 rounded-full px-2 py-0.5 text-[9px] ${activeTab === tab.id ? 'bg-white text-racing-red' : 'bg-white/10 text-white'}`}
-                                    >
-                                        {tab.count}
-                                    </span>
-                                )}
+                            {tab.label}
+                            <span
+                                className={`flex h-4 min-w-4 items-center justify-center px-1 text-[8px] font-bold ${
+                                    activeTab === tab.id
+                                        ? 'bg-white/20 text-white'
+                                        : 'bg-white/5 text-muted-foreground'
+                                }`}
+                            >
+                                {tab.count}
                             </span>
                         </button>
                     ))}
                 </div>
 
-                {/* Content */}
+                {/* ── List ── */}
                 <AnimatePresence mode="wait">
-                    <motion.div
-                        key={activeTab}
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="hidden"
-                        className="space-y-6"
-                    >
-                        {currentAppointments.length === 0 ? (
-                            renderEmptyState(activeTab)
-                        ) : (
-                            <div className="grid gap-6">
-                                {currentAppointments.map((apt) =>
-                                    renderAppointment(apt, activeTab),
-                                )}
+                    {current.length === 0 ? (
+                        <motion.div
+                            key="empty"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex flex-col items-center justify-center border border-dashed border-white/5 bg-luxury-charcoal/10 py-20"
+                        >
+                            <div className="mb-5 flex h-14 w-14 items-center justify-center bg-white/5">
+                                <CalendarIcon className="h-6 w-6 text-muted-foreground/30" />
                             </div>
-                        )}
-                    </motion.div>
+                            <p className="text-sm font-bold tracking-widest text-muted-foreground uppercase">
+                                {activeTab === 'upcoming'
+                                    ? 'Aucun rendez-vous à venir'
+                                    : activeTab === 'past'
+                                      ? 'Aucun historique'
+                                      : 'Aucune annulation'}
+                            </p>
+                            <p className="mt-1 text-[10px] tracking-wider text-muted-foreground/50">
+                                {activeTab === 'upcoming'
+                                    ? 'Planifiez votre première intervention'
+                                    : 'Vos rendez-vous apparaîtront ici'}
+                            </p>
+                            {activeTab === 'upcoming' && (
+                                <Link href={appointments.index().url}>
+                                    <Button
+                                        size="sm"
+                                        className="mt-6 h-9 rounded-none bg-racing-red text-[9px] font-bold tracking-widest text-white uppercase hover:bg-white hover:text-luxury-black"
+                                    >
+                                        <PlusIcon className="mr-2 h-3 w-3" />
+                                        Prendre rendez-vous
+                                    </Button>
+                                </Link>
+                            )}
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="flex flex-col divide-y divide-white/5 border border-white/5"
+                        >
+                            {/* Table header */}
+                            <div className="hidden grid-cols-12 gap-4 bg-white/[0.02] px-6 py-3 lg:grid">
+                                {[
+                                    { label: 'Référence', span: 'col-span-2' },
+                                    { label: 'Service', span: 'col-span-3' },
+                                    { label: 'Date', span: 'col-span-2' },
+                                    { label: 'Horaire', span: 'col-span-2' },
+                                    { label: 'Lieu', span: 'col-span-2' },
+                                    { label: 'Statut', span: 'col-span-1' },
+                                ].map(({ label, span }) => (
+                                    <div
+                                        key={label}
+                                        className={`text-[9px] font-bold tracking-widest text-muted-foreground/60 uppercase ${span}`}
+                                    >
+                                        {label}
+                                    </div>
+                                ))}
+                            </div>
+
+                            {current.map((apt, idx) => {
+                                const st = getStatus(apt.status);
+
+                                return (
+                                    <motion.div
+                                        key={apt.id}
+                                        initial={{ opacity: 0, y: 6 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.04 }}
+                                        className="group relative flex flex-col gap-4 bg-luxury-black px-6 py-4 transition-colors hover:bg-luxury-charcoal/40 lg:grid lg:grid-cols-12 lg:items-center lg:gap-4"
+                                    >
+                                        {/* Left accent bar */}
+                                        <div
+                                            className={`absolute top-0 bottom-0 left-0 w-[2px] opacity-0 transition-opacity group-hover:opacity-100 ${
+                                                apt.status === 'confirmed' ||
+                                                apt.status === 'completed'
+                                                    ? 'bg-emerald-500'
+                                                    : apt.status === 'cancelled'
+                                                      ? 'bg-racing-red'
+                                                      : 'bg-amber-500'
+                                            }`}
+                                        />
+
+                                        {/* Référence */}
+                                        <div className="lg:col-span-2">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Référence
+                                            </p>
+                                            <p className="font-mono text-sm font-bold tracking-tight text-white">
+                                                #
+                                                {apt.id
+                                                    .toString()
+                                                    .padStart(6, '0')}
+                                            </p>
+                                        </div>
+
+                                        {/* Service */}
+                                        <div className="lg:col-span-3">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Service
+                                            </p>
+                                            <p className="truncate text-sm font-medium text-white/80">
+                                                {apt.service.name}
+                                            </p>
+                                            {apt.cancellation_reason && (
+                                                <p className="mt-0.5 truncate text-[9px] text-racing-red/70 italic">
+                                                    {apt.cancellation_reason}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* Date */}
+                                        <div className="lg:col-span-2">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Date
+                                            </p>
+                                            <div className="flex items-center gap-1.5 text-sm text-white/70">
+                                                <CalendarIcon className="h-3 w-3 shrink-0 text-racing-red" />
+                                                {formatDate(apt.start_at)}
+                                            </div>
+                                        </div>
+
+                                        {/* Horaire */}
+                                        <div className="lg:col-span-2">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Horaire
+                                            </p>
+                                            <div className="flex items-center gap-1.5 text-sm text-white/70">
+                                                <ClockIcon className="h-3 w-3 shrink-0 text-racing-red" />
+                                                {formatTime(apt.start_at)} –{' '}
+                                                {formatTime(apt.end_at)}
+                                            </div>
+                                        </div>
+
+                                        {/* Lieu */}
+                                        <div className="lg:col-span-2">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Lieu
+                                            </p>
+                                            <div className="flex items-center gap-1.5 text-sm text-white/70">
+                                                <MapPinIcon className="h-3 w-3 shrink-0 text-racing-red" />
+                                                <span className="truncate">
+                                                    {apt.team.name}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        {/* Statut */}
+                                        <div className="lg:col-span-1">
+                                            <p className="mb-0.5 text-[8px] font-bold tracking-widest text-muted-foreground/50 uppercase lg:hidden">
+                                                Statut
+                                            </p>
+                                            <span
+                                                className={`inline-flex items-center gap-1.5 border px-2 py-1 text-[9px] font-bold tracking-wider uppercase ${st.bg} ${st.color}`}
+                                            >
+                                                <span
+                                                    className={`h-1.5 w-1.5 shrink-0 rounded-full ${st.dot}`}
+                                                />
+                                                {st.label}
+                                            </span>
+                                        </div>
+
+                                        {/* Actions — visible on hover on desktop, always on mobile */}
+                                        <div className="flex flex-wrap items-center gap-2 lg:absolute lg:right-4 lg:col-span-12 lg:flex-nowrap lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100">
+                                            <Link
+                                                href={
+                                                    appointments.show(apt.id)
+                                                        .url
+                                                }
+                                            >
+                                                <Button
+                                                    size="sm"
+                                                    className="h-8 rounded-none bg-white px-3 text-[8px] font-bold tracking-widest text-luxury-black uppercase transition-all hover:bg-racing-red hover:text-white"
+                                                >
+                                                    <ArrowUpRightIcon className="h-3 w-3" />
+                                                </Button>
+                                            </Link>
+
+                                            {activeTab === 'upcoming' && (
+                                                <>
+                                                    <Link
+                                                        href={
+                                                            appointments.reschedule(
+                                                                apt.id,
+                                                            ).url
+                                                        }
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="h-8 rounded-none border border-white/5 px-3 text-[8px] font-bold tracking-widest text-muted-foreground uppercase hover:border-white/10 hover:bg-white/5 hover:text-white"
+                                                        >
+                                                            <RefreshCwIcon className="mr-1.5 h-3 w-3" />
+                                                            Reprogrammer
+                                                        </Button>
+                                                    </Link>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() =>
+                                                            handleCancel(apt.id)
+                                                        }
+                                                        className="h-8 rounded-none border border-racing-red/20 px-3 text-[8px] font-bold tracking-widest text-racing-red uppercase hover:border-racing-red/40 hover:bg-racing-red/10"
+                                                    >
+                                                        <XIcon className="mr-1.5 h-3 w-3" />
+                                                        Annuler
+                                                    </Button>
+                                                </>
+                                            )}
+
+                                            {activeTab === 'past' && (
+                                                <Button
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        router.visit(
+                                                            appointments.index()
+                                                                .url,
+                                                        )
+                                                    }
+                                                    className="h-8 rounded-none bg-racing-red px-3 text-[8px] font-bold tracking-widest text-white uppercase hover:bg-white hover:text-luxury-black"
+                                                >
+                                                    <RefreshCwIcon className="mr-1.5 h-3 w-3" />
+                                                    Réserver
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                );
+                            })}
+                        </motion.div>
+                    )}
                 </AnimatePresence>
 
-                {/* New Booking CTA */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    className="mt-16 flex justify-center border-t border-white/5 pt-12"
-                >
-                    <Link
-                        href={appointments.index().url}
-                        className="group flex items-center gap-3 font-heading text-[10px] font-bold tracking-[0.4em] text-racing-red uppercase transition-colors hover:text-white"
-                    >
-                        <PlusIcon className="h-4 w-4 transition-transform group-hover:rotate-90" />
-                        Initialiser un Nouveau Protocole
-                    </Link>
-                </motion.div>
+                {/* ── Footer ── */}
+                {current.length > 0 && (
+                    <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                        <p className="text-[9px] font-semibold tracking-widest text-muted-foreground/50 uppercase">
+                            {current.length} rendez-vous affiché
+                            {current.length > 1 ? 's' : ''}
+                        </p>
+                    </div>
+                )}
             </div>
-        </PublicLayout>
+        </>
     );
 }
+
+MyAppointments.layout = () => ({
+    breadcrumbs: [
+        { title: 'Console Technique', href: '/dashboard' },
+        { title: 'Mes Rendez-vous', href: '/my-appointments' },
+    ],
+});
