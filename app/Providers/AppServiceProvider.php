@@ -6,12 +6,17 @@ namespace App\Providers;
 
 use App\Listeners\LogInvoiceActivity;
 use App\Listeners\SendInvoiceNotification;
+use App\Models\Brand;
+use App\Models\Faq;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
+use App\Models\Service;
+use App\Models\Testimonial;
 use App\Models\User;
 use App\Observers\InvoiceItemObserver;
 use App\Observers\InvoiceObserver;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -55,6 +60,35 @@ class AppServiceProvider extends ServiceProvider
     {
         Invoice::observe(InvoiceObserver::class);
         InvoiceItem::observe(InvoiceItemObserver::class);
+
+        $bustServiceCache = static function (Service $service): void {
+            Cache::forget('home.featured_services');
+            Cache::forget('services.all');
+            Cache::forget("service.{$service->slug}");
+            Cache::forget("service.{$service->slug}.related");
+            Cache::forget('sitemap.xml');
+        };
+        Service::saved($bustServiceCache);
+        Service::deleted($bustServiceCache);
+
+        $bustBrandCache = static function (): void {
+            Cache::forget('home.featured_brands');
+            Cache::forget('brands.all');
+        };
+        Brand::saved($bustBrandCache);
+        Brand::deleted($bustBrandCache);
+
+        $bustTestimonialCache = static function (): void {
+            Cache::forget('home.testimonials');
+        };
+        Testimonial::saved($bustTestimonialCache);
+        Testimonial::deleted($bustTestimonialCache);
+
+        $bustFaqCache = static function (): void {
+            Cache::forget('faqs.grouped');
+        };
+        Faq::saved($bustFaqCache);
+        Faq::deleted($bustFaqCache);
     }
 
     /**
