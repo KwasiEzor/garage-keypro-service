@@ -26,6 +26,8 @@ use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Passkeys\Passkey;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -79,7 +81,10 @@ use Laravel\Passkeys\Passkey;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail, PasskeyUser
 {
     use HasFactory;
-    use HasTeams;
+    use HasRoles, HasTeams {
+        HasTeams::teams insteadof HasRoles;
+        HasRoles::teams as spatieTeams;
+    }
     use Notifiable;
     use PasskeyAuthenticatable;
     use SoftDeletes;
@@ -108,7 +113,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Pas
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role->canAccessAdminPanel();
+        return $this->hasRole(['admin', 'manager']);
     }
 
     /**
@@ -116,7 +121,19 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Pas
      */
     public function isAdmin(): bool
     {
-        return $this->role->isAdmin();
+        return $this->hasRole('admin');
+    }
+
+    /**
+     * Check a permission without throwing if it doesn't exist yet (e.g. before seeder runs).
+     */
+    public function hasPermission(string $permission): bool
+    {
+        try {
+            return $this->hasPermissionTo($permission);
+        } catch (PermissionDoesNotExist) {
+            return false;
+        }
     }
 
     /**

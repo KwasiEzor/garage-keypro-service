@@ -15,7 +15,7 @@ class TeamPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->isAdmin()) {
+        if ($user->hasRole('admin')) {
             return true;
         }
 

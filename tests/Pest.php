@@ -1,7 +1,9 @@
 <?php
 
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 /*
@@ -21,6 +23,9 @@ pest()->extend(TestCase::class)
 
 beforeEach(function (): void {
     $this->withoutMiddleware(PreventRequestForgery::class);
+    $this->seed(RolesAndPermissionsSeeder::class);
+    // Bust Spatie's static permission cache after seeding so middleware checks read fresh DB data
+    app()[PermissionRegistrar::class]->forgetCachedPermissions();
 })->in('Feature');
 
 /*

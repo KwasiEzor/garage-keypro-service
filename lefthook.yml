@@ -21,4 +21,4 @@ pre-commit:
       glob: "*.php"
       run: |
         PHP_BIN="${HOME}/Library/Application Support/Herd/bin/php84"
-        "${PHP_BIN}" vendor/bin/phpstan analyse --level=8 --no-progress {staged_files}
+        TERM=dumb "${PHP_BIN}" vendor/bin/phpstan analyse --no-progress

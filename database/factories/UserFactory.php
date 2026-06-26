@@ -56,6 +56,22 @@ class UserFactory extends Factory
             ]);
 
             $user->switchTeam($team);
+
+            // Assign Spatie role matching the user's role enum.
+            // Use firstOrCreate so tests with RefreshDatabase don't require the seeder to run first.
+            $roleName = match ($user->role) {
+                Role::Admin => 'admin',
+                Role::Manager => 'manager',
+                Role::Member => 'member',
+            };
+
+            $spatieRole = \Spatie\Permission\Models\Role::firstOrCreate(
+                ['name' => $roleName, 'guard_name' => 'web']
+            );
+
+            if (! $user->hasRole($spatieRole)) {
+                $user->assignRole($spatieRole);
+            }
         });
     }
 

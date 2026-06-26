@@ -14,7 +14,7 @@ class AppointmentPolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->isAdmin()) {
+        if ($user->hasRole(['admin', 'manager'])) {
             return true;
         }
 
@@ -59,10 +59,6 @@ class AppointmentPolicy
      */
     public function cancel(User $user, Appointment $appointment): bool
     {
-        // Owner can cancel if:
-        // - They own the appointment
-        // - Status is cancelable (pending or confirmed)
-        // - Appointment starts more than 2 hours from now
         return $user->id === $appointment->user_id
             && $appointment->status->canBeCancelled()
             && $appointment->start_at->isFuture()
@@ -74,7 +70,6 @@ class AppointmentPolicy
      */
     public function reschedule(User $user, Appointment $appointment): bool
     {
-        // Same rules as cancel - owner can reschedule with 2h notice
         return $user->id === $appointment->user_id
             && $appointment->status->canBeCancelled()
             && $appointment->start_at->isFuture()
