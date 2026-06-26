@@ -37,14 +37,18 @@ class TopPagesWidget extends BaseWidget
             )
             ->groupBy('path');
 
+        $outerQuery = PageView::query()
+            ->fromSub($sub, 'top_pages')
+            ->select('id', 'path', 'views', 'unique_visitors', 'avg_response')
+            ->orderByDesc('views')
+            ->limit(15);
+
+        // Filament qualifies its id tiebreaker as "{model->table}"."id".
+        // Redirect it to match the subquery alias so the ORDER BY resolves.
+        $outerQuery->getModel()->setTable('top_pages');
+
         return $table
-            ->query(
-                PageView::query()
-                    ->fromSub($sub, 'top_pages')
-                    ->select('id', 'path', 'views', 'unique_visitors', 'avg_response')
-                    ->orderByDesc('views')
-                    ->limit(15)
-            )
+            ->query($outerQuery)
             ->columns([
                 TextColumn::make('path')
                     ->label('Page')
