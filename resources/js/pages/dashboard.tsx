@@ -57,8 +57,8 @@ interface Props {
     upcomingAppointments: Appointment[];
     recentInvoices: Invoice[];
     notifications: Notification[];
-    vehicles: Vehicle[];
-    stats: {
+    vehicles?: Vehicle[];
+    stats?: {
         totalAppointments: number;
         pendingInvoices: number;
         totalSpent: number;
@@ -117,7 +117,7 @@ export default function Dashboard({
                                     {new Intl.NumberFormat('fr-FR', {
                                         style: 'currency',
                                         currency: 'EUR',
-                                    }).format(stats.totalSpent)}
+                                    }).format(stats?.totalSpent ?? 0)}
                                 </h3>
                             </CardContent>
                         </Card>
@@ -133,7 +133,7 @@ export default function Dashboard({
                                     Factures en Attente
                                 </p>
                                 <h3 className="font-heading text-3xl font-bold tracking-tighter text-white uppercase">
-                                    {stats.pendingInvoices}
+                                    {stats?.pendingInvoices ?? '—'}
                                 </h3>
                             </CardContent>
                         </Card>
@@ -149,7 +149,7 @@ export default function Dashboard({
                                     Total Interventions
                                 </p>
                                 <h3 className="font-heading text-3xl font-bold tracking-tighter text-white uppercase">
-                                    {stats.totalAppointments}
+                                    {stats?.totalAppointments ?? '—'}
                                 </h3>
                             </CardContent>
                         </Card>
@@ -464,8 +464,8 @@ export default function Dashboard({
                                 Mes Véhicules
                             </h2>
                             <div className="space-y-4">
-                                {vehicles.length > 0 ? (
-                                    vehicles.map((vehicle, idx) => (
+                                {(vehicles ?? []).length > 0 ? (
+                                    (vehicles ?? []).map((vehicle, idx) => (
                                         <Card
                                             key={idx}
                                             className="group rounded-none border-white/5 bg-luxury-black transition-all hover:border-racing-red/30"
