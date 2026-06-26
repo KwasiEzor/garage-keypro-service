@@ -2,7 +2,7 @@
 
 GarageKeyPro is a high-end service platform for elite automotive diagnostics, advanced key programming, and precision engineering. Built with an "Industrial Luxury" aesthetic, it combines cutting-edge security protocols with a seamless, high-performance user experience.
 
-![GarageKeyPro Banner](public/images/og-image.png)
+![GarageKeyPro Home Page Preview](docs/screenshots/home-preview.png)
 
 ## 🛠 Tech Stack
 

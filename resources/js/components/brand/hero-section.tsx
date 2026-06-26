@@ -8,7 +8,7 @@ interface HeroSectionProps {
   ctaSecondary?: { text: string; href: string };
 }
 
-const DEFAULT_HERO_IMAGE = '/images/hero-banner.png';
+const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2500&auto=format&fit=crop';
 
 export function HeroSection({ title, subtitle, badge, heroImageUrl, ctaPrimary, ctaSecondary }: HeroSectionProps) {
   return (
