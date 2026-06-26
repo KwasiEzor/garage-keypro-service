@@ -271,7 +271,7 @@ export function HeroSection({
 
                     {/* Cycling typewriter — own line, white, smaller */}
                     <div
-                        className="mb-10 flex items-center gap-2"
+                        className="mb-10 flex h-9 items-center gap-2"
                         style={{
                             animation: `fade-in 0.5s ease-out ${0.4 + words.length * 0.12}s both`,
                         }}
