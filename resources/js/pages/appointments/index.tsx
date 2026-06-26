@@ -8,15 +8,15 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import DateTimeStep from './steps/DateTimeStep';
+import DetailsStep from './steps/DetailsStep';
+import ReviewStep from './steps/ReviewStep';
+import ServiceStep from './steps/ServiceStep';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useBookingWizard } from '@/hooks/useBookingWizard';
 import PublicLayout from '@/layouts/public-layout';
 import appointments from '@/routes/appointments';
-import DateTimeStep from './steps/DateTimeStep';
-import DetailsStep from './steps/DetailsStep';
-import ReviewStep from './steps/ReviewStep';
-import ServiceStep from './steps/ServiceStep';
 
 interface Service {
     id: number;
@@ -316,34 +316,52 @@ export default function AppointmentWizard({
                                     </div>
 
                                     {!isLastStep ? (
-                                        <Button
+                                        <button
                                             onClick={nextStep}
                                             disabled={isSubmitting}
-                                            className="rounded-none bg-racing-red font-heading font-bold tracking-[0.25em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-luxury-black"
+                                            className="group/btn relative -skew-x-6 overflow-hidden rounded-none bg-racing-red px-8 py-3 font-heading text-xs font-bold tracking-[0.25em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-luxury-black disabled:opacity-50"
+                                            style={{
+                                                animation:
+                                                    'btn-glow-pulse 2s ease-in-out infinite',
+                                            }}
                                         >
-                                            Suivant
-                                            <ArrowRight className="ml-2 h-4 w-4" />
-                                        </Button>
+                                            <span className="absolute inset-0 -translate-x-full skew-x-6 bg-white/20 transition-transform duration-500 group-hover/btn:translate-x-full" />
+                                            <span className="relative flex skew-x-6 items-center gap-2">
+                                                Suivant
+                                                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                                            </span>
+                                        </button>
                                     ) : (
-                                        <Button
+                                        <button
                                             onClick={handleSubmit}
                                             disabled={
                                                 isSubmitting || !canProceed()
                                             }
-                                            className="min-w-[200px] rounded-none bg-racing-red font-heading font-bold tracking-[0.25em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-luxury-black disabled:opacity-50"
+                                            className="group/btn relative min-w-[200px] -skew-x-6 overflow-hidden rounded-none bg-racing-red px-8 py-3 font-heading text-xs font-bold tracking-[0.25em] text-white uppercase transition-all duration-300 hover:bg-white hover:text-luxury-black disabled:cursor-not-allowed disabled:opacity-50"
+                                            style={
+                                                !isSubmitting && canProceed()
+                                                    ? {
+                                                          animation:
+                                                              'btn-glow-pulse 2s ease-in-out infinite',
+                                                      }
+                                                    : {}
+                                            }
                                         >
-                                            {isSubmitting ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    Confirmation...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Check className="mr-2 h-4 w-4" />
-                                                    Confirmer le Rendez-vous
-                                                </>
-                                            )}
-                                        </Button>
+                                            <span className="absolute inset-0 -translate-x-full skew-x-6 bg-white/20 transition-transform duration-500 group-hover/btn:translate-x-full" />
+                                            <span className="relative flex skew-x-6 items-center justify-center gap-2">
+                                                {isSubmitting ? (
+                                                    <>
+                                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                                        Confirmation...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <Check className="h-4 w-4" />
+                                                        Confirmer le Rendez-vous
+                                                    </>
+                                                )}
+                                            </span>
+                                        </button>
                                     )}
                                 </div>
                             </CardContent>

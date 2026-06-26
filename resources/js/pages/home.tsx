@@ -1,5 +1,5 @@
 import { Head, usePage, Deferred } from '@inertiajs/react';
-import { BrandGrid } from '@/components/brand/brand-grid';
+import { BrandMarquee } from '@/components/brand/brand-marquee';
 import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
 import { ServiceCard } from '@/components/brand/service-card';
@@ -24,27 +24,35 @@ export default function Home({
     const siteName = settings?.site_name || 'KeyPro';
     const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
 
-    const s = (key: string, fallback: string) =>
-        settings?.[key] || fallback;
+    const s = (key: string, fallback: string) => settings?.[key] || fallback;
 
     const howSteps = [
         {
             step: '01',
             icon: 'Phone',
             title: s('how_step1_title', 'Activation'),
-            desc: s('how_step1_desc', 'Analyse rapide de votre besoin en clés ou diagnostic électronique par nos techniciens.'),
+            desc: s(
+                'how_step1_desc',
+                'Analyse rapide de votre besoin en clés ou diagnostic électronique par nos techniciens.',
+            ),
         },
         {
             step: '02',
             icon: 'Zap',
             title: s('how_step2_title', 'Intervention'),
-            desc: s('how_step2_desc', 'Déploiement immédiat de notre unité mobile à Lomé pour une solution sur site.'),
+            desc: s(
+                'how_step2_desc',
+                'Déploiement immédiat de notre unité mobile à Lomé pour une solution sur site.',
+            ),
         },
         {
             step: '03',
             icon: 'Award',
             title: s('how_step3_title', 'Validation'),
-            desc: s('how_step3_desc', 'Programmation, test de conformité et remise des clés avec garantie de fiabilité.'),
+            desc: s(
+                'how_step3_desc',
+                'Programmation, test de conformité et remise des clés avec garantie de fiabilité.',
+            ),
         },
     ];
 
@@ -69,7 +77,10 @@ export default function Home({
             <HeroSection
                 badge={s('hero_badge', 'Protocoles de Sécurité Avancés')}
                 title={s('hero_title', 'Expert Clés Auto')}
-                subtitle={s('hero_subtitle', 'Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs.')}
+                subtitle={s(
+                    'hero_subtitle',
+                    'Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs.',
+                )}
                 ctaPrimary={{
                     text: s('hero_cta_primary_text', 'Réserver un Rendez-vous'),
                     href: s('hero_cta_primary_href', '/appointments'),
@@ -92,11 +103,17 @@ export default function Home({
                                 {s('section_services_badge', 'Nos Spécialités')}
                             </span>
                             <h2 className="font-heading text-4xl leading-[1.1] font-bold tracking-tighter text-white uppercase md:text-6xl">
-                                {s('section_services_heading', 'Solutions Automobiles')}
+                                {s(
+                                    'section_services_heading',
+                                    'Solutions Automobiles',
+                                )}
                             </h2>
                         </div>
                         <p className="max-w-xs text-xs leading-loose font-bold tracking-[0.25em] text-muted-foreground uppercase">
-                            {s('section_services_subtext', 'Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.')}
+                            {s(
+                                'section_services_subtext',
+                                'Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.',
+                            )}
                         </p>
                     </div>
 
@@ -120,7 +137,10 @@ export default function Home({
                             {s('section_process_badge', 'Notre Méthodologie')}
                         </span>
                         <h2 className="mb-8 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s('section_process_heading', "Protocole d'Exécution")}
+                            {s(
+                                'section_process_heading',
+                                "Protocole d'Exécution",
+                            )}
                         </h2>
                         <div className="mx-auto h-[2px] w-24 bg-racing-red" />
                     </div>
@@ -173,22 +193,38 @@ export default function Home({
                                 {s('mission_badge', 'Notre Mission à Lomé')}
                             </span>
                             <h2 className="font-heading text-4xl leading-none font-bold tracking-tighter text-white uppercase md:text-7xl">
-                                {s('mission_heading', 'Innovation\net Expertise\nTechnique')
+                                {s(
+                                    'mission_heading',
+                                    'Innovation\net Expertise\nTechnique',
+                                )
                                     .split('\n')
-                                    .map((line: string, i: number, arr: string[]) => (
-                                        <span key={i}>
-                                            {i === arr.length - 1 ? (
-                                                <span className="text-racing-red">{line}</span>
-                                            ) : (
-                                                line
-                                            )}
-                                            {i < arr.length - 1 && <br />}
-                                        </span>
-                                    ))}
+                                    .map(
+                                        (
+                                            line: string,
+                                            i: number,
+                                            arr: string[],
+                                        ) => (
+                                            <span key={i}>
+                                                {i === arr.length - 1 ? (
+                                                    <span className="text-racing-red">
+                                                        {line}
+                                                    </span>
+                                                ) : (
+                                                    line
+                                                )}
+                                                {i < arr.length - 1 && <br />}
+                                            </span>
+                                        ),
+                                    )}
                             </h2>
                             <div className="h-[2px] w-32 bg-racing-red" />
                             <p className="max-w-xl border-l-4 border-racing-red/50 pl-8 text-lg leading-loose font-medium tracking-wide text-muted-foreground italic">
-                                "{s('mission_quote', 'Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules.')}"
+                                "
+                                {s(
+                                    'mission_quote',
+                                    'Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules.',
+                                )}
+                                "
                             </p>
                             <div className="flex gap-12 pt-6">
                                 <div>
@@ -196,7 +232,10 @@ export default function Home({
                                         {s('mission_stat1_value', '98%')}
                                     </div>
                                     <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        {s('mission_stat1_label', 'Clients Satisfaits')}
+                                        {s(
+                                            'mission_stat1_label',
+                                            'Clients Satisfaits',
+                                        )}
                                     </div>
                                 </div>
                                 <div>
@@ -204,7 +243,10 @@ export default function Home({
                                         {s('mission_stat2_value', '24h/7')}
                                     </div>
                                     <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        {s('mission_stat2_label', 'Assistance Urgente')}
+                                        {s(
+                                            'mission_stat2_label',
+                                            'Assistance Urgente',
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -214,7 +256,10 @@ export default function Home({
                             <div className="absolute -inset-4 -skew-x-6 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
                             <div className="relative -skew-x-6 transform overflow-hidden bg-luxury-charcoal">
                                 <img
-                                    src={s('mission_image_url', 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop')}
+                                    src={s(
+                                        'mission_image_url',
+                                        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop',
+                                    )}
                                     alt="Véhicule premium - Expertise technique en programmation de clés et diagnostic automobile"
                                     className="w-full transition-all duration-1000 group-hover:scale-105"
                                     loading="lazy"
@@ -251,13 +296,12 @@ export default function Home({
                             </div>
                         }
                     >
-                        <BrandGrid
+                        <BrandMarquee
                             brands={
                                 Array.isArray(featuredBrands)
                                     ? featuredBrands
                                     : []
                             }
-                            title="Capacité Marques"
                         />
                     </Deferred>
                 </div>
@@ -270,10 +314,16 @@ export default function Home({
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-24 flex flex-col items-center text-center">
                         <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                            {s('section_testimonials_badge', 'Rapports Système')}
+                            {s(
+                                'section_testimonials_badge',
+                                'Rapports Système',
+                            )}
                         </span>
                         <h2 className="font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s('section_testimonials_heading', 'Intelligence Client')}
+                            {s(
+                                'section_testimonials_heading',
+                                'Intelligence Client',
+                            )}
                         </h2>
                     </div>
 
@@ -336,10 +386,16 @@ export default function Home({
                 <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-24 border-b-2 border-racing-red pb-12 text-center">
                         <h2 className="mb-6 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s('section_contact_heading', 'Demander une Intervention')}
+                            {s(
+                                'section_contact_heading',
+                                'Demander une Intervention',
+                            )}
                         </h2>
                         <p className="mx-auto max-w-xl text-[11px] leading-loose font-bold tracking-[0.3em] text-muted-foreground uppercase">
-                            {s('section_contact_subtext', 'Établissez un statut technique prioritaire en soumettant vos besoins opérationnels.')}
+                            {s(
+                                'section_contact_subtext',
+                                'Établissez un statut technique prioritaire en soumettant vos besoins opérationnels.',
+                            )}
                         </p>
                     </div>
                     <div className="animate-in duration-1000 fade-in slide-in-from-bottom">

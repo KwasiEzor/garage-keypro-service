@@ -45,14 +45,14 @@ if (import.meta.hot) {
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) => {
-        const pages = import.meta.glob('./pages/**/*.tsx', { eager: true });
+        const pages = import.meta.glob('./pages/**/*.tsx');
         const page = pages[`./pages/${name}.tsx`];
 
         if (!page) {
             throw new Error(`Page not found: ${name}`);
         }
 
-        return page;
+        return page();
     },
     setup({ el, App, props }) {
         // SSR: el is a string, not a DOM element
@@ -81,7 +81,9 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        color: 'oklch(0.6 0.25 25)',
+        includeCSS: true,
+        showSpinner: false,
     },
     layout: (name) => {
         switch (true) {

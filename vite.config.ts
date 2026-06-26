@@ -71,7 +71,7 @@ export default defineConfig({
                         }
                         // Icon libraries
                         if (id.includes('lucide-react')) {
-                            return 'icons';
+                            return 'lucide';
                         }
                         // UI utilities
                         if (

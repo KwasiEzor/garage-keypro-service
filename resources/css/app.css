@@ -6,11 +6,162 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes ken-burns {
+    0% {
+        transform: scale(1.05) translate(0, 0);
+    }
+    25% {
+        transform: scale(1.1) translate(-1%, 0.5%);
+    }
+    50% {
+        transform: scale(1.08) translate(1%, -0.5%);
+    }
+    75% {
+        transform: scale(1.12) translate(-0.5%, 1%);
+    }
+    100% {
+        transform: scale(1.05) translate(0, 0);
+    }
+}
+
+@keyframes btn-glow-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 oklch(0.6 0.25 25 / 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px oklch(0.6 0.25 25 / 0);
+    }
+}
+
+@keyframes glow-drift {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.4;
+    }
+    33% {
+        transform: translate(60px, -40px) scale(1.15);
+        opacity: 0.6;
+    }
+    66% {
+        transform: translate(-40px, 30px) scale(0.9);
+        opacity: 0.3;
+    }
+}
+
+@keyframes glow-drift-2 {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.25;
+    }
+    40% {
+        transform: translate(-80px, 60px) scale(1.2);
+        opacity: 0.45;
+    }
+    70% {
+        transform: translate(50px, -30px) scale(0.85);
+        opacity: 0.2;
+    }
+}
+
+@keyframes scanlines {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 100px;
+    }
+}
+
+@keyframes float-particle {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-120px) scale(0.4);
+        opacity: 0;
+    }
+}
+
+@keyframes line-draw {
+    from {
+        width: 0;
+    }
+    to {
+        width: 3rem;
+    }
+}
+
+@keyframes line-draw-vertical {
+    from {
+        height: 0;
+    }
+    to {
+        height: 100%;
+    }
+}
+
+@keyframes cursor-blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes stat-flash {
+    0%,
+    100% {
+        color: white;
+    }
+    50% {
+        color: oklch(0.6 0.25 25);
+    }
+}
+
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes marquee-reverse {
+    from {
+        transform: translateX(-50%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
 @theme {
+    --animate-marquee: marquee 35s linear infinite;
+    --animate-marquee-reverse: marquee-reverse 40s linear infinite;
+    --animate-ken-burns: ken-burns 24s ease-in-out infinite;
+    --animate-btn-glow-pulse: btn-glow-pulse 2s ease-in-out infinite;
+    --animate-glow-drift: glow-drift 12s ease-in-out infinite;
+    --animate-glow-drift-2: glow-drift-2 18s ease-in-out infinite;
+    --animate-scanlines: scanlines 3s linear infinite;
+    --animate-float-particle: float-particle 4s ease-out infinite;
+    --animate-line-draw: line-draw 0.8s ease-out forwards;
+    --animate-stat-flash: stat-flash 0.6s ease-out;
     --font-sans:
-        'Outfit', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+        'Outfit', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
     --font-heading: 'Syncopate', sans-serif;
 
@@ -97,19 +248,31 @@
     }
 
     body {
-        @apply bg-background text-foreground font-sans selection:bg-racing-red/30 selection:text-white;
+        @apply bg-background font-sans text-foreground selection:bg-racing-red/30 selection:text-white;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
         @apply font-heading tracking-tight;
     }
 
     /* Custom cursor - hide default on desktop only */
     @media (hover: hover) and (pointer: fine) {
         @media (prefers-reduced-motion: no-preference) {
-            body, a, button, [role="button"], input, textarea, select, .cursor-pointer {
+            body,
+            a,
+            button,
+            [role='button'],
+            input,
+            textarea,
+            select,
+            .cursor-pointer {
                 cursor: none !important;
             }
         }
@@ -118,9 +281,9 @@
 
 @layer utilities {
     .glass-panel {
-        @apply bg-luxury-black/80 backdrop-blur-xl border border-white/5 shadow-2xl;
+        @apply border border-white/5 bg-luxury-black/80 shadow-2xl backdrop-blur-xl;
     }
-    
+
     .metallic-gradient {
         @apply bg-gradient-to-br from-white/10 via-white/5 to-white/5;
     }
@@ -130,18 +293,26 @@
     }
 
     .bg-grid-pattern {
-        background-image: 
-            linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-image:
+            linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.03) 1px,
+                transparent 1px
+            );
         background-size: 40px 40px;
     }
 
     .skewed-btn {
-        @apply relative inline-flex items-center justify-center px-8 py-4 font-heading font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 transform -skew-x-12;
+        @apply relative inline-flex -skew-x-12 transform items-center justify-center px-8 py-4 font-heading text-xs font-bold tracking-[0.2em] uppercase transition-all duration-300;
     }
 
     .skewed-btn > span {
-        @apply transform skew-x-12;
+        @apply skew-x-12 transform;
     }
 
     .accent-border-top {
@@ -150,11 +321,10 @@
 
     .accent-border-top::after {
         content: '';
-        @apply absolute top-0 left-0 w-full h-[2px] bg-racing-red transform -translate-x-full transition-transform duration-500 ease-out;
+        @apply absolute top-0 left-0 h-[2px] w-full -translate-x-full transform bg-racing-red transition-transform duration-500 ease-out;
     }
 
     .accent-border-top:hover::after {
         @apply translate-x-0;
     }
 }
-
