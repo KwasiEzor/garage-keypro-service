@@ -22,13 +22,19 @@ class TopPagesWidget extends BaseWidget
 
     public function table(Table $table): Table
     {
+        // Wrap in a subquery so Filament's default ORDER BY id doesn't conflict
+        // with PostgreSQL's strict GROUP BY rules.
+        $sub = PageView::query()
+            ->humans()
+            ->lastDays(30)
+            ->select('path', DB::raw('COUNT(*) as views'), DB::raw('COUNT(DISTINCT ip) as unique_visitors'), DB::raw('ROUND(AVG(response_time_ms)) as avg_response'))
+            ->groupBy('path');
+
         return $table
             ->query(
                 PageView::query()
-                    ->humans()
-                    ->lastDays(30)
-                    ->select('path', DB::raw('COUNT(*) as views'), DB::raw('COUNT(DISTINCT ip) as unique_visitors'), DB::raw('AVG(response_time_ms) as avg_response'))
-                    ->groupBy('path')
+                    ->fromSub($sub, 'top_pages')
+                    ->select('path', 'views', 'unique_visitors', 'avg_response')
                     ->orderByDesc('views')
                     ->limit(15)
             )
