@@ -1,4 +1,62 @@
 import { Head, usePage, Deferred } from '@inertiajs/react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+
+/* ── Scroll-triggered reveal ─────────────────────────────────────── */
+function useInView(threshold = 0.15) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [visible, setVisible] = useState(false);
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        const obs = new IntersectionObserver(
+            ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+            { threshold },
+        );
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, [threshold]);
+    return { ref, visible };
+}
+
+type RevealProps = { children: ReactNode; delay?: number; from?: 'bottom' | 'left' | 'right'; className?: string; };
+function Reveal({ children, delay = 0, from = 'bottom', className = '' }: RevealProps) {
+    const { ref, visible } = useInView();
+    const translate = from === 'left' ? 'translateX(-32px)' : from === 'right' ? 'translateX(32px)' : 'translateY(24px)';
+    return (
+        <div
+            ref={ref}
+            className={className}
+            style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'none' : translate,
+                transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms`,
+            }}
+        >
+            {children}
+        </div>
+    );
+}
+
+/* ── Scroll-triggered counter ────────────────────────────────────── */
+function useScrollCounter(target: number, decimals = 0) {
+    const { ref, visible } = useInView(0.3);
+    const [count, setCount] = useState(0);
+    const rafRef = useRef<number>(0);
+    useEffect(() => {
+        if (!visible) return;
+        const duration = 1600;
+        const start = performance.now();
+        const step = (now: number) => {
+            const p = Math.min((now - start) / duration, 1);
+            const ease = 1 - Math.pow(1 - p, 3);
+            setCount(parseFloat((ease * target).toFixed(decimals)));
+            if (p < 1) rafRef.current = requestAnimationFrame(step);
+        };
+        rafRef.current = requestAnimationFrame(step);
+        return () => cancelAnimationFrame(rafRef.current);
+    }, [visible, target, decimals]);
+    return { ref, count };
+}
 import { BrandMarquee } from '@/components/brand/brand-marquee';
 import { HeroSection } from '@/components/brand/hero-section';
 import { LeadForm } from '@/components/brand/lead-form';
@@ -13,6 +71,32 @@ interface HomeProps {
     featuredServices: Service[];
     featuredBrands: Brand[];
     testimonials: Testimonial[];
+}
+
+/* ── Mission scroll-counter stats ───────────────────────────────── */
+function ScrollStats({ s }: { s: (key: string, fallback: string) => string }) {
+    const stat1 = useScrollCounter(98);
+    const stat2 = useScrollCounter(24);
+    return (
+        <div ref={stat1.ref} className="flex gap-12 pt-6">
+            <div>
+                <div className="mb-2 font-heading text-4xl font-bold text-white">
+                    {stat1.count}%
+                </div>
+                <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                    {s('mission_stat1_label', 'Clients Satisfaits')}
+                </div>
+            </div>
+            <div ref={stat2.ref}>
+                <div className="mb-2 font-heading text-4xl font-bold text-white">
+                    {stat2.count}h/7
+                </div>
+                <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
+                    {s('mission_stat2_label', 'Assistance Urgente')}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default function Home({
@@ -98,30 +182,28 @@ export default function Home({
 
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-24 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-                        <div className="max-w-2xl border-l-4 border-racing-red pl-8">
-                            <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                                {s('section_services_badge', 'Nos Spécialités')}
-                            </span>
-                            <h2 className="font-heading text-4xl leading-[1.1] font-bold tracking-tighter text-white uppercase md:text-6xl">
-                                {s(
-                                    'section_services_heading',
-                                    'Solutions Automobiles',
-                                )}
-                            </h2>
-                        </div>
-                        <p className="max-w-xs text-xs leading-loose font-bold tracking-[0.25em] text-muted-foreground uppercase">
-                            {s(
-                                'section_services_subtext',
-                                'Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.',
-                            )}
-                        </p>
+                        <Reveal from="left">
+                            <div className="max-w-2xl border-l-4 border-racing-red pl-8">
+                                <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
+                                    {s('section_services_badge', 'Nos Spécialités')}
+                                </span>
+                                <h2 className="font-heading text-4xl leading-[1.1] font-bold tracking-tighter text-white uppercase md:text-6xl">
+                                    {s('section_services_heading', 'Solutions Automobiles')}
+                                </h2>
+                            </div>
+                        </Reveal>
+                        <Reveal from="right" delay={100}>
+                            <p className="max-w-xs text-xs leading-loose font-bold tracking-[0.25em] text-muted-foreground uppercase">
+                                {s('section_services_subtext', 'Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.')}
+                            </p>
+                        </Reveal>
                     </div>
 
                     <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-                        {servicesList.map((service) => (
-                            <div key={service.id}>
+                        {servicesList.map((service, i) => (
+                            <Reveal key={service.id} delay={i * 100}>
                                 <ServiceCard service={service} />
-                            </div>
+                            </Reveal>
                         ))}
                     </div>
                 </div>
@@ -132,22 +214,19 @@ export default function Home({
                 <div className="bg-grid-pattern absolute inset-0 opacity-10" />
 
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-32 text-center">
+                    <Reveal className="mb-32 text-center">
                         <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
                             {s('section_process_badge', 'Notre Méthodologie')}
                         </span>
                         <h2 className="mb-8 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s(
-                                'section_process_heading',
-                                "Protocole d'Exécution",
-                            )}
+                            {s('section_process_heading', "Protocole d'Exécution")}
                         </h2>
                         <div className="mx-auto h-[2px] w-24 bg-racing-red" />
-                    </div>
+                    </Reveal>
 
                     <div className="grid grid-cols-1 gap-16 md:grid-cols-3 lg:gap-24">
                         {howSteps.map((item, i) => (
-                            <div key={i} className="group relative text-center">
+                            <Reveal key={i} delay={i * 150} className="group relative text-center">
                                 <div className="relative mb-10 inline-flex h-28 w-28 -skew-x-12 transform items-center justify-center border border-white/10 bg-luxury-charcoal transition-all duration-700 group-hover:border-racing-red/50">
                                     <div className="absolute inset-0 bg-racing-red/5 opacity-0 transition-opacity group-hover:opacity-100" />
                                     <Icon
@@ -164,7 +243,7 @@ export default function Home({
                                 <p className="px-4 text-sm leading-relaxed font-medium tracking-wide text-muted-foreground">
                                     {item.desc}
                                 </p>
-                            </div>
+                            </Reveal>
                         ))}
                     </div>
                 </div>
@@ -188,78 +267,34 @@ export default function Home({
 
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid grid-cols-1 items-center gap-24 lg:grid-cols-2">
-                        <div className="space-y-10">
+                        <Reveal from="left" className="space-y-10">
                             <span className="block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
                                 {s('mission_badge', 'Notre Mission à Lomé')}
                             </span>
                             <h2 className="font-heading text-4xl leading-none font-bold tracking-tighter text-white uppercase md:text-7xl">
-                                {s(
-                                    'mission_heading',
-                                    'Innovation\net Expertise\nTechnique',
-                                )
+                                {s('mission_heading', 'Innovation\net Expertise\nTechnique')
                                     .split('\n')
-                                    .map(
-                                        (
-                                            line: string,
-                                            i: number,
-                                            arr: string[],
-                                        ) => (
-                                            <span key={i}>
-                                                {i === arr.length - 1 ? (
-                                                    <span className="text-racing-red">
-                                                        {line}
-                                                    </span>
-                                                ) : (
-                                                    line
-                                                )}
-                                                {i < arr.length - 1 && <br />}
-                                            </span>
-                                        ),
-                                    )}
+                                    .map((line: string, i: number, arr: string[]) => (
+                                        <span key={i}>
+                                            {i === arr.length - 1 ? (
+                                                <span className="text-racing-red">{line}</span>
+                                            ) : line}
+                                            {i < arr.length - 1 && <br />}
+                                        </span>
+                                    ))}
                             </h2>
                             <div className="h-[2px] w-32 bg-racing-red" />
                             <p className="max-w-xl border-l-4 border-racing-red/50 pl-8 text-lg leading-loose font-medium tracking-wide text-muted-foreground italic">
-                                "
-                                {s(
-                                    'mission_quote',
-                                    'Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules.',
-                                )}
-                                "
+                                "{s('mission_quote', 'Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules.')}"
                             </p>
-                            <div className="flex gap-12 pt-6">
-                                <div>
-                                    <div className="mb-2 font-heading text-4xl font-bold text-white">
-                                        {s('mission_stat1_value', '98%')}
-                                    </div>
-                                    <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        {s(
-                                            'mission_stat1_label',
-                                            'Clients Satisfaits',
-                                        )}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="mb-2 font-heading text-4xl font-bold text-white">
-                                        {s('mission_stat2_value', '24h/7')}
-                                    </div>
-                                    <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        {s(
-                                            'mission_stat2_label',
-                                            'Assistance Urgente',
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            <ScrollStats s={s} />
+                        </Reveal>
 
-                        <div className="group relative">
+                        <Reveal from="right" delay={150} className="group relative">
                             <div className="absolute -inset-4 -skew-x-6 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
                             <div className="relative -skew-x-6 transform overflow-hidden bg-luxury-charcoal">
                                 <img
-                                    src={s(
-                                        'mission_image_url',
-                                        'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop',
-                                    )}
+                                    src={s('mission_image_url', 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop')}
                                     alt="Véhicule premium - Expertise technique en programmation de clés et diagnostic automobile"
                                     className="w-full transition-all duration-1000 group-hover:scale-105"
                                     loading="lazy"
@@ -269,7 +304,7 @@ export default function Home({
                                 />
                                 <div className="absolute inset-0 bg-racing-red/10 transition-opacity group-hover:opacity-0" />
                             </div>
-                        </div>
+                        </Reveal>
                     </div>
                 </div>
             </section>
@@ -312,20 +347,14 @@ export default function Home({
                 <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-racing-red/30 to-transparent" />
 
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-24 flex flex-col items-center text-center">
+                    <Reveal className="mb-24 flex flex-col items-center text-center">
                         <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                            {s(
-                                'section_testimonials_badge',
-                                'Rapports Système',
-                            )}
+                            {s('section_testimonials_badge', 'Rapports Système')}
                         </span>
                         <h2 className="font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s(
-                                'section_testimonials_heading',
-                                'Intelligence Client',
-                            )}
+                            {s('section_testimonials_heading', 'Intelligence Client')}
                         </h2>
-                    </div>
+                    </Reveal>
 
                     <div className="flex min-h-[500px] justify-center">
                         <Deferred
@@ -384,23 +413,17 @@ export default function Home({
             <section id="contact" className="relative bg-background py-40">
                 <div className="bg-grid-pattern absolute inset-0 opacity-5" />
                 <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-24 border-b-2 border-racing-red pb-12 text-center">
+                    <Reveal className="mb-24 border-b-2 border-racing-red pb-12 text-center">
                         <h2 className="mb-6 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            {s(
-                                'section_contact_heading',
-                                'Demander une Intervention',
-                            )}
+                            {s('section_contact_heading', 'Demander une Intervention')}
                         </h2>
                         <p className="mx-auto max-w-xl text-[11px] leading-loose font-bold tracking-[0.3em] text-muted-foreground uppercase">
-                            {s(
-                                'section_contact_subtext',
-                                'Établissez un statut technique prioritaire en soumettant vos besoins opérationnels.',
-                            )}
+                            {s('section_contact_subtext', 'Établissez un statut technique prioritaire en soumettant vos besoins opérationnels.')}
                         </p>
-                    </div>
-                    <div className="animate-in duration-1000 fade-in slide-in-from-bottom">
+                    </Reveal>
+                    <Reveal delay={150}>
                         <LeadForm />
-                    </div>
+                    </Reveal>
                 </div>
 
                 {/* Background decorative element */}
