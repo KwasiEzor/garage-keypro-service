@@ -69,7 +69,7 @@ class FaqSeeder extends Seeder
         ];
 
         foreach ($faqs as $faq) {
-            Faq::create($faq);
+            Faq::updateOrCreate(['question' => $faq['question']], $faq);
         }
     }
 }

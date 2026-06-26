@@ -80,10 +80,12 @@ class GalleryItemSeeder extends Seeder
 
         // Create premium car gallery items
         foreach ($premiumCars as $car) {
-            GalleryItem::create($car);
+            GalleryItem::updateOrCreate(['slug' => $car['slug']], $car);
         }
 
-        // Create additional random gallery items
-        GalleryItem::factory()->count(18)->create();
+        // Only seed factory items when the gallery has no extras yet
+        if (GalleryItem::count() <= count($premiumCars)) {
+            GalleryItem::factory()->count(18)->create();
+        }
     }
 }
