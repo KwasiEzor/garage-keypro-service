@@ -126,6 +126,78 @@ class ManageSettings extends Page implements HasForms
                             ->label('Default WhatsApp Message')
                             ->placeholder("Bonjour, j'aimerais avoir des informations sur vos services."),
                     ]),
+
+                Section::make('Social Media Links')
+                    ->description('Links shown in the footer and navigation.')
+                    ->components([
+                        TextInput::make('social_facebook')->label('Facebook URL')->placeholder('https://facebook.com/yourpage'),
+                        TextInput::make('social_instagram')->label('Instagram URL')->placeholder('https://instagram.com/yourpage'),
+                        TextInput::make('social_twitter')->label('Twitter / X URL')->placeholder('https://twitter.com/yourpage'),
+                        TextInput::make('social_youtube')->label('YouTube URL')->placeholder('https://youtube.com/yourchannel'),
+                        TextInput::make('social_tiktok')->label('TikTok URL')->placeholder('https://tiktok.com/@yourpage'),
+                    ]),
+
+                Section::make('Hero Section')
+                    ->description('Content for the full-width hero at the top of the home page.')
+                    ->components([
+                        TextInput::make('hero_badge')->label('Badge Text')->placeholder('Protocoles de Sécurité Avancés'),
+                        TextInput::make('hero_title')->label('Hero Title')->placeholder('Expert Clés Auto'),
+                        Textarea::make('hero_subtitle')->label('Hero Subtitle')->rows(2)
+                            ->placeholder('Spécialiste en reproduction de clés, programmation électronique…'),
+                        TextInput::make('hero_cta_primary_text')->label('Primary CTA Text')->placeholder('Réserver un Rendez-vous'),
+                        TextInput::make('hero_cta_primary_href')->label('Primary CTA URL')->placeholder('/appointments'),
+                        TextInput::make('hero_cta_secondary_text')->label('Secondary CTA Text')->placeholder("Appel d'Urgence"),
+                        TextInput::make('hero_image_url')->label('Hero Background Image URL')
+                            ->placeholder('https://images.unsplash.com/…')
+                            ->helperText('Leave empty to use the default image.'),
+                    ]),
+
+                Section::make('How It Works — Steps')
+                    ->description('The 3-step process shown on the home page.')
+                    ->columns(3)
+                    ->components([
+                        TextInput::make('how_step1_title')->label('Step 1 Title')->placeholder('Activation'),
+                        TextInput::make('how_step2_title')->label('Step 2 Title')->placeholder('Intervention'),
+                        TextInput::make('how_step3_title')->label('Step 3 Title')->placeholder('Validation'),
+                        Textarea::make('how_step1_desc')->label('Step 1 Description')->rows(3)
+                            ->placeholder('Analyse rapide de votre besoin…'),
+                        Textarea::make('how_step2_desc')->label('Step 2 Description')->rows(3)
+                            ->placeholder('Déploiement immédiat…'),
+                        Textarea::make('how_step3_desc')->label('Step 3 Description')->rows(3)
+                            ->placeholder('Programmation, test de conformité…'),
+                    ]),
+
+                Section::make('Mission Section')
+                    ->description('The full-width mission block on the home page.')
+                    ->components([
+                        TextInput::make('mission_badge')->label('Badge Label')->placeholder('Notre Mission à Lomé'),
+                        TextInput::make('mission_heading')->label('Heading (supports \\n for line breaks)')
+                            ->placeholder('Innovation\net Expertise\nTechnique'),
+                        Textarea::make('mission_quote')->label('Quote / Tagline')->rows(3)
+                            ->placeholder('Fournir des solutions rapides, fiables…'),
+                        TextInput::make('mission_stat1_value')->label('Stat 1 Value')->placeholder('98%'),
+                        TextInput::make('mission_stat1_label')->label('Stat 1 Label')->placeholder('Clients Satisfaits'),
+                        TextInput::make('mission_stat2_value')->label('Stat 2 Value')->placeholder('24h/7'),
+                        TextInput::make('mission_stat2_label')->label('Stat 2 Label')->placeholder('Assistance Urgente'),
+                        TextInput::make('mission_image_url')->label('Mission Image URL')
+                            ->placeholder('https://images.unsplash.com/…'),
+                    ]),
+
+                Section::make('Home Page — Section Labels')
+                    ->description('Section headings and subtexts across the home page.')
+                    ->components([
+                        TextInput::make('section_services_badge')->label('Services Badge')->placeholder('Nos Spécialités'),
+                        TextInput::make('section_services_heading')->label('Services Heading')->placeholder('Solutions Automobiles'),
+                        TextInput::make('section_services_subtext')->label('Services Sub-text')
+                            ->placeholder('Expertise technique multi-marques…'),
+                        TextInput::make('section_process_badge')->label('Process Badge')->placeholder('Notre Méthodologie'),
+                        TextInput::make('section_process_heading')->label('Process Heading')->placeholder("Protocole d'Exécution"),
+                        TextInput::make('section_testimonials_badge')->label('Testimonials Badge')->placeholder('Rapports Système'),
+                        TextInput::make('section_testimonials_heading')->label('Testimonials Heading')->placeholder('Intelligence Client'),
+                        TextInput::make('section_contact_heading')->label('Contact Heading')->placeholder('Demander une Intervention'),
+                        TextInput::make('section_contact_subtext')->label('Contact Sub-text')
+                            ->placeholder('Établissez un statut technique prioritaire…'),
+                    ]),
             ])
             ->statePath('data');
     }

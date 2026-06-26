@@ -24,6 +24,30 @@ export default function Home({
     const siteName = settings?.site_name || 'KeyPro';
     const contactPhone = settings?.contact_phone || '+228 72 11 44 44';
 
+    const s = (key: string, fallback: string) =>
+        settings?.[key] || fallback;
+
+    const howSteps = [
+        {
+            step: '01',
+            icon: 'Phone',
+            title: s('how_step1_title', 'Activation'),
+            desc: s('how_step1_desc', 'Analyse rapide de votre besoin en clés ou diagnostic électronique par nos techniciens.'),
+        },
+        {
+            step: '02',
+            icon: 'Zap',
+            title: s('how_step2_title', 'Intervention'),
+            desc: s('how_step2_desc', 'Déploiement immédiat de notre unité mobile à Lomé pour une solution sur site.'),
+        },
+        {
+            step: '03',
+            icon: 'Award',
+            title: s('how_step3_title', 'Validation'),
+            desc: s('how_step3_desc', 'Programmation, test de conformité et remise des clés avec garantie de fiabilité.'),
+        },
+    ];
+
     // Safety fallbacks for props that might arrive as objects due to corrupted cache
     const servicesList = Array.isArray(featuredServices)
         ? featuredServices
@@ -43,16 +67,18 @@ export default function Home({
             </Head>
 
             <HeroSection
-                title="Expert Clés Auto"
-                subtitle="Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs."
+                badge={s('hero_badge', 'Protocoles de Sécurité Avancés')}
+                title={s('hero_title', 'Expert Clés Auto')}
+                subtitle={s('hero_subtitle', 'Spécialiste en reproduction de clés, programmation électronique et diagnostic automobile. Assistance mobile rapide à Lomé et ses environs.')}
                 ctaPrimary={{
-                    text: 'Réserver un Rendez-vous',
-                    href: '/appointments',
+                    text: s('hero_cta_primary_text', 'Réserver un Rendez-vous'),
+                    href: s('hero_cta_primary_href', '/appointments'),
                 }}
                 ctaSecondary={{
-                    text: "Appel d'Urgence",
+                    text: s('hero_cta_secondary_text', "Appel d'Urgence"),
                     href: `tel:${contactPhone.replace(/\s+/g, '')}`,
                 }}
+                heroImageUrl={settings?.hero_image_url || undefined}
             />
 
             {/* Featured Services */}
@@ -63,18 +89,14 @@ export default function Home({
                     <div className="mb-24 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                         <div className="max-w-2xl border-l-4 border-racing-red pl-8">
                             <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                                Nos Spécialités
+                                {s('section_services_badge', 'Nos Spécialités')}
                             </span>
                             <h2 className="font-heading text-4xl leading-[1.1] font-bold tracking-tighter text-white uppercase md:text-6xl">
-                                Solutions <br />
-                                <span className="text-racing-red">
-                                    Automobiles
-                                </span>
+                                {s('section_services_heading', 'Solutions Automobiles')}
                             </h2>
                         </div>
                         <p className="max-w-xs text-xs leading-loose font-bold tracking-[0.25em] text-muted-foreground uppercase">
-                            Expertise technique multi-marques pour tous vos
-                            problèmes de clés et électronique embarquée.
+                            {s('section_services_subtext', 'Expertise technique multi-marques pour tous vos problèmes de clés et électronique embarquée.')}
                         </p>
                     </div>
 
@@ -95,36 +117,16 @@ export default function Home({
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-32 text-center">
                         <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                            Notre Méthodologie
+                            {s('section_process_badge', 'Notre Méthodologie')}
                         </span>
                         <h2 className="mb-8 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            Protocole{' '}
-                            <span className="text-racing-red">d'Exécution</span>
+                            {s('section_process_heading', "Protocole d'Exécution")}
                         </h2>
                         <div className="mx-auto h-[2px] w-24 bg-racing-red" />
                     </div>
 
                     <div className="grid grid-cols-1 gap-16 md:grid-cols-3 lg:gap-24">
-                        {[
-                            {
-                                step: '01',
-                                icon: 'Phone',
-                                title: 'Activation',
-                                desc: 'Analyse rapide de votre besoin en clés ou diagnostic électronique par nos techniciens.',
-                            },
-                            {
-                                step: '02',
-                                icon: 'Zap',
-                                title: 'Intervention',
-                                desc: 'Déploiement immédiat de notre unité mobile à Lomé pour une solution sur site.',
-                            },
-                            {
-                                step: '03',
-                                icon: 'Award',
-                                title: 'Validation',
-                                desc: 'Programmation, test de conformité et remise des clés avec garantie de fiabilité.',
-                            },
-                        ].map((item, i) => (
+                        {howSteps.map((item, i) => (
                             <div key={i} className="group relative text-center">
                                 <div className="relative mb-10 inline-flex h-28 w-28 -skew-x-12 transform items-center justify-center border border-white/10 bg-luxury-charcoal transition-all duration-700 group-hover:border-racing-red/50">
                                     <div className="absolute inset-0 bg-racing-red/5 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -168,37 +170,41 @@ export default function Home({
                     <div className="grid grid-cols-1 items-center gap-24 lg:grid-cols-2">
                         <div className="space-y-10">
                             <span className="block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                                Notre Mission à Lomé
+                                {s('mission_badge', 'Notre Mission à Lomé')}
                             </span>
                             <h2 className="font-heading text-4xl leading-none font-bold tracking-tighter text-white uppercase md:text-7xl">
-                                Innovation <br />
-                                et Expertise <br />
-                                <span className="text-racing-red">
-                                    Technique
-                                </span>
+                                {s('mission_heading', 'Innovation\net Expertise\nTechnique')
+                                    .split('\n')
+                                    .map((line: string, i: number, arr: string[]) => (
+                                        <span key={i}>
+                                            {i === arr.length - 1 ? (
+                                                <span className="text-racing-red">{line}</span>
+                                            ) : (
+                                                line
+                                            )}
+                                            {i < arr.length - 1 && <br />}
+                                        </span>
+                                    ))}
                             </h2>
                             <div className="h-[2px] w-32 bg-racing-red" />
                             <p className="max-w-xl border-l-4 border-racing-red/50 pl-8 text-lg leading-loose font-medium tracking-wide text-muted-foreground italic">
-                                "Fournir des solutions rapides, fiables et
-                                accessibles pour tous les problèmes liés aux
-                                clés automobiles et aux systèmes électroniques
-                                des véhicules."
+                                "{s('mission_quote', 'Fournir des solutions rapides, fiables et accessibles pour tous les problèmes liés aux clés automobiles et aux systèmes électroniques des véhicules.')}"
                             </p>
                             <div className="flex gap-12 pt-6">
                                 <div>
                                     <div className="mb-2 font-heading text-4xl font-bold text-white">
-                                        98%
+                                        {s('mission_stat1_value', '98%')}
                                     </div>
                                     <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        Client Satisfaits
+                                        {s('mission_stat1_label', 'Clients Satisfaits')}
                                     </div>
                                 </div>
                                 <div>
                                     <div className="mb-2 font-heading text-4xl font-bold text-white">
-                                        24h/7
+                                        {s('mission_stat2_value', '24h/7')}
                                     </div>
                                     <div className="font-heading text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
-                                        Assistance Urgente
+                                        {s('mission_stat2_label', 'Assistance Urgente')}
                                     </div>
                                 </div>
                             </div>
@@ -208,7 +214,7 @@ export default function Home({
                             <div className="absolute -inset-4 -skew-x-6 transform border border-racing-red/20 transition-all duration-700 group-hover:border-racing-red/50" />
                             <div className="relative -skew-x-6 transform overflow-hidden bg-luxury-charcoal">
                                 <img
-                                    src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop"
+                                    src={s('mission_image_url', 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=90&auto=format&fit=crop')}
                                     alt="Véhicule premium - Expertise technique en programmation de clés et diagnostic automobile"
                                     className="w-full transition-all duration-1000 group-hover:scale-105"
                                     loading="lazy"
@@ -264,11 +270,10 @@ export default function Home({
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-24 flex flex-col items-center text-center">
                         <span className="mb-4 block font-heading text-[11px] font-bold tracking-[0.4em] text-racing-red uppercase">
-                            Rapports Système
+                            {s('section_testimonials_badge', 'Rapports Système')}
                         </span>
                         <h2 className="font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            Intelligence{' '}
-                            <span className="text-racing-red">Client</span>
+                            {s('section_testimonials_heading', 'Intelligence Client')}
                         </h2>
                     </div>
 
@@ -331,14 +336,10 @@ export default function Home({
                 <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-24 border-b-2 border-racing-red pb-12 text-center">
                         <h2 className="mb-6 font-heading text-4xl font-bold tracking-tighter text-white uppercase md:text-6xl">
-                            Demander une{' '}
-                            <span className="text-racing-red">
-                                Intervention
-                            </span>
+                            {s('section_contact_heading', 'Demander une Intervention')}
                         </h2>
                         <p className="mx-auto max-w-xl text-[11px] leading-loose font-bold tracking-[0.3em] text-muted-foreground uppercase">
-                            Établissez un statut technique prioritaire en
-                            soumettant vos besoins opérationnels.
+                            {s('section_contact_subtext', 'Établissez un statut technique prioritaire en soumettant vos besoins opérationnels.')}
                         </p>
                     </div>
                     <div className="animate-in duration-1000 fade-in slide-in-from-bottom">

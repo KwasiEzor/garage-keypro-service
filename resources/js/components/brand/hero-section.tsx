@@ -2,17 +2,21 @@
 interface HeroSectionProps {
   title: string;
   subtitle?: string;
+  badge?: string;
+  heroImageUrl?: string;
   ctaPrimary?: { text: string; href: string };
   ctaSecondary?: { text: string; href: string };
 }
 
-export function HeroSection({ title, subtitle, ctaPrimary, ctaSecondary }: HeroSectionProps) {
+const DEFAULT_HERO_IMAGE = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2500&auto=format&fit=crop';
+
+export function HeroSection({ title, subtitle, badge, heroImageUrl, ctaPrimary, ctaSecondary }: HeroSectionProps) {
   return (
     <div className="relative overflow-hidden bg-background min-h-[90vh] flex items-center">
       {/* Background Image Layer */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2500&auto=format&fit=crop" 
+        <img
+          src={heroImageUrl || DEFAULT_HERO_IMAGE}
           alt="Véhicule de luxe haute performance - Service de serrurerie KeyPro"
           className="w-full h-full object-cover opacity-40"
           fetchPriority="high"
@@ -36,7 +40,7 @@ export function HeroSection({ title, subtitle, ctaPrimary, ctaSecondary }: HeroS
           <div className="mb-8 flex items-center gap-4 animate-in fade-in slide-in-from-left duration-700">
             <div className="h-[2px] w-12 bg-racing-red" />
             <span className="text-[11px] font-heading font-bold uppercase tracking-[0.4em] text-racing-red">
-              Protocoles de Sécurité Avancés
+              {badge || 'Protocoles de Sécurité Avancés'}
             </span>
           </div>
 
